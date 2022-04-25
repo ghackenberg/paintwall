@@ -30,3 +30,9 @@ input {
     top: 1em;
     left: 1em;
 }
+div {
+    position: absolute;
+
+    top: 1em;
+    right: 1em;
+}

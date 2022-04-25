@@ -3,6 +3,7 @@
 // Canvas
 var canvasId
 var socket
+var qrcode
 var names = {}
 var colors = {}
 var widths = {}
