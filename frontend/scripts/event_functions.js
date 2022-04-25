@@ -2,6 +2,9 @@
 
 // Event functions (window)
 
+function handleLoad() {
+    handleResize()
+}
 function handleResize() {
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
@@ -10,7 +13,7 @@ function handleResize() {
 function handleHashChange() {
     // TODO
 }
-window.addEventListener('load', handleResize)
+window.addEventListener('load', handleLoad)
 window.addEventListener('resize', handleResize)
 window.addEventListener('hashchange', handleHashChange)
 
@@ -23,6 +26,7 @@ function handleMouseMove(event) {
     if (event.buttons > 0) {
         continueLine(event.clientX, event.clientY)
     }
+    // Forward
     if (socket.readyState == WebSocket.OPEN) {
         socket.send(JSON.stringify({ type: 'move', data: { x: event.clientX, y: event.clientY }}))
     }
@@ -31,6 +35,7 @@ function handleMouseOver(event) {
     if (event.buttons > 0) {
         startLine(event.clientX, event.clientY)
     }
+    // Forward
     if (socket.readyState == WebSocket.OPEN) {
         socket.send(JSON.stringify({ type: 'over', data: { x: event.clientX, y: event.clientY }}))
     }
@@ -39,6 +44,7 @@ function handleMouseOut(event) {
     if (event.buttons > 0) {
         continueLine(event.clientX, event.clientY)
     }
+    // Forward
     if (socket.readyState == WebSocket.OPEN) {
         socket.send(JSON.stringify({ type: 'out', data: { x: event.clientX, y: event.clientY }}))
     }
@@ -52,6 +58,7 @@ canvas.addEventListener('mouseout', handleMouseOut)
 
 function handleChange(event) {
     color = event.target.value
+    // Forward
     if (socket.readyState == WebSocket.OPEN) {
         socket.send(JSON.stringify({ type: 'color', data: color}))
     }

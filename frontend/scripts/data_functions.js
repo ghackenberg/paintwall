@@ -6,6 +6,7 @@ function startLine(x, y) {
     points = [point]
     lines[lineId] = { lineId, clientId, points, color, width, alpha }
     draw()
+    // Forward
     if (socket.readyState == WebSocket.OPEN) {
         socket.send(JSON.stringify({ type: 'start', data: { lineId, point } }))
     }
@@ -15,6 +16,7 @@ function continueLine(x, y) {
     const point = { x, y }
     points.push(point)
     draw()
+    // Forward
     if (socket.readyState == WebSocket.OPEN) {
         socket.send(JSON.stringify({ type: 'continue', data: { lineId, point } }))
     }
