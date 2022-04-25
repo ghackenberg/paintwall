@@ -3,36 +3,39 @@ body {
     user-select: none;
     font-family: sans-serif;
 }
-header {
+body > header {
     position: absolute;
     top: 1em;
-    left: 0;
-    right: 0;
+    left: 5em;
+    right: 5em;
     text-align: center;
     font-weight: bold;
 }
-footer {
+body > footer {
     position: absolute;
-    left: 0;
-    right: 0;
+    left: 1em;
+    right: 1em;
     bottom: 1em;
     text-align: center;
 }
-canvas {
+body > canvas {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
 }
-input {
+body > input {
     position: absolute;
     top: 1em;
     left: 1em;
 }
-div {
+body > div {
     position: absolute;
-
     top: 1em;
     right: 1em;
+}
+body > div > * {
+    max-width: 15vw;
+    max-height: 15vh;
 }
