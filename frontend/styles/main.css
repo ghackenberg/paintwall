@@ -1,0 +1,32 @@
+body {
+    margin: 0;
+    user-select: none;
+    font-family: sans-serif;
+}
+header {
+    position: absolute;
+    top: 1em;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-weight: bold;
+}
+footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 1em;
+    text-align: center;
+}
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+input {
+    position: absolute;
+    top: 1em;
+    left: 1em;
+}

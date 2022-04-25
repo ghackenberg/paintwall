@@ -1,0 +1,23 @@
+{
+    "name": "collaborative-paint-backend",
+    "version": "0.0.1",
+    "license": "UNLICENSED",
+    "private": true,
+    "type": "module",
+    "main": "scripts/main.js",
+    "author": {
+        "name": "Georg Hackenberg",
+        "email": "georg.hackenberg@gmail.com"
+    },
+    "dependencies": {
+        "express": "^4.17.3",
+        "express-ws": "^5.0.2"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.15"
+    },
+    "scripts": {
+        "start": "node .",
+        "dev": "nodemon ."
+    }
+}
