@@ -29,9 +29,11 @@ window.addEventListener('hashchange', handleHashChange)
 // Event functions (canvas)
 
 function handleMouseDown(event) {
+    event.preventDefault()
     startLine(event.cientX, event.clientY)
 }
 function handleMouseMove(event) {
+    event.preventDefault()
     if (event.buttons > 0) {
         continueLine(event.clientX, event.clientY)
     }
@@ -41,6 +43,7 @@ function handleMouseMove(event) {
     }
 }
 function handleMouseOver(event) {
+    event.preventDefault()
     if (event.buttons > 0) {
         startLine(event.clientX, event.clientY)
     }
@@ -50,6 +53,7 @@ function handleMouseOver(event) {
     }
 }
 function handleMouseOut(event) {
+    event.preventDefault()
     if (event.buttons > 0) {
         continueLine(event.clientX, event.clientY)
     }
@@ -59,6 +63,7 @@ function handleMouseOut(event) {
     }
 }
 function handleTouchStart(event) {
+    event.preventDefault()
     if (event.touches.length == 1) {
         startLine(event.touches[0].clientX, event.touches[0].clientY)
     }
@@ -68,6 +73,7 @@ function handleTouchStart(event) {
     }
 }
 function handleTouchMove(event) {
+    event.preventDefault()
     if (event.touches.length == 1) {
         continueLine(event.touches[0].clientX, event.touches[0].clientY)
     }
@@ -77,6 +83,7 @@ function handleTouchMove(event) {
     }
 }
 function handleTouchEnd(event) {
+    event.preventDefault()
     if (event.touches.length == 1) {
         continueLine(event.touches[0].clientX, event.touches[0].clientY)
     }
