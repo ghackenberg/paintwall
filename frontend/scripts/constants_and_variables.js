@@ -16,7 +16,10 @@ const canvasId = 'test'
 const clientId = '' + Math.random()
 const name = prompt("What's your name?")
 // Create web socket connection
-const socket = new WebSocket('ws://localhost:8080/api/v1/canvas/' + canvasId + '/client/' + clientId)
+const protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
+const host = location.host
+const path = '/api/v1/canvas/' + canvasId + '/client/' + clientId
+const socket = new WebSocket(protocol + '//' + host + path)
 
 // App data
 
