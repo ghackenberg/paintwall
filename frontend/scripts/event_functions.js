@@ -7,8 +7,12 @@ function handleResize() {
     canvas.height = window.innerHeight
     draw()
 }
+function handleHashChange() {
+    // TODO
+}
 window.addEventListener('load', handleResize)
 window.addEventListener('resize', handleResize)
+window.addEventListener('hashchange', handleHashChange)
 
 // Event functions (canvas)
 

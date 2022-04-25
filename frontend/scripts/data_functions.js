@@ -2,7 +2,7 @@
 
 function startLine(x, y) {
     const point = { x, y }
-    lineId = '' + Math.random()
+    lineId = '' + Math.random().toString(16).substring(2)
     points = [point]
     lines[lineId] = { lineId, clientId, points, color, width, alpha }
     draw()

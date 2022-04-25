@@ -13,8 +13,8 @@ const context = canvas.getContext('2d')
 // Web socket
 
 // Define web socket connection parameters
-const canvasId = 'test'
-const clientId = '' + Math.random()
+const canvasId = Math.random().toString(16).substring(2)
+const clientId = Math.random().toString(16).substring(2)
 const name = prompt("What's your name?")
 
 // Create web socket connection
