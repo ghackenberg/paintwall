@@ -6,11 +6,6 @@ function handleLoad() {
     if (!location.hash) {
         location.hash = '#' + Math.random().toString(16).substring(2)
     } else {
-        qrcode = new QRCode(document.getElementById('div'), {
-            text: location.href,
-            width: 128,
-            height: 128
-        })
         initialize()
         connect()
     }
@@ -23,20 +18,6 @@ function handleResize() {
 }
 function handleHashChange() {
     socket && socket.close()
-    if (qrcode) {
-        qrcode.clear()
-        qrcode.makeCode({
-            text: location.href,
-            width: 128,
-            height: 128
-        })
-    } else {
-        qrcode = new QRCode(document.getElementById('div'), {
-            text: location.href,
-            width: 128,
-            height: 128
-        })
-    }
     initialize()
     connect()
     draw()
