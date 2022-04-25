@@ -1,128 +1,129 @@
 // SOCKET FUNCTIONS
 
-socket.onopen = (event) => {
-    socket.send(JSON.stringify({ type: 'join', data: name }))
-}
-socket.onmessage = (event) => {
-    // Parse
-    const message = JSON.parse(event.data)
-    // Process
-    switch (message.type) {
-        case 'join': {
-            const clientId = message.clientId
-            const name = message.data
+function connect() {
+    const path = '/api/v1/canvas/' + canvasId + '/client/' + clientId
 
-            names[clientId] = name
-            colors[clientId] = 'black'
-            widths[clientId] = 5
-            alphas[clientId] = 0.5
-            positions[clientId] = undefined
+    socket = new WebSocket(socketProtocol + '//' + socketHost + path)
 
-            break
-        }
-        case 'leave': {
-            const clientId = message.clientId
+    socket.onopen = (event) => {
+        socket.send(JSON.stringify({ type: 'join', data: clientName }))
+    }
+    socket.onmessage = (event) => {
+        // Parse
+        const message = JSON.parse(event.data)
+        // Process
+        switch (message.type) {
+            case 'join': {
+                const clientId = message.clientId
+                const clientName = message.data
 
-            delete names[clientId]
-            delete colors[clientId]
-            delete widths[clientId]
-            delete alphas[clientId]
-            delete positions[clientId]
+                names[clientId] = clientName
+                colors[clientId] = 'black'
+                widths[clientId] = 5
+                alphas[clientId] = 0.5
+                positions[clientId] = undefined
 
-            break
-        }
-        case 'move': {
-            const clientId = message.clientId
-            const position = message.data
+                break
+            }
+            case 'leave': {
+                const clientId = message.clientId
 
-            positions[clientId] = position
+                delete names[clientId]
+                delete colors[clientId]
+                delete widths[clientId]
+                delete alphas[clientId]
+                delete positions[clientId]
 
-            draw()
-            break
-        }
-        case 'out': {
-            const clientId = message.clientId
-            positions[clientId] = undefined
+                break
+            }
+            case 'move': {
+                const clientId = message.clientId
+                const position = message.data
 
-            draw()
-            break
-        }
-        case 'over': {
-            const clientId = message.clientId
-            const position = message.data
+                positions[clientId] = position
 
-            positions[clientId] = position
+                draw()
+                break
+            }
+            case 'out': {
+                const clientId = message.clientId
 
-            draw()
-            break
-        }
-        case 'color': {
-            const clientId = message.clientId
-            const color = message.data
-            
-            colors[clientId] = color
+                positions[clientId] = undefined
 
-            draw()
-            break
-        }
-        case 'width': {
-            const clientId = message.clientId
-            const width = message.data
-            
-            widths[clientId] = width
+                draw()
+                break
+            }
+            case 'over': {
+                const clientId = message.clientId
+                const position = message.data
 
-            draw()
-            break
-        }
-        case 'alpha': {
-            const clientId = message.clientId
-            const alpha = message.data
-            
-            alphas[clientId] = alpha
+                positions[clientId] = position
 
-            draw()
-            break
-        }
-        case 'start': {
-            const clientId = message.clientId
-            const lineId = message.data.lineId
-            const points = [message.data.point]
-            
-            const color = colors[clientId]
-            const width = widths[clientId]
-            const alpha = alphas[clientId]
+                draw()
+                break
+            }
+            case 'color': {
+                const clientId = message.clientId
+                const color = message.data
+                
+                colors[clientId] = color
 
-            lines[lineId] = { lineId, clientId, points, color, width, alpha }
+                draw()
+                break
+            }
+            case 'width': {
+                const clientId = message.clientId
+                const width = message.data
+                
+                widths[clientId] = width
 
-            draw()
-            break
-        }
-        case 'continue': {
-            const lineId = message.data.lineId
+                draw()
+                break
+            }
+            case 'alpha': {
+                const clientId = message.clientId
+                const alpha = message.data
+                
+                alphas[clientId] = alpha
 
-            lines[lineId].points.push(message.data.point)
+                draw()
+                break
+            }
+            case 'start': {
+                const clientId = message.clientId
+                const lineId = message.data.lineId
+                const points = [message.data.point]
+                
+                const color = colors[clientId]
+                const width = widths[clientId]
+                const alpha = alphas[clientId]
 
-            draw()
-            break
-        }
-        case 'line': {
-            const lineId = message.data.lineId
-            const clientId = message.data.clientId
-            const points = message.data.points
-            const color = message.data.color
-            const width = message.data.width
-            const alpha = message.data.alpha
+                lines[lineId] = { lineId, clientId, points, color, width, alpha }
 
-            lines[lineId] = { lineId, clientId, points, color, width, alpha }
+                draw()
+                break
+            }
+            case 'continue': {
+                const lineId = message.data.lineId
 
-            draw()
-            break
+                lines[lineId].points.push(message.data.point)
+
+                draw()
+                break
+            }
+            case 'line': {
+                const lineId = message.data.lineId
+                const clientId = message.data.clientId
+                const points = message.data.points
+                const color = message.data.color
+                const width = message.data.width
+                const alpha = message.data.alpha
+
+                lines[lineId] = { lineId, clientId, points, color, width, alpha }
+
+                draw()
+                break
+            }
         }
     }
-}
-socket.onerror = (event) => {
-
-}
-socket.onclose = (event) => {
-
 }
