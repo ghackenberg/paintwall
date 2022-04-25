@@ -6,6 +6,7 @@
 const body = document.body
 const input = document.getElementById('input')
 const canvas = document.getElementById('canvas')
+
 // Get reference to HTML 5 Canvas 2D context
 const context = canvas.getContext('2d')
 
@@ -15,6 +16,7 @@ const context = canvas.getContext('2d')
 const canvasId = 'test'
 const clientId = '' + Math.random()
 const name = prompt("What's your name?")
+
 // Create web socket connection
 const protocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
 const host = location.host
@@ -30,6 +32,7 @@ const widths = {}
 const alphas = {}
 const positions = {}
 const lines = {}
+
 // Define current line parameters
 var lineId = undefined
 var points = undefined
