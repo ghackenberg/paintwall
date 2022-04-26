@@ -1,0 +1,32 @@
+{
+    "short_name": "Collaborative Paint PWA",
+    "name": "Collaborative Paint PWA",
+    "description": "Create simple paintings collaboratively",
+    "start_url": "./",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "white",
+    "theme_color": "white",
+    "icons": [
+        {
+            "src": "./images/icon.png",
+            "type": "image/png",
+            "size": "512x512"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "https://raw.githubusercontent.com/ghackenberg/cpa2il/master/screenshots/screenshot-1.png",
+            "type": "image/png",
+            "size": "501x890"
+        },{
+            "src": "https://raw.githubusercontent.com/ghackenberg/cpa2il/master/screenshots/screenshot-2.png",
+            "type": "image/png",
+            "size": "501x890"
+        },{
+            "src": "https://raw.githubusercontent.com/ghackenberg/cpa2il/master/screenshots/screenshot-3.png",
+            "type": "image/png",
+            "size": "501x890"
+        }
+    ]
+}
