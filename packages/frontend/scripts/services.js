@@ -11,7 +11,7 @@ const files = [
     '../scripts/functions/socket.js',
     '../scripts/constants.js',
     '../scripts/variables.js',
-    '../scripts/calls.js'
+    '../scripts/executions.js'
 ]
 
 function cleanUp() {
