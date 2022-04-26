@@ -10,7 +10,7 @@ const context = canvas.getContext('2d')
 
 // Client information
 const clientId = Math.random().toString(16).substring(2)
-const clientName = prompt("What's your name?", localStorage.getItem('name') || '')
+const clientName = prompt("What's your name?", localStorage.getItem('name') || '') || 'Anonymous'
 
 localStorage.setItem('name', clientName)
 
