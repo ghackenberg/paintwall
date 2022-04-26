@@ -13,18 +13,22 @@ This project contains a collaborative paint application. The application is impl
 
 ### Libraries
 
-* Coming soon
+* *Coming soon*
 
 ### Executables
 
-* A [backend executable](./packages/backend/) running on a server in the cloud.
-* A [frontend executable](./packages/frontend/) running on a device of the user.
+* A [backend executable](./packages/backend/) running on a **server**
+* A [frontend executable](./packages/frontend/) running in a **browser**
+
+## Dependencies
+
+* Node.js
 
 ## Guides
 
 ### User guide
 
-Coming soon.
+*Coming soon*
 
 ### Administrator guide
 
