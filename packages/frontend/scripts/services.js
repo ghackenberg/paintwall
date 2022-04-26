@@ -14,6 +14,19 @@ const files = [
     '../scripts/calls.js'
 ]
 
+function cleanUp() {
+    return caches.keys().then(deleteCaches)
+}
+function setUp() {
+    return caches.open(version).then(cache => cache.addAll(files))
+}
+function deleteCaches(keys) {
+    return Promise.all(keys.map(deleteCache))
+}
+function deleteCache(key) {
+    return caches.delete(key)
+}
+
 self.addEventListener('install', (event) => {
-    event.waitUntil(caches.open(version).then(cache => cache.addAll(files)))
+    event.waitUntil(cleanUp().then(setUp))
 })
