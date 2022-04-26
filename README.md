@@ -11,7 +11,7 @@ This project contains a collaborative paint application. The application is impl
 
 ## Screenshots
 
-<img src="./screenshots/screenshot-1.png" title="Screenshot 1" style="width: 10em;"/> <img src="./screenshots/screenshot-2.png" title="Screenshot 2" style="width: 10em;"/> <img src="./screenshots/screenshot-3.png" title="Screenshot 3" style="width: 10em;"/>
+<img src="./screenshots/screenshot-1.png" title="Screenshot 1" style="width: 10em; box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);"/> <img src="./screenshots/screenshot-2.png" title="Screenshot 2" style="width: 10em; box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);"/> <img src="./screenshots/screenshot-3.png" title="Screenshot 3" style="width: 10em; box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);"/>
 
 ## Packages
 
