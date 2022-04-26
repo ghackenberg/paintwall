@@ -1,3 +1,5 @@
+// CONSTANTS
+
 const version = '0.0.1'
 
 const files = [
@@ -14,11 +16,12 @@ const files = [
     '../scripts/executions.js'
 ]
 
+// FUNCTIONS
+
+// Clean up
+
 function cleanUp() {
     return caches.keys().then(deleteCaches)
-}
-function setUp() {
-    return caches.open(version).then(cache => cache.addAll(files))
 }
 function deleteCaches(keys) {
     return Promise.all(keys.map(deleteCache))
@@ -26,6 +29,16 @@ function deleteCaches(keys) {
 function deleteCache(key) {
     return caches.delete(key)
 }
+
+// Set up
+
+function setUp() {
+    return caches.open(version).then(cache => cache.addAll(files))
+}
+
+// EXECUTIONS
+
+// Event listeners
 
 self.addEventListener('install', (event) => {
     event.waitUntil(cleanUp().then(setUp))
