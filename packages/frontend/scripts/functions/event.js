@@ -22,9 +22,6 @@ function handleHashChange() {
     connect()
     draw()
 }
-window.addEventListener('load', handleLoad)
-window.addEventListener('resize', handleResize)
-window.addEventListener('hashchange', handleHashChange)
 
 // Event functions (canvas)
 
@@ -92,13 +89,6 @@ function handleTouchEnd(event) {
         socket.send(JSON.stringify({ type: 'out' }))
     }
 }
-canvas.addEventListener('mousedown', handleMouseDown)
-canvas.addEventListener('mousemove', handleMouseMove)
-canvas.addEventListener('mouseover', handleMouseOver)
-canvas.addEventListener('mouseout', handleMouseOut)
-canvas.addEventListener('touchstart', handleTouchStart)
-canvas.addEventListener('touchmove', handleTouchMove)
-canvas.addEventListener('touchend', handleTouchEnd)
 
 // Event functions (input)
 
@@ -109,4 +99,3 @@ function handleChange(event) {
         socket.send(JSON.stringify({ type: 'color', data: color}))
     }
 }
-input.addEventListener('change', handleChange)
