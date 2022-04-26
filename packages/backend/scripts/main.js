@@ -7,6 +7,11 @@ const app = express()
 
 ws(app) // enable websocket!
 
+app.use((request, response, next) => {
+    response.header('Service-Worker-Allowed', '/')
+    next()
+})
+
 app.use(express.static('../frontend'))
 
 app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {

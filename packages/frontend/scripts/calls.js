@@ -2,7 +2,7 @@
 
 // Service workers
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./scripts/services.js')
+    navigator.serviceWorker.register('./scripts/services.js', { scope: './' })
 }
 
 // Window event listeners
