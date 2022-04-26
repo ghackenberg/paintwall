@@ -12,22 +12,39 @@
         {
             "src": "./images/icon.png",
             "type": "image/png",
-            "size": "512x512"
+            "sizes": "512x512",
+            "purpose": "any"
+        },{
+            "src": "./images/icon.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "maskable"
+        },{
+            "src": "./images/icon.png",
+            "type": "image/png",
+            "sizes": "512x512",
+            "purpose": "monochrome"
         }
     ],
     "screenshots": [
         {
             "src": "https://raw.githubusercontent.com/ghackenberg/cpa2il/master/screenshots/screenshot-1.png",
             "type": "image/png",
-            "size": "501x890"
+            "sizes": "501x890",
+            "platform": "narrow",
+            "label": "Screenshot 1"
         },{
             "src": "https://raw.githubusercontent.com/ghackenberg/cpa2il/master/screenshots/screenshot-2.png",
             "type": "image/png",
-            "size": "501x890"
+            "sizes": "501x890",
+            "platform": "narrow",
+            "label": "Screenshot 2"
         },{
             "src": "https://raw.githubusercontent.com/ghackenberg/cpa2il/master/screenshots/screenshot-3.png",
             "type": "image/png",
-            "size": "501x890"
+            "sizes": "501x890",
+            "platform": "narrow",
+            "label": "Screenshot 3"
         }
     ]
 }
