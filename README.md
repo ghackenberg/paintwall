@@ -9,6 +9,12 @@ This project contains a collaborative paint application. The application is impl
 * [Demo-2 painting](https://iot.fh-wels.at/#demo-2)
 * [Demo-3 painting](https://iot.fh-wels.at/#demo-3)
 
+## Screenshots
+
+<img src="./screenshots/screenshot-1.png" title="Screenshot 1" style="max-width: 10em;"/>
+<img src="./screenshots/screenshot-2.png" title="Screenshot 2" style="max-width: 10em;"/>
+<img src="./screenshots/screenshot-3.png" title="Screenshot 3" style="max-width: 10em;"/>
+
 ## Packages
 
 ### Libraries
