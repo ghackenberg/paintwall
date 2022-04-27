@@ -2,40 +2,100 @@ body {
     margin: 0;
     user-select: none;
     font-family: sans-serif;
+    line-height: 100%;
 }
+
+/* Screen */
+
+body > div.screen {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+body > div.screen > header {
+    font-weight: bold;
+    text-align: center;
+}
+body > div.screen > footer {
+    text-align: center;
+}
+
+/* Browse screen */
+
+body > #browse > header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1em;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+body > #browse > main {
+    position: absolute;
+    top: 3em;
+    left: 0;
+    right: 0;
+    bottom: 3em;
+    padding: 1em;
+    overflow: auto;
+}
+
+body > #browse > footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1em;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Paint screen */
+
 body > #paint > header {
     position: absolute;
+    z-index: 0;
     top: 1em;
     left: 5em;
     right: 5em;
-    text-align: center;
-    font-weight: bold;
 }
-body > #paint > footer {
+body > #paint > main {
     position: absolute;
-    left: 1em;
-    right: 1em;
-    bottom: 1em;
-    text-align: center;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
-body > #paint > #canvas {
+body > #paint > main > #canvas {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
 }
-body > #paint > #color {
+body > #paint > main > #color {
     position: absolute;
     top: 1em;
     left: 1em;
 }
-body > #paint > #qrcode {
+body > #paint > main > #qrcode {
     position: absolute;
     top: 1em;
     right: 1em;
 }
-body > #paint > #qrcode > * {
+body > #paint > main > #qrcode > * {
     max-width: 15vw;
     max-height: 15vh;
+}
+body > #paint > footer {
+    position: absolute;
+    z-index: 0;
+    left: 1em;
+    right: 1em;
+    bottom: 1em;
 }

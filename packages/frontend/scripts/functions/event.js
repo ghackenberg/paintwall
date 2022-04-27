@@ -3,24 +3,21 @@
 // Event functions (window)
 
 function handleLoad() {
-    if (!location.hash) {
-        location.hash = '#' + Math.random().toString(16).substring(2)
-    } else {
-        initialize()
-        connect()
-    }
+    route()
     handleResize()
 }
 function handleResize() {
     canvasNode.width = window.innerWidth
     canvasNode.height = window.innerHeight
-    draw()
+
+    if (location.hash && location.hash.startsWith('#paint')) {
+        draw()
+    }
 }
 function handleHashChange() {
-    socket && socket.close()
-    initialize()
-    connect()
-    draw()
+    if (location.hash) {
+        route()
+    }
 }
 
 // Event functions (canvas)

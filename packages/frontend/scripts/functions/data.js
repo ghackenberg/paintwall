@@ -1,14 +1,16 @@
 // DATA FUNCTIONS
 
 function initialize() {
-    initializeQRCode()
-    canvasId = location.hash.substring(1)
+    canvasId = location.hash.substring(location.hash.indexOf('/') + 1)
+
     names = {}
     colors = {}
     widths = {}
     alphas = {}
     positions = {}
     lines = {}
+
+    initializeQRCode()
 }
 
 function initializeQRCode() {

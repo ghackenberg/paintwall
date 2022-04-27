@@ -1,6 +1,8 @@
 // GLOBAL CONSTANTS
 
 // DOM nodes
+const browseNode = document.getElementById('browse')
+const paintNode = document.getElementById('paint')
 const qrcodeNode = document.getElementById('qrcode')
 const canvasNode = document.getElementById('canvas')
 const colorNode = document.getElementById('color')

@@ -4,10 +4,9 @@ This project contains a collaborative paint application. The application is impl
 
 ## Demos
 
-* [New painting](https://iot.fh-wels.at/)
-* [Demo-1 painting](https://iot.fh-wels.at/#demo-1)
-* [Demo-2 painting](https://iot.fh-wels.at/#demo-2)
-* [Demo-3 painting](https://iot.fh-wels.at/#demo-3)
+* [Demo-1 painting](https://iot.fh-wels.at/#paint/demo-1)
+* [Demo-2 painting](https://iot.fh-wels.at/#paint/demo-2)
+* [Demo-3 painting](https://iot.fh-wels.at/#paint/demo-3)
 
 ## Screenshots
 

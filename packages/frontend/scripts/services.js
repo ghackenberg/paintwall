@@ -1,6 +1,6 @@
 // CONSTANTS
 
-const version = '0.0.2'
+const version = '0.0.1'
 
 const files = [
     '../',
@@ -9,6 +9,7 @@ const files = [
     '../styles/main.css',
     '../scripts/functions/data.js',
     '../scripts/functions/draw.js',
+    '../scripts/functions/route.js',
     '../scripts/functions/event.js',
     '../scripts/functions/socket.js',
     '../scripts/constants.js',

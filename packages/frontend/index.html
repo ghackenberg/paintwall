@@ -19,16 +19,22 @@
 
         <!-- Browse screen -->
         <div class="screen" id="browse">
-            <!-- TODO -->
+            <header>Collaborative Paint PWA</header>
+            <main>
+                <button onclick="location.hash = '#paint/' + Math.random().toString(16).substring(2)">New painting</button>
+            </main>
+            <footer>&copy; 2022 University of Applied Sciences Upper Austria, School of Engineering, CPA2IL</footer>
         </div>
 
         <!-- Paint screen -->
         <div class="screen" id="paint">
             <header>Collaborative Paint PWA</header>
+            <main>
+                <div id="qrcode"></div>
+                <canvas id="canvas"></canvas>
+                <input id="color" type="color"/>
+            </main>
             <footer>&copy; 2022 University of Applied Sciences Upper Austria, School of Engineering, CPA2IL</footer>
-            <div id="qrcode"></div>
-            <canvas id="canvas"></canvas>
-            <input id="color" type="color"/>
         </div>
 
         <!-- SCRIPTS -->
@@ -39,6 +45,7 @@
         <!-- Internal scripts -->
         <script src="./scripts/functions/data.js"></script>
         <script src="./scripts/functions/draw.js"></script>
+        <script src="./scripts/functions/route.js"></script>
         <script src="./scripts/functions/event.js"></script>
         <script src="./scripts/functions/socket.js"></script>
         <script src="./scripts/constants.js"></script>
