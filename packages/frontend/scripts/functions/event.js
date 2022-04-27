@@ -3,21 +3,23 @@
 // Event functions (window)
 
 function handleLoad() {
+    if (!location.hash.startsWith('#browse')) {
+        const hash = location.hash
+        history.replaceState(null, undefined, '#browse')
+        history.pushState(null, undefined, hash)
+    }
     route()
     handleResize()
 }
 function handleResize() {
     canvasNode.width = window.innerWidth
     canvasNode.height = window.innerHeight
-
-    if (location.hash && location.hash.startsWith('#paint')) {
+    if (location.hash.startsWith('#paint')) {
         draw()
     }
 }
 function handleHashChange() {
-    if (location.hash) {
-        route()
-    }
+    route()
 }
 
 // Event functions (canvas)

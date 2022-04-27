@@ -19,7 +19,7 @@ function route() {
 
     } else {
 
-        location.hash = '#browse'
+        location.hash = 'browse'
 
     }
 }
