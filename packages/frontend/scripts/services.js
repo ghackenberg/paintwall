@@ -3,7 +3,7 @@
 const version = '0.0.2'
 
 const files = [
-    '../index.html',
+    '../',
     '../manifest.json',
     '../images/icon.png',
     '../styles/main.css',
