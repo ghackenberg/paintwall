@@ -3,7 +3,7 @@ body {
     user-select: none;
     font-family: sans-serif;
 }
-body > header {
+body > #paint > header {
     position: absolute;
     top: 1em;
     left: 5em;
@@ -11,31 +11,31 @@ body > header {
     text-align: center;
     font-weight: bold;
 }
-body > footer {
+body > #paint > footer {
     position: absolute;
     left: 1em;
     right: 1em;
     bottom: 1em;
     text-align: center;
 }
-body > canvas {
+body > #paint > #canvas {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
 }
-body > input {
+body > #paint > #color {
     position: absolute;
     top: 1em;
     left: 1em;
 }
-body > div {
+body > #paint > #qrcode {
     position: absolute;
     top: 1em;
     right: 1em;
 }
-body > div > * {
+body > #paint > #qrcode > * {
     max-width: 15vw;
     max-height: 15vh;
 }

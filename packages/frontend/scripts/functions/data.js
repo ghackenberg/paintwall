@@ -1,22 +1,24 @@
 // DATA FUNCTIONS
 
 function initialize() {
+    initializeQRCode()
     canvasId = location.hash.substring(1)
-
-    const data = { text: location.href, width: 128, height: 128 }
-    if (!qrcode) {
-        qrcode = new QRCode(document.getElementById('div'), data)
-    } else {
-        qrcode.clear()
-        qrcode.makeCode(data)
-    }
-
     names = {}
     colors = {}
     widths = {}
     alphas = {}
     positions = {}
     lines = {}
+}
+
+function initializeQRCode() {
+    const data = { text: location.href, width: 128, height: 128 }
+    if (!qrcode) {
+        qrcode = new QRCode(qrcodeNode, data)
+    } else {
+        qrcode.clear()
+        qrcode.makeCode(data)
+    }
 }
 
 function startLine(x, y) {

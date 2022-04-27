@@ -1,20 +1,42 @@
 <html>
     <head>
         <title>Collaborative Paint PWA</title>
+
+        <!-- Metas -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
         <meta name="theme-color" content="white"/>
+
+        <!-- Links -->
         <link rel="manifest" href="./manifest.json"/>
         <link rel="icon" href="./images/icon.png"/>
         <link rel="apple-touch-icon" href="./images/icon.png"/>
         <link rel="stylesheet" href="./styles/main.css"/>
+        
     </head>
     <body>
-        <header>Collaborative Paint PWA</header>
-        <footer>&copy; 2022 University of Applied Sciences Upper Austria, School of Engineering, CPA2IL</footer>
-        <div id="div"></div>
-        <canvas id="canvas"></canvas>
-        <input id="input" type="color"/>
+
+        <!-- SCREENS -->
+
+        <!-- Browse screen -->
+        <div class="screen" id="browse">
+            <!-- TODO -->
+        </div>
+
+        <!-- Paint screen -->
+        <div class="screen" id="paint">
+            <header>Collaborative Paint PWA</header>
+            <footer>&copy; 2022 University of Applied Sciences Upper Austria, School of Engineering, CPA2IL</footer>
+            <div id="qrcode"></div>
+            <canvas id="canvas"></canvas>
+            <input id="color" type="color"/>
+        </div>
+
+        <!-- SCRIPTS -->
+
+        <!-- External scripts-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+        <!-- Internal scripts -->
         <script src="./scripts/functions/data.js"></script>
         <script src="./scripts/functions/draw.js"></script>
         <script src="./scripts/functions/event.js"></script>
@@ -22,5 +44,6 @@
         <script src="./scripts/constants.js"></script>
         <script src="./scripts/variables.js"></script>
         <script src="./scripts/executions.js"></script>
+
     </body>
 </html>

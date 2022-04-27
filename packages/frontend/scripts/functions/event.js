@@ -12,8 +12,8 @@ function handleLoad() {
     handleResize()
 }
 function handleResize() {
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    canvasNode.width = window.innerWidth
+    canvasNode.height = window.innerHeight
     draw()
 }
 function handleHashChange() {
