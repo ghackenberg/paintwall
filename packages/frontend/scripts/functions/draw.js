@@ -2,7 +2,9 @@
 
 function draw(canvas, names, colors, alphas, positions, lines) {
     const context = canvas.getContext('2d')
+    // Clear
     context.clearRect(0, 0, canvas.width, canvas.height)
+    // Draw
     drawGrid(context)
     drawLines(context, lines)
     drawClients(context, names, colors, widths, alphas, positions)
@@ -44,10 +46,12 @@ function drawLines(context, lines) {
 }
 
 function drawLine(context, line) {
+    // Extract
     const points = line.points
     const color = line.color
     const width = line.width
     const alpha = line.alpha
+    // Check
     if (points.length > 1) {
         // Path
         context.beginPath()
@@ -68,23 +72,26 @@ function drawLine(context, line) {
 
 function drawClients(context, names, colors, widths, alphas, positions) {
     for (const clientId of Object.keys(names)) {
+        // Extract
         const name = names[clientId]
         const color = colors[clientId]
         const width = widths[clientId]
         const alpha = alphas[clientId]
         const position = positions[clientId]
+        // Draw
         drawClient(context, name, color, width, alpha, position)
     }
 }
 
 function drawClient(context, name, color, width, alpha, position) {
     if (position) {
+        // Circle
         context.beginPath()
         context.arc(position.x, position.y, 10, 0, Math.PI * 2)
         context.globalAlpha = 0.25
         context.fillStyle = color
         context.fill()
-
+        // Text
         context.textAlign = 'center'
         context.textBaseline = 'middle'
         context.globalAlpha = 0.75
