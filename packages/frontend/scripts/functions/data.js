@@ -1,25 +1,27 @@
 // DATA FUNCTIONS
 
 function initialize() {
+    // Client name
     clientName = localStorage.getItem('name') || 'Anonymous'
     clientName = prompt("How do you want to be called?", clientName) || 'Anonymous'
-    
+    // Remember client name
     localStorage.setItem('name', clientName)
-
+    // Canvas id
     canvasId = location.hash.substring(location.hash.indexOf('/') + 1)
-
+    // Canvas data
     names = {}
     colors = {}
     widths = {}
     alphas = {}
     positions = {}
     lines = {}
-
+    // Canvas QR-code
     initializeQRCode()
 }
 
 function initializeQRCode() {
     const data = { text: location.href, width: 128, height: 128 }
+    // Check
     if (!qrcode) {
         qrcode = new QRCode(qrcodeNode, data)
     } else {
