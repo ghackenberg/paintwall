@@ -5,12 +5,13 @@ body > div.screen {
     left: 0;
     right: 0;
     bottom: 0;
-    overflow: hidden;
 }
+
 body > div.screen > header {
     font-weight: bold;
     text-align: center;
 }
+
 body > div.screen > footer {
     text-align: center;
 }

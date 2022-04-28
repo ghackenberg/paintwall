@@ -1,25 +1,52 @@
+/* Header */
+
 body > #browse > header {
-    position: absolute;
+    position: fixed;
+
     top: 0;
     left: 0;
     right: 0;
-    padding: 1em;
+
+    height: 3em;
+
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 1em;
+
+    line-height: 3em;
+
+    overflow: hidden;
+
+    background-image: linear-gradient(rgba(255,255,255,1), rgba(255,255,255,1) 75%, rgba(255,0,255,0));
 }
+
+/* Main */
 
 body > #browse > main {
-    position: absolute;
-    top: 3em;
-    left: 0;
-    right: 0;
-    bottom: 3em;
-    padding: 1em;
-    overflow: auto;
+    padding-top: 4em;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-bottom: 4em;
 }
 
+/* Footer */
+
 body > #browse > footer {
-    position: absolute;
+    position: fixed;
+
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 1em;
+
+    height: 3em;
+
+    padding-top: 1em;
+    padding-left: 1em;
+    padding-right: 1em;
+
+    line-height: 3em;
+
+    overflow: hidden;
+
+    background-image: linear-gradient(rgba(255,0,255,0), rgba(255,255,255,1) 25%, rgba(255,255,255,1));
 }
