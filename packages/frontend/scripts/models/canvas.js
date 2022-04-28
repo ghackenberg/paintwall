@@ -1,7 +1,11 @@
+// CONSTANTS
+
 const clientId = Math.random().toString(16).substring(2)
 
 const socketProtocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
 const socketHost = location.host
+
+// CLASSES
 
 class Canvas {
     constructor(canvasNode, canvasId) {

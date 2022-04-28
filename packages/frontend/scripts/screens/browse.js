@@ -1,4 +1,4 @@
-// BROWSE FUNCIONS
+// CLASSES
 
 class BrowseScreen extends BaseScreen {
     constructor() {

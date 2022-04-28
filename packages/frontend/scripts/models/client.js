@@ -1,3 +1,5 @@
+// CLASSES
+
 class Client {
     constructor(clientId, name, color, width, alpha, position) {
         this.clientId = clientId

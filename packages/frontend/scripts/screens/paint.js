@@ -1,4 +1,4 @@
-// PAINT FUNCTIONS
+// CLASSES
 
 class PaintScreen extends BaseScreen {
     constructor() {

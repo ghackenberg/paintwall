@@ -1,3 +1,5 @@
+// CLASSES
+
 class Line {
     constructor(lineId, clientId, color, width, alpha, points) {
         this.lineId = lineId

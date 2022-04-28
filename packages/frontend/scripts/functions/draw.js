@@ -1,4 +1,4 @@
-// DRAW FUNCTIONS
+// FUNCTIONS
 
 function draw(canvas, lines, clients) {
     // Context

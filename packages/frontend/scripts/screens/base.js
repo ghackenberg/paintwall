@@ -1,3 +1,5 @@
+// CLASSES
+
 class BaseScreen {
     static ACTIVE
     constructor(id) {
