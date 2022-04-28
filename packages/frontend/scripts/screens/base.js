@@ -1,7 +1,12 @@
 // CLASSES
 
 class BaseScreen {
+    // Static
+    
     static ACTIVE
+    
+    // Non-static
+
     constructor(id) {
         // Header
         this.headerNode = document.createElement('header')

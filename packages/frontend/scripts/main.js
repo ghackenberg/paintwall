@@ -6,19 +6,23 @@ const paintScreen = new PaintScreen()
 // FUNCTIONS
 
 function handleLoad() {
+    // Initialize
     if (!location.hash.startsWith('#browse')) {
         const hash = location.hash
         history.replaceState(null, undefined, '#browse')
         history.pushState(null, undefined, hash)
     }
+    // Route
     route()
 }
 
 function handleHashChange() {
+    // Route
     route()
 }
 
 function route() {
+    // Switch
     if (location.hash.startsWith('#browse')) {
         browseScreen.show()
     } else if (location.hash.startsWith('#paint')) {

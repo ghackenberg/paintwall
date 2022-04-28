@@ -1,0 +1,25 @@
+body > #browse > header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 1em;
+}
+
+body > #browse > main {
+    position: absolute;
+    top: 3em;
+    left: 0;
+    right: 0;
+    bottom: 3em;
+    padding: 1em;
+    overflow: auto;
+}
+
+body > #browse > footer {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 1em;
+}

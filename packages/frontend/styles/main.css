@@ -1,99 +1,10 @@
+@import url(./screens/base.css);
+@import url(./screens/browse.css);
+@import url(./screens/paint.css);
+
 body {
     margin: 0;
     user-select: none;
     font-family: sans-serif;
     line-height: 100%;
-}
-
-/* Screen */
-
-body > div.screen {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    overflow: hidden;
-}
-body > div.screen > header {
-    font-weight: bold;
-    text-align: center;
-}
-body > div.screen > footer {
-    text-align: center;
-}
-
-/* Browse screen */
-
-body > #browse > header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 1em;
-}
-
-body > #browse > main {
-    position: absolute;
-    top: 3em;
-    left: 0;
-    right: 0;
-    bottom: 3em;
-    padding: 1em;
-    overflow: auto;
-}
-
-body > #browse > footer {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 1em;
-}
-
-/* Paint screen */
-
-body > #paint > header {
-    position: absolute;
-    z-index: 0;
-    top: 1em;
-    left: 5em;
-    right: 5em;
-}
-body > #paint > main {
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-body > #paint > main > #canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-body > #paint > main > #color {
-    position: absolute;
-    top: 1em;
-    left: 1em;
-}
-body > #paint > main > #qrcode {
-    position: absolute;
-    top: 1em;
-    right: 1em;
-}
-body > #paint > main > #qrcode > * {
-    max-width: 15vw;
-    max-height: 15vh;
-}
-body > #paint > footer {
-    position: absolute;
-    z-index: 0;
-    left: 1em;
-    right: 1em;
-    bottom: 1em;
 }

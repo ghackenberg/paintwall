@@ -7,14 +7,17 @@ const files = [
     '../../manifest.json',
     '../../images/icon.png',
     '../../styles/main.css',
+    '../../styles/screens/base.css',
+    '../../styles/screens/browse.css',
+    '../../styles/screens/paint.css',
+    '../../scripts/main.js',
     '../../scripts/functions/draw.js',
     '../../scripts/models/canvas.js',
     '../../scripts/models/client.js',
     '../../scripts/models/line.js',
     '../../scripts/screens/base.js',
     '../../scripts/screens/browse.js',
-    '../../scripts/screens/paint.js',
-    '../../scripts/main.js'
+    '../../scripts/screens/paint.js'
 ]
 
 // FUNCTIONS
