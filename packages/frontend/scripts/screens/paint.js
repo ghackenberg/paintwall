@@ -63,7 +63,7 @@ class PaintScreen extends BaseScreen {
         this.qrcodeModel.clear()
         this.qrcodeModel.makeCode(location.href)
         // Canvas model
-        this.canvasModel = new Canvas(this.canvasNode, this.canvasId)
+        this.canvasModel = new CanvasModel(this.canvasNode, this.canvasId)
         this.canvasModel.connect(this.clientName)
         // Resize
         this.handleResize()
@@ -88,7 +88,7 @@ class PaintScreen extends BaseScreen {
     handleMouseDown(event) {
         event.preventDefault()
         // Call
-        this.startLine(event.cientX, event.clientY)
+        this.startLine(event.clientX, event.clientY)
     }
     handleMouseMove(event) {
         event.preventDefault()

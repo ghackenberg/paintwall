@@ -7,16 +7,13 @@ const socketHost = location.host
 
 // CLASSES
 
-class Canvas {
-    constructor(canvasNode, canvasId) {
+class CanvasModel {
+    constructor(canvasNode, canvasId, clients, lines) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
+        this.clients = clients || {}
+        this.lines = lines || {}
         this.socket = null
-        this.lines = {}
-        this.clients = {}
-    }
-    get() {
-        // TODO
     }
     connect(clientName) {
         if (this.socket != null) {
