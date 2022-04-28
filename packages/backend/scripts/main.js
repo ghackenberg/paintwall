@@ -5,24 +5,28 @@ const database = {}
 
 const app = express()
 
-ws(app) // enable websocket!
+ws(app) // Enable WebSocket support
+
+// Middleware
 
 app.use((request, response, next) => {
     response.header('Service-Worker-Allowed', '/')
     next()
 })
-
 app.use(express.static('../frontend'))
+
+// Request handlers
 
 app.get('/api/v1/canvas/', (request, response) => {
     // TODO
     response.status(500).send('Not implemented yet.')
 })
-
 app.get('/api/v1/canvas/:canvas', (request, response) => {
     // TODO
     response.status(500).send('Not implemented yet.')
 })
+
+// Socket handlers
 
 app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     // Extract path parameters
@@ -88,14 +92,13 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
             case 'start': {
                 const clientId = message.clientId
                 const lineId = message.data.lineId
-                const point = message.data.point
-                const points = [point]
+                const points = [message.data.point]
 
                 const color = canvas.clients[clientId].color
                 const width = canvas.clients[clientId].width
                 const alpha = canvas.clients[clientId].alpha
 
-                canvas.lines[lineId] = { lineId, clientId, points, color, width, alpha }
+                canvas.lines[lineId] = { lineId, clientId, color, width, alpha, points }
 
                 break
             }
@@ -130,5 +133,7 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         }
     })
 })
+
+// Listen
 
 app.listen(8080)
