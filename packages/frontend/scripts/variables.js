@@ -5,8 +5,8 @@ var clientName
 
 // Canvas
 var canvasId
-var socket
 var qrcode
+var socket
 var names = {}
 var colors = {}
 var widths = {}
