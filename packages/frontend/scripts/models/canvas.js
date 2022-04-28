@@ -43,7 +43,9 @@ class CanvasModel {
                 case 'leave': {
                     const clientId = message.clientId
 
-                    delete this.clients[clientId]
+                    if (clientId in this.clients) {
+                        delete this.clients[clientId]
+                    }
 
                     break
                 }
@@ -51,14 +53,18 @@ class CanvasModel {
                     const clientId = message.clientId
                     const position = message.data
 
-                    this.clients[clientId].position = position
+                    if (clientId in this.clients) {
+                        this.clients[clientId].position = position
+                    }
 
                     break
                 }
                 case 'out': {
                     const clientId = message.clientId
 
-                    this.clients[clientId].position = undefined
+                    if (clientId in this.clients) {
+                        this.clients[clientId].position = undefined
+                    }
 
                     break
                 }
@@ -66,7 +72,9 @@ class CanvasModel {
                     const clientId = message.clientId
                     const position = message.data
 
-                    this.clients[clientId].position = position
+                    if (clientId in this.clients) {
+                        this.clients[clientId].position = position
+                    }
 
                     break
                 }
@@ -74,7 +82,9 @@ class CanvasModel {
                     const clientId = message.clientId
                     const color = message.data
                     
-                    this.clients[clientId].color = color
+                    if (clientId in this.clients) {
+                        this.clients[clientId].color = color
+                    }
                     
                     break
                 }
@@ -82,7 +92,9 @@ class CanvasModel {
                     const clientId = message.clientId
                     const width = message.data
                     
-                    this.clients[clientId].width = width
+                    if (clientId in this.clients) {
+                        this.clients[clientId].width = width
+                    }
 
                     break
                 }
@@ -90,7 +102,9 @@ class CanvasModel {
                     const clientId = message.clientId
                     const alpha = message.data
                     
-                    this.clients[clientId].alpha = alpha
+                    if (clientId in this.clients) {
+                        this.clients[clientId].alpha = alpha
+                    }
 
                     break
                 }
@@ -111,7 +125,9 @@ class CanvasModel {
                     const lineId = message.data.lineId
                     const point = message.data.point
 
-                    this.lines[lineId].points.push(point)
+                    if (lineId in this.lines) {
+                        this.lines[lineId].points.push(point)
+                    }
 
                     break
                 }

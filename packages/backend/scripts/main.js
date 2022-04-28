@@ -94,35 +94,49 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         // Remember
         switch (message.type) {
             case 'join': {
-                canvasObject.clients[clientId].name = message.data
-                canvasObject.clients[clientId].color = 'black'
-                canvasObject.clients[clientId].width = 5
-                canvasObject.clients[clientId].alpha = 0.5
-                canvasObject.clients[clientId].position = undefined
+                if (clientId in canvasObject.clients) {
+                    canvasObject.clients[clientId].name = message.data
+                    canvasObject.clients[clientId].color = 'black'
+                    canvasObject.clients[clientId].width = 5
+                    canvasObject.clients[clientId].alpha = 0.5
+                    canvasObject.clients[clientId].position = undefined
+                }
                 break
             }
             case 'move': {
-                canvasObject.clients[clientId].position = message.data
+                if (clientId in canvasObject.clients) {
+                    canvasObject.clients[clientId].position = message.data
+                }
                 break
             }
             case 'out': {
-                canvasObject.clients[clientId].position = undefined
+                if (clientId in canvasObject.clients) {
+                    canvasObject.clients[clientId].position = undefined
+                }
                 break
             }
             case 'over': {
-                canvasObject.clients[clientId].position = message.data
+                if (clientId in canvasObject.clients) {
+                    canvasObject.clients[clientId].position = message.data
+                }
                 break
             }
             case 'color': {
-                canvasObject.clients[clientId].color = message.data
+                if (clientId in canvasObject.clients) {
+                    canvasObject.clients[clientId].color = message.data
+                }
                 break
             }
             case 'width': {
-                canvasObject.clients[clientId].width = message.data
+                if (clientId in canvasObject.clients) {
+                    canvasObject.clients[clientId].width = message.data
+                }
                 break
             }
             case 'alpha': {
-                canvasObject.clients[clientId].alpha = message.data
+                if (clientId in canvasObject.clients) {
+                    canvasObject.clients[clientId].alpha = message.data
+                }
                 break
             }
             case 'start': {
@@ -142,7 +156,9 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                 const lineId = message.data.lineId
                 const point = message.data.point
 
-                canvasObject.lines[lineId].points.push(point)
+                if (lineId in canvasObject.lines) {
+                    canvasObject.lines[lineId].points.push(point)
+                }
                 
                 break
             }
