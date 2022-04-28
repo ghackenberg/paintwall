@@ -32,7 +32,6 @@ body > #browse > header {
     left: 0;
     right: 0;
     padding: 1em;
-    background: rgba(0, 0, 0, 0.1);
 }
 
 body > #browse > main {
@@ -51,7 +50,6 @@ body > #browse > footer {
     right: 0;
     bottom: 0;
     padding: 1em;
-    background: rgba(0, 0, 0, 0.1);
 }
 
 /* Paint screen */
