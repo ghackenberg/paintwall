@@ -10,17 +10,32 @@
     "theme_color": "white",
     "icons": [
         {
-            "src": "./images/icon.png",
+            "src": "./images/icon-192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "any"
+        },{
+            "src": "./images/icon-192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "maskable"
+        },{
+            "src": "./images/icon-192.png",
+            "type": "image/png",
+            "sizes": "192x192",
+            "purpose": "monochrome"
+        },{
+            "src": "./images/icon-512.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "any"
         },{
-            "src": "./images/icon.png",
+            "src": "./images/icon-512.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "maskable"
         },{
-            "src": "./images/icon.png",
+            "src": "./images/icon-512.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "monochrome"

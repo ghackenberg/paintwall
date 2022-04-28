@@ -6,6 +6,8 @@ const files = [
     '../../',
     '../../manifest.json',
     '../../images/icon.png',
+    '../../images/icon-192.png',
+    '../../images/icon-512.png',
     '../../styles/main.css',
     '../../styles/screens/base.css',
     '../../styles/screens/browse.css',
