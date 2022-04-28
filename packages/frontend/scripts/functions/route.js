@@ -6,16 +6,14 @@ function route() {
         browseNode.style.display = 'block'
         paintNode.style.display = 'none'
 
-        // TODO
+        browse.initialize()
 
     } else if (location.hash.startsWith('#paint')) {
 
         browseNode.style.display = 'none'
         paintNode.style.display = 'block'
 
-        initialize()
-        connect()
-        draw(canvas, names, colors, alphas, positions, lines)
+        paint.initialize()
 
     } else {
 

@@ -1,13 +1,14 @@
 // CONSTANTS
 
-const version = '0.0.2'
+const version = '0.0.1'
 
 const files = [
     '../',
     '../manifest.json',
     '../images/icon.png',
     '../styles/main.css',
-    '../scripts/functions/data.js',
+    '../scripts/screens/browse.js',
+    '../scripts/screens/paint.js',
     '../scripts/functions/draw.js',
     '../scripts/functions/route.js',
     '../scripts/functions/event.js',

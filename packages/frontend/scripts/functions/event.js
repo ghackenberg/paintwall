@@ -28,13 +28,13 @@ function handleHashChange() {
 
 function handleMouseDown(event) {
     event.preventDefault()
-    startLine(event.cientX, event.clientY)
+    paint.startLine(event.cientX, event.clientY)
 }
 function handleMouseMove(event) {
     event.preventDefault()
     // Check
     if (event.buttons > 0) {
-        continueLine(event.clientX, event.clientY)
+        paint.continueLine(event.clientX, event.clientY)
     }
     // Forward
     if (socket && socket.readyState == WebSocket.OPEN) {
@@ -45,7 +45,7 @@ function handleMouseOver(event) {
     event.preventDefault()
     // Check
     if (event.buttons > 0) {
-        startLine(event.clientX, event.clientY)
+        paint.startLine(event.clientX, event.clientY)
     }
     // Forward
     if (socket && socket.readyState == WebSocket.OPEN) {
@@ -56,7 +56,7 @@ function handleMouseOut(event) {
     event.preventDefault()
     // Check
     if (event.buttons > 0) {
-        continueLine(event.clientX, event.clientY)
+        paint.continueLine(event.clientX, event.clientY)
     }
     // Forward
     if (socket && socket.readyState == WebSocket.OPEN) {
@@ -67,7 +67,7 @@ function handleTouchStart(event) {
     event.preventDefault()
     // Check
     if (event.touches.length == 1) {
-        startLine(event.touches[0].clientX, event.touches[0].clientY)
+        paint.startLine(event.touches[0].clientX, event.touches[0].clientY)
     }
     // Forward
     if (socket && socket.readyState == WebSocket.OPEN) {
@@ -78,7 +78,7 @@ function handleTouchMove(event) {
     event.preventDefault()
     // Check
     if (event.touches.length == 1) {
-        continueLine(event.touches[0].clientX, event.touches[0].clientY)
+        paint.continueLine(event.touches[0].clientX, event.touches[0].clientY)
     }
     // Forward
     if (socket && socket.readyState == WebSocket.OPEN) {
@@ -89,7 +89,7 @@ function handleTouchEnd(event) {
     event.preventDefault()
     // Check
     if (event.touches.length == 1) {
-        continueLine(event.touches[0].clientX, event.touches[0].clientY)
+        paint.continueLine(event.touches[0].clientX, event.touches[0].clientY)
     }
     // Forward
     if (socket && socket.readyState == WebSocket.OPEN) {
