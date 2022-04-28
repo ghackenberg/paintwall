@@ -10,32 +10,47 @@
     "theme_color": "white",
     "icons": [
         {
-            "src": "./images/icon-192.png",
+            "src": "./images/icon-any-128.png",
+            "type": "image/png",
+            "sizes": "128x128",
+            "purpose": "any"
+        },{
+            "src": "./images/icon-mask-128.png",
+            "type": "image/png",
+            "sizes": "128x128",
+            "purpose": "maskable"
+        },{
+            "src": "./images/icon-mono-128.png",
+            "type": "image/png",
+            "sizes": "128x128",
+            "purpose": "monochrome"
+        },{
+            "src": "./images/icon-any-192.png",
             "type": "image/png",
             "sizes": "192x192",
             "purpose": "any"
         },{
-            "src": "./images/icon-192.png",
+            "src": "./images/icon-mask-192.png",
             "type": "image/png",
             "sizes": "192x192",
             "purpose": "maskable"
         },{
-            "src": "./images/icon-192.png",
+            "src": "./images/icon-mono-192.png",
             "type": "image/png",
             "sizes": "192x192",
             "purpose": "monochrome"
         },{
-            "src": "./images/icon-512.png",
+            "src": "./images/icon-any-512.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "any"
         },{
-            "src": "./images/icon-512.png",
+            "src": "./images/icon-mask-512.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "maskable"
         },{
-            "src": "./images/icon-512.png",
+            "src": "./images/icon-mono-512.png",
             "type": "image/png",
             "sizes": "512x512",
             "purpose": "monochrome"
