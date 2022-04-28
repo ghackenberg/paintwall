@@ -15,7 +15,7 @@ function handleResize() {
     canvasNode.width = window.innerWidth
     canvasNode.height = window.innerHeight
     if (location.hash.startsWith('#paint')) {
-        draw()
+        draw(canvas, names, colors, alphas, positions, lines)
     }
 }
 function handleHashChange() {

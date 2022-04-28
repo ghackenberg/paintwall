@@ -42,7 +42,6 @@ function connect() {
 
                 positions[clientId] = position
 
-                draw()
                 break
             }
             case 'out': {
@@ -50,7 +49,6 @@ function connect() {
 
                 positions[clientId] = undefined
 
-                draw()
                 break
             }
             case 'over': {
@@ -59,7 +57,6 @@ function connect() {
 
                 positions[clientId] = position
 
-                draw()
                 break
             }
             case 'color': {
@@ -67,8 +64,7 @@ function connect() {
                 const color = message.data
                 
                 colors[clientId] = color
-
-                draw()
+                
                 break
             }
             case 'width': {
@@ -77,7 +73,6 @@ function connect() {
                 
                 widths[clientId] = width
 
-                draw()
                 break
             }
             case 'alpha': {
@@ -86,7 +81,6 @@ function connect() {
                 
                 alphas[clientId] = alpha
 
-                draw()
                 break
             }
             case 'start': {
@@ -100,7 +94,6 @@ function connect() {
 
                 lines[lineId] = { lineId, clientId, points, color, width, alpha }
 
-                draw()
                 break
             }
             case 'continue': {
@@ -108,7 +101,6 @@ function connect() {
 
                 lines[lineId].points.push(message.data.point)
 
-                draw()
                 break
             }
             case 'line': {
@@ -121,9 +113,10 @@ function connect() {
 
                 lines[lineId] = { lineId, clientId, points, color, width, alpha }
 
-                draw()
                 break
             }
         }
+        // Draw
+        draw(canvas, names, colors, alphas, positions, lines)
     }
 }

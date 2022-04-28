@@ -1,13 +1,14 @@
 // DRAW FUNCTIONS
 
-function draw() {
+function draw(canvas, names, colors, alphas, positions, lines) {
+    const context = canvas.getContext('2d')
     context.clearRect(0, 0, canvas.width, canvas.height)
-    drawGrid()
-    drawLines()
-    drawClients()
+    drawGrid(context)
+    drawLines(context, lines)
+    drawClients(context, names, colors, widths, alphas, positions)
 }
 
-function drawGrid() {
+function drawGrid(context) {
     // Draw vertical lines
     for (var x = 50; x < canvas.width; x += 50) {
         // Path
@@ -36,13 +37,13 @@ function drawGrid() {
     }
 }
 
-function drawLines() {
+function drawLines(context, lines) {
     for (const line of Object.values(lines)) {
-        drawLine(line)
+        drawLine(context, line)
     }
 }
 
-function drawLine(line) {
+function drawLine(context, line) {
     const points = line.points
     const color = line.color
     const width = line.width
@@ -65,18 +66,18 @@ function drawLine(line) {
     }
 }
 
-function drawClients() {
+function drawClients(context, names, colors, widths, alphas, positions) {
     for (const clientId of Object.keys(names)) {
         const name = names[clientId]
         const color = colors[clientId]
         const width = widths[clientId]
         const alpha = alphas[clientId]
         const position = positions[clientId]
-        drawClient(name, color, width, alpha, position)
+        drawClient(context, name, color, width, alpha, position)
     }
 }
 
-function drawClient(name, color, width, alpha, position) {
+function drawClient(context, name, color, width, alpha, position) {
     if (position) {
         context.beginPath()
         context.arc(position.x, position.y, 10, 0, Math.PI * 2)

@@ -15,7 +15,7 @@ function route() {
 
         initialize()
         connect()
-        draw()
+        draw(canvas, names, colors, alphas, positions, lines)
 
     } else {
 
