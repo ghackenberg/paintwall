@@ -1,17 +1,17 @@
 // DRAW FUNCTIONS
 
-function draw(canvas, names, colors, alphas, positions, lines) {
+function draw(canvas, lines, clients) {
     // Context
     const context = canvas.getContext('2d')
     // Clear
     context.clearRect(0, 0, canvas.width, canvas.height)
     // Draw
-    drawGrid(context)
+    drawGrid(canvas, context)
     drawLines(context, lines)
-    drawClients(context, names, colors, widths, alphas, positions)
+    drawClients(context, clients)
 }
 
-function drawGrid(context) {
+function drawGrid(canvas, context) {
     // Vertical lines
     for (var x = 50; x < canvas.width; x += 50) {
         // Path
@@ -71,20 +71,20 @@ function drawLine(context, line) {
     }
 }
 
-function drawClients(context, names, colors, widths, alphas, positions) {
-    for (const clientId of Object.keys(names)) {
-        // Extract
-        const name = names[clientId]
-        const color = colors[clientId]
-        const width = widths[clientId]
-        const alpha = alphas[clientId]
-        const position = positions[clientId]
-        // Draw
-        drawClient(context, name, color, width, alpha, position)
+function drawClients(context, clients) {
+    for (const client of Object.values(clients)) {
+        drawClient(context, client)
     }
 }
 
-function drawClient(context, name, color, width, alpha, position) {
+function drawClient(context, client) {
+    // Extract
+    const name = client.name
+    const color = client.color
+    const width = client.width
+    const alpha = client.alpha
+    const position = client.position
+    // Check
     if (position) {
         // Circle
         context.beginPath()

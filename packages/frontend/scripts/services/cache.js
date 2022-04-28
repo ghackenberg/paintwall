@@ -3,19 +3,18 @@
 const version = '0.0.1'
 
 const files = [
-    '../',
-    '../manifest.json',
-    '../images/icon.png',
-    '../styles/main.css',
-    '../scripts/screens/browse.js',
-    '../scripts/screens/paint.js',
-    '../scripts/functions/draw.js',
-    '../scripts/functions/route.js',
-    '../scripts/functions/event.js',
-    '../scripts/functions/socket.js',
-    '../scripts/constants.js',
-    '../scripts/variables.js',
-    '../scripts/executions.js'
+    '../../',
+    '../../manifest.json',
+    '../../images/icon.png',
+    '../../styles/main.css',
+    '../../scripts/functions/draw.js',
+    '../../scripts/models/canvas.js',
+    '../../scripts/models/client.js',
+    '../../scripts/models/line.js',
+    '../../scripts/screens/base.js',
+    '../../scripts/screens/browse.js',
+    '../../scripts/screens/paint.js',
+    '../../scripts/main.js'
 ]
 
 // FUNCTIONS

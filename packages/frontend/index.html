@@ -15,43 +15,18 @@
     </head>
     <body>
 
-        <!-- SCREENS -->
-
-        <!-- Browse screen -->
-        <div class="screen" id="browse">
-            <header>Collaborative Paint PWA</header>
-            <main>
-                <button onclick="location.hash = '#paint/' + Math.random().toString(16).substring(2)">New painting</button>
-            </main>
-            <footer>&copy; 2022 University of Applied Sciences Upper Austria, School of Engineering, CPA2IL</footer>
-        </div>
-
-        <!-- Paint screen -->
-        <div class="screen" id="paint">
-            <header>Collaborative Paint PWA</header>
-            <main>
-                <div id="qrcode"></div>
-                <canvas id="canvas"></canvas>
-                <input id="color" type="color"/>
-            </main>
-            <footer>&copy; 2022 University of Applied Sciences Upper Austria, School of Engineering, CPA2IL</footer>
-        </div>
-
-        <!-- SCRIPTS -->
-
         <!-- External scripts-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
         <!-- Internal scripts -->
         <script src="./scripts/functions/draw.js"></script>
-        <script src="./scripts/functions/route.js"></script>
-        <script src="./scripts/functions/event.js"></script>
-        <script src="./scripts/functions/socket.js"></script>
+        <script src="./scripts/models/canvas.js"></script>
+        <script src="./scripts/models/client.js"></script>
+        <script src="./scripts/models/line.js"></script>
+        <script src="./scripts/screens/base.js"></script>
         <script src="./scripts/screens/browse.js"></script>
         <script src="./scripts/screens/paint.js"></script>
-        <script src="./scripts/constants.js"></script>
-        <script src="./scripts/variables.js"></script>
-        <script src="./scripts/executions.js"></script>
+        <script src="./scripts/main.js"></script>
 
     </body>
 </html>

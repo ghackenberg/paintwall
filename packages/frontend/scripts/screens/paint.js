@@ -1,60 +1,167 @@
 // PAINT FUNCTIONS
 
-const paint = {
-    initialize() {
-        // Client name
-        clientName = localStorage.getItem('name') || 'Anonymous'
-        clientName = prompt("How do you want to be called?", clientName) || 'Anonymous'
-        // Remember client name
-        localStorage.setItem('name', clientName)
+class PaintScreen extends BaseScreen {
+    constructor() {
+        super('paint')
+        // States
+        this.canvasId = undefined
+        this.clientName = undefined
+        this.canvasModel = undefined
+        this.lineId = undefined
+        this.color = 'black'
+        this.width = 5
+        this.alpha = 0.5
+        // Handlers (resize)
+        this.handleResize = this.handleResize.bind(this)
+        // Handlers (mouse)
+        this.handleMouseDown = this.handleMouseDown.bind(this)
+        this.handleMouseMove = this.handleMouseMove.bind(this)
+        this.handleMouseOver = this.handleMouseOver.bind(this)
+        this.handleMouseOut = this.handleMouseOut.bind(this)
+        // Handers (touch)
+        this.handleTouchStart = this.handleTouchStart.bind(this)
+        this.handleTouchMove = this.handleTouchMove.bind(this)
+        this.handleTouchEnd = this.handleTouchEnd.bind(this)
+        // Handlers (change)
+        this.handleChange = this.handleChange.bind(this)
+        // Nodes (canvas)
+        this.canvasNode = document.createElement('canvas')
+        this.canvasNode.id = 'canvas'
+        this.canvasNode.addEventListener('mousedown', this.handleMouseDown)
+        this.canvasNode.addEventListener('mousemove', this.handleMouseMove)
+        this.canvasNode.addEventListener('mouseover', this.handleMouseOver)
+        this.canvasNode.addEventListener('mouseout', this.handleMouseOut)
+        this.canvasNode.addEventListener('touchstart', this.handleTouchStart)
+        this.canvasNode.addEventListener('touchmove', this.handleTouchMove)
+        this.canvasNode.addEventListener('touchend', this.handleTouchEnd)
+        // Nodes (color)
+        this.colorNode = document.createElement('input')
+        this.colorNode.id = 'color'
+        this.colorNode.type = 'color'
+        this.colorNode.value = this.color
+        this.colorNode.addEventListener('change', this.handleChange)
+        // Nodes (code)
+        this.qrcodeNode = document.createElement('div')
+        this.qrcodeNode.id = 'qrcode'
+        // Nodes (main)
+        this.mainNode.appendChild(this.qrcodeNode)
+        this.mainNode.appendChild(this.canvasNode)
+        this.mainNode.appendChild(this.colorNode)
+    }
+    show() {
+        // Node
+        super.show()
         // Canvas id
-        canvasId = location.hash.substring(location.hash.indexOf('/') + 1)
-        // Canvas data
-        names = {}
-        colors = {}
-        widths = {}
-        alphas = {}
-        positions = {}
-        lines = {}
-        // Canvas QR-code
-        paint.initializeQRCode()
-        // Socket
-        connect()
+        this.canvasId = location.hash.substring(location.hash.indexOf('/') + 1)
+        // Client name
+        this.clientName = localStorage.getItem('name') || 'Anonymous'
+        this.clientName = prompt("How do you want to be called?", this.clientName) || 'Anonymous'
+        localStorage.setItem('name', this.clientName)
+        // Canvas
+        this.canvasModel = new Canvas(this.canvasNode, this.canvasId)
+        this.canvasModel.connect(this.clientName)
+        // Resize
+        this.handleResize()
+        // Window
+        window.addEventListener('resize', this.handleResize)
+    }
+    hide() {
+        // Node
+        super.hide()
+        // Canvas
+        this.canvasModel.disconnect()
+        // Window
+        window.removeEventListener('resize', this.handleResize)
+    }
+    handleResize() {
+        // Resize
+        this.canvasNode.width = window.innerWidth
+        this.canvasNode.height = window.innerHeight
         // Draw
-        draw(canvas, names, colors, alphas, positions, lines)
-    },
-    initializeQRCode() {
-        const data = { text: location.href, width: 128, height: 128 }
+        this.canvasModel.draw()
+    }
+    handleMouseDown(event) {
+        event.preventDefault()
+        // Call
+        this.startLine(event.cientX, event.clientY)
+    }
+    handleMouseMove(event) {
+        event.preventDefault()
         // Check
-        if (!qrcode) {
-            qrcode = new QRCode(qrcodeNode, data)
-        } else {
-            qrcode.clear()
-            qrcode.makeCode(data)
+        if (event.buttons > 0) {
+            this.continueLine(event.clientX, event.clientY)
         }
-    },
+        // Broadcast
+        this.canvasModel.broadcast('move', { x: event.clientX, y: event.clientY })
+    }
+    handleMouseOver(event) {
+        event.preventDefault()
+        // Check
+        if (event.buttons > 0) {
+            this.startLine(event.clientX, event.clientY)
+        }
+        // Broadcast
+        this.canvasModel.broadcast('over', { x: event.clientX, y: event.clientY })
+    }
+    handleMouseOut(event) {
+        event.preventDefault()
+        // Check
+        if (event.buttons > 0) {
+            this.continueLine(event.clientX, event.clientY)
+        }
+        // Broadcast
+        this.canvasModel.broadcast('out')
+    }
+    handleTouchStart(event) {
+        event.preventDefault()
+        // Check
+        if (event.touches.length == 1) {
+            this.startLine(event.touches[0].clientX, event.touches[0].clientY)
+        }
+        // Broadcast
+        this.canvasModel.broadcast('over', { x: event.touches[0].clientX, y: event.touches[0].clientY })
+    }
+    handleTouchMove(event) {
+        event.preventDefault()
+        // Check
+        if (event.touches.length == 1) {
+            this.continueLine(event.touches[0].clientX, event.touches[0].clientY)
+        }
+        // Broadcast
+        this.canvasModel.broadcast('move', { x: event.touches[0].clientX, y: event.touches[0].clientY })
+    }
+    handleTouchEnd(event) {
+        event.preventDefault()
+        // Check
+        if (event.touches.length == 1) {
+            this.continueLine(event.touches[0].clientX, event.touches[0].clientY)
+        }
+        // Broadcast
+        this.canvasModel.broadcast('out')
+    }
+    handleChange(event) {
+        // Update
+        this.color = event.target.value
+        // Broadcast
+        this.canvasModel.broadcast('color', this.color)
+    }
     startLine(x, y) {
-        // Update
+        // Create
+        this.lineId = '' + Math.random().toString(16).substring(2)
         const point = { x, y }
-        lineId = '' + Math.random().toString(16).substring(2)
-        points = [point]
-        lines[lineId] = { lineId, clientId, points, color, width, alpha }
-        // Draw
-        draw(canvas, names, colors, alphas, positions, lines)
-        // Forward
-        if (socket && socket.readyState == WebSocket.OPEN) {
-            socket.send(JSON.stringify({ type: 'start', data: { lineId, point } }))
-        }
-    },
+        // Update
+        this.canvasModel.lines[this.lineId] = new Line(this.lineId, clientId, this.color, this.width, this.alpha, [point])
+        this.canvasModel.draw()
+        // Broadcast
+        this.canvasModel.broadcast('start', { lineId: this.lineId, point })
+    }
     continueLine(x, y) {
-        // Update
+        // Create
         const point = { x, y }
-        points.push(point)
-        // Draw
-        draw(canvas, names, colors, alphas, positions, lines)
-        // Forward
-        if (socket && socket.readyState == WebSocket.OPEN) {
-            socket.send(JSON.stringify({ type: 'continue', data: { lineId, point } }))
-        }
+        // Update
+        this.canvasModel.lines[this.lineId].points.push(point)
+        this.canvasModel.draw()
+        // Broadcast
+        this.canvasModel.broadcast('continue', { lineId: this.lineId, point })
     }
 }
