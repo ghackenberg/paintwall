@@ -1,6 +1,7 @@
 // DRAW FUNCTIONS
 
 function draw(canvas, names, colors, alphas, positions, lines) {
+    // Context
     const context = canvas.getContext('2d')
     // Clear
     context.clearRect(0, 0, canvas.width, canvas.height)
@@ -11,7 +12,7 @@ function draw(canvas, names, colors, alphas, positions, lines) {
 }
 
 function drawGrid(context) {
-    // Draw vertical lines
+    // Vertical lines
     for (var x = 50; x < canvas.width; x += 50) {
         // Path
         context.beginPath()
@@ -24,7 +25,7 @@ function drawGrid(context) {
         // Paint
         context.stroke()
     }
-    // Draw horizontal lines
+    // Horizontal lines
     for (var y = 50; y < canvas.height; y += 50) {
         // Path
         context.beginPath()
