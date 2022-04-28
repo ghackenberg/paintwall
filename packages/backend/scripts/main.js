@@ -14,36 +14,35 @@ app.use((request, response, next) => {
 
 app.use(express.static('../frontend'))
 
+app.get('/api/v1/canvas/', (request, response) => {
+    // TODO
+    response.status(500).send('Not implemented yet.')
+})
+
+app.get('/api/v1/canvas/:canvas', (request, response) => {
+    // TODO
+    response.status(500).send('Not implemented yet.')
+})
+
 app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
+    // Extract path parameters
     const canvasId = request.params.canvas
     const clientId = request.params.client
 
-    // Create
+    // Create & retrieve canvas
     if (!(canvasId in database)) {
-        database[canvasId] = { sockets: {}, names: {}, colors: {}, widths: {}, alphas: {}, positions: {}, lines: {} }
+        database[canvasId] = { sockets: {}, clients: {}, lines: {} }
     }
-    // Retrieve
     const canvas = database[canvasId]
-    // Remember
+
+    // Remember socket and initialize client data
     canvas.sockets[clientId] = socket
+    canvas.clients[clientId] = { clientId, name: 'Anonymous', color: 'black', width: 5, alpha: 0.5, position: undefined }
     
-    // Standard events
-    for (const [clientId, name] of Object.entries(canvas.names)) {
-        socket.send(JSON.stringify({ clientId, type: 'join', data: name }))
+    // Synchronize client and line data
+    for (const client of Object.values(canvas.clients)) {
+        socket.send(JSON.stringify({ type: 'client', data: client }))
     }
-    for (const [clientId, color] of Object.entries(canvas.colors)) {
-        socket.send(JSON.stringify({ clientId, type: 'color', data: color }))
-    }
-    for (const [clientId, width] of Object.entries(canvas.widths)) {
-        socket.send(JSON.stringify({ clientId, type: 'width', data: width }))
-    }
-    for (const [clientId, alpha] of Object.entries(canvas.alphas)) {
-        socket.send(JSON.stringify({ clientId, type: 'alpha', data: alpha }))
-    }
-    for (const [clientId, position] of Object.entries(canvas.positions)) {
-        socket.send(JSON.stringify({ clientId, type: 'move', data: position }))
-    }
-    // Synthetic events
     for (const line of Object.values(canvas.lines)) {
         socket.send(JSON.stringify({ type: 'line', data: line }))
     }
@@ -55,35 +54,35 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         // Remember
         switch (message.type) {
             case 'join': {
-                canvas.names[clientId] = message.data
-                canvas.colors[clientId] = 'black'
-                canvas.widths[clientId] = 5
-                canvas.alphas[clientId] = 0.5
-                canvas.positions[clientId] = undefined
+                canvas.clients[clientId].name = message.data
+                canvas.clients[clientId].color = 'black'
+                canvas.clients[clientId].width = 5
+                canvas.clients[clientId].alpha = 0.5
+                canvas.clients[clientId].position = undefined
                 break
             }
             case 'move': {
-                canvas.positions[clientId] = message.data
+                canvas.clients[clientId].position = message.data
                 break
             }
             case 'out': {
-                canvas.positions[clientId] = undefined
+                canvas.clients[clientId].position = undefined
                 break
             }
             case 'over': {
-                canvas.positions[clientId] = message.data
+                canvas.clients[clientId].position = message.data
                 break
             }
             case 'color': {
-                canvas.colors[clientId] = message.data
+                canvas.clients[clientId].color = message.data
                 break
             }
             case 'width': {
-                canvas.widths[clientId] = message.data
+                canvas.clients[clientId].width = message.data
                 break
             }
             case 'alpha': {
-                canvas.alphas[clientId] = message.data
+                canvas.clients[clientId].alpha = message.data
                 break
             }
             case 'start': {
@@ -92,11 +91,12 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                 const point = message.data.point
                 const points = [point]
 
-                const color = canvas.colors[clientId]
-                const width = canvas.widths[clientId]
-                const alpha = canvas.alphas[clientId]
+                const color = canvas.clients[clientId].color
+                const width = canvas.clients[clientId].width
+                const alpha = canvas.clients[clientId].alpha
 
                 canvas.lines[lineId] = { lineId, clientId, points, color, width, alpha }
+
                 break
             }
             case 'continue': {
@@ -104,6 +104,7 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                 const point = message.data.point
 
                 canvas.lines[lineId].points.push(point)
+                
                 break
             }
         }
@@ -118,12 +119,7 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     })
     socket.on('close', () => {
         // Remove
-        delete canvas.sockets[clientId]
-        delete canvas.names[clientId]
-        delete canvas.colors[clientId]
-        delete canvas.widths[clientId]
-        delete canvas.alphas[clientId]
-        delete canvas.positions[clientId]
+        delete canvas.clients[clientId]
         // Message
         const message = { clientId, type: 'leave' }
         // String

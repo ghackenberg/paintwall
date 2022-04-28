@@ -114,6 +114,18 @@ class Canvas {
 
                     break
                 }
+                case 'client': {
+                    const clientId = message.data.clientId
+                    const name = message.data.name
+                    const color = message.data.color
+                    const width = message.data.width
+                    const alpha = message.data.alpha
+                    const position = message.data.position
+
+                    this.clients[clientId] = new Client(clientId, name, color, width, alpha, position)
+
+                    break
+                }
                 case 'line': {
                     const lineId = message.data.lineId
                     const clientId = message.data.clientId
