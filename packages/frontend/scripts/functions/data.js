@@ -1,6 +1,11 @@
 // DATA FUNCTIONS
 
 function initialize() {
+    clientName = localStorage.getItem('name') || 'Anonymous'
+    clientName = prompt("How do you want to be called?", clientName) || 'Anonymous'
+    
+    localStorage.setItem('name', clientName)
+
     canvasId = location.hash.substring(location.hash.indexOf('/') + 1)
 
     names = {}

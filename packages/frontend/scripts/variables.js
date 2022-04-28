@@ -1,5 +1,8 @@
 // GLOBAL VARIABLES
 
+// Client
+var clientName
+
 // Canvas
 var canvasId
 var socket
