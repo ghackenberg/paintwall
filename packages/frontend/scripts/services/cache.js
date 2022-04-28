@@ -50,3 +50,12 @@ function setUp() {
 self.addEventListener('install', (event) => {
     event.waitUntil(cleanUp().then(setUp))
 })
+self.addEventListener('fetch', function(event) {
+    if (event.request.url.startsWith('https')) {
+        event.respondWith(fetch(event.request))
+    } else if (event.request.url.includes('/api/')) {
+        event.respondWith(fetch(event.request))
+    } else {
+        event.respondWith(caches.match(event.request))
+    }
+})
