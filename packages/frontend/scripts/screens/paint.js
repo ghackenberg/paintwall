@@ -47,6 +47,8 @@ class PaintScreen extends BaseScreen {
         this.mainNode.appendChild(this.qrcodeNode)
         this.mainNode.appendChild(this.canvasNode)
         this.mainNode.appendChild(this.colorNode)
+        // Models
+        this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })
     }
     show() {
         // Node
@@ -57,7 +59,10 @@ class PaintScreen extends BaseScreen {
         this.clientName = localStorage.getItem('name') || 'Anonymous'
         this.clientName = prompt("How do you want to be called?", this.clientName) || 'Anonymous'
         localStorage.setItem('name', this.clientName)
-        // Canvas
+        // QR-Code model
+        this.qrcodeModel.clear()
+        this.qrcodeModel.makeCode(location.href)
+        // Canvas model
         this.canvasModel = new Canvas(this.canvasNode, this.canvasId)
         this.canvasModel.connect(this.clientName)
         // Resize
