@@ -11,6 +11,7 @@ const files = [
     '../../styles/screens/browse.css',
     '../../styles/screens/paint.css',
     '../../scripts/main.js',
+    '../../scripts/dependencies/qrcode.js',
     '../../scripts/functions/draw.js',
     '../../scripts/models/canvas.js',
     '../../scripts/models/client.js',
