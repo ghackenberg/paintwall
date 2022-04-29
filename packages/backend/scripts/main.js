@@ -1,7 +1,31 @@
 import express from 'express'
 import ws from 'express-ws'
+import fs from 'fs'
 
-const database = {}
+const canvasObjectMapFile = 'database.json'
+
+function loadCanvasObjectMap() {
+    try {
+        console.log('Loading canvasObjectMap')
+        return JSON.parse(fs.readFileSync(canvasObjectMapFile, 'utf-8'))
+    } catch (error) {
+        console.log('Initializing canvasObjectMap')
+        return {}
+    }
+}
+function saveCanvasObjectMap() {
+    try {
+        console.log('Saving canvasObjectMap')
+        fs.writeFileSync(canvasObjectMapFile, JSON.stringify(canvasObjectMap))
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+const canvasSocketMap = {}
+const canvasObjectMap = loadCanvasObjectMap()
+
+setInterval(saveCanvasObjectMap, 10000)
 
 const app = express()
 
@@ -18,34 +42,22 @@ app.use(express.static('../frontend'))
 // Request handlers
 
 app.get('/api/v1/canvas/', (request, response) => {
-    const canvasObjects = []
+    const result = []
     // Convert database entries into array
-    for (const canvasObject of Object.values(database)) {
-        // Extract canvas object information
-        const canvasId = canvasObject.canvasId
-        const timestamps = canvasObject.timestamps
-        const clients = canvasObject.clients
-        const lines = canvasObject.lines
+    for (const canvasObject of Object.values(canvasObjectMap)) {
         // Append canvas object
-        canvasObjects.push({ canvasId, timestamps, clients, lines })
+        result.push(canvasObject)
     }
     // Send array
-    response.send(canvasObjects.sort((a, b) => a.timestamps.created - b.timestamps.created))
+    response.send(result.sort((a, b) => a.timestamps.created - b.timestamps.created))
 })
 app.get('/api/v1/canvas/:canvas', (request, response) => {
     // Parse path parameter
     const canvasId = request.params.canvas
     // Check if canvas exists in database
-    if (canvasId in database) {
-        // Retrieve canvas object
-        const canvasObject = database[canvasId]
-        // Extract canvas object information
-        const canvasId = canvasObject.canvasId
-        const timestamps = canvasObject.timestamps
-        const clients = canvasObject.clients
-        const lines = canvasOject.lines
+    if (canvasId in canvasObjectMap) {
         // Send canvas object
-        response.send({ canvasId, timestamps, clients, lines })
+        response.send(canvasObjectMap[canvasId])
     } else {
         // Return not found code
         response.status(404).send()
@@ -59,22 +71,31 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     const canvasId = request.params.canvas
     const clientId = request.params.client
 
+    // Create canvas socket
+    if (!(canvasId in canvasSocketMap)) {
+        canvasSocketMap[canvasId] = {}
+    }
+
+    // Retrieve canvas socket
+    const canvasSocket = canvasSocketMap[canvasId]
+
+    // Remember socket
+    canvasSocket[clientId] = socket
+
     // Create canvas object
-    if (!(canvasId in database)) {
+    if (!(canvasId in canvasObjectMap)) {
         // Create canvas object information
         const timestamps = { created: Date.now(), updated: Date.now() }
-        const sockets = {}
         const clients = {}
         const lines = {}
         // Create canvas object
-        database[canvasId] = { canvasId, timestamps, sockets, clients, lines }
+        canvasObjectMap[canvasId] = { canvasId, timestamps, clients, lines }
     }
 
     // Retrieve canvas object
-    const canvasObject = database[canvasId]
+    const canvasObject = canvasObjectMap[canvasId]
 
-    // Remember socket and initialize client data
-    canvasObject.sockets[clientId] = socket
+    // Remember client
     canvasObject.clients[clientId] = { clientId, name: 'Anonymous', color: 'black', width: 5, alpha: 0.5, position: undefined }
     
     // Synchronize client and line data
@@ -166,21 +187,23 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         // String
         const string = JSON.stringify(message)
         // Forward
-        for (const [otherClientId, otherSocket] of Object.entries(canvasObject.sockets)) {
+        for (const [otherClientId, otherSocket] of Object.entries(canvasSocket)) {
             if (otherClientId != clientId) {
                 otherSocket.send(string)
             }
         }
     })
     socket.on('close', () => {
-        // Remove
+        // Remove socket
+        delete canvasSocket[clientId]
+        // Remove client
         delete canvasObject.clients[clientId]
         // Message
         const message = { clientId, type: 'leave' }
         // String
         const string = JSON.stringify(message)
         // Forward
-        for (const otherSocket of Object.values(canvasObject.sockets)) {
+        for (const otherSocket of Object.values(canvasSocket)) {
             otherSocket.send(string)
         }
     })

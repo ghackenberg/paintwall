@@ -18,6 +18,6 @@
     },
     "scripts": {
         "start": "node .",
-        "dev": "nodemon ."
+        "dev": "nodemon --ignore database.json ."
     }
 }
