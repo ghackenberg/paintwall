@@ -4,7 +4,6 @@ class BrowseScreen extends BaseScreen {
     constructor() {
         super('browse')
         // States
-        this.canvasNodes = []
         this.canvasModels = []
         // Button
         this.buttonNode = document.createElement('button')
@@ -37,13 +36,12 @@ class BrowseScreen extends BaseScreen {
                     canvasNode.addEventListener('click', (event) => {
                         location.hash = 'paint/' + canvasObject.canvasId
                     })
+                    // Main node
+                    self.mainNode.appendChild(canvasNode)
                     // Canvas model
                     const canvasModel = new CanvasModel(canvasNode, canvasId, clients, lines)
                     canvasModel.draw()
-                    // Main node
-                    self.mainNode.appendChild(canvasNode)
                     // Update state
-                    self.canvasNodes.push(canvasNode)
                     self.canvasModels.push(canvasModel)
                 }
             }
@@ -54,11 +52,8 @@ class BrowseScreen extends BaseScreen {
     hide() {
         super.hide()
         // Remove childs
-        while (this.canvasNodes.length > 0) {
-            this.mainNode.removeChild(this.canvasNodes.pop())
+        while (this.canvasModels.length > 0) {
+            this.mainNode.removeChild(this.canvasModels.pop().canvasNode)
         }
-        // Update state
-        this.canvasNodes = []
-        this.canvasModels = []
     }
 }
