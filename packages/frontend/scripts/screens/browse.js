@@ -7,16 +7,18 @@ class BrowseScreen extends BaseScreen {
         this.canvasModels = []
         // Count
         this.countNode = document.createElement('span')
+        this.countNode.id = 'count'
         this.countNode.textContent = '0'
         // Button
-        this.buttonNode = document.createElement('button')
-        this.buttonNode.textContent = 'New canvas'
-        this.buttonNode.onclick = function() {
+        this.createNode = document.createElement('button')
+        this.createNode.id = 'create'
+        this.createNode.textContent = 'New canvas'
+        this.createNode.onclick = function() {
             location.hash = 'paint/' + Math.random().toString(16).substring(2)
         }
         // Main
         this.headerNode.appendChild(this.countNode)
-        this.headerNode.appendChild(this.buttonNode)
+        this.headerNode.appendChild(this.createNode)
         // Connect
         this.connect()
     }

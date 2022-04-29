@@ -1,26 +1,12 @@
 /* Header */
 
 body > #browse > header {
-    position: fixed;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    height: 3em;
-
-    padding-left: 1em;
-    padding-right: 1em;
     padding-bottom: 1em;
-
-    line-height: 3em;
-
-    overflow: hidden;
 
     background-image: linear-gradient(rgba(255,255,255,1), rgba(255,255,255,1) 75%, rgba(255,0,255,0));
 }
 
-body > #browse > header > span {
+body > #browse > header > #count {
     display: inline-block;
 
     margin-left: 1em;
@@ -47,7 +33,7 @@ body > #browse > header > span {
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
 }
 
-body > #browse > header > button {
+body > #browse > header > #create {
     font-size: inherit;
 
     margin-left: 1em;
@@ -114,21 +100,7 @@ body > #browse > main > div > div {
 /* Footer */
 
 body > #browse > footer {
-    position: fixed;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
-    height: 3em;
-
     padding-top: 1em;
-    padding-left: 1em;
-    padding-right: 1em;
-
-    line-height: 3em;
-
-    overflow: hidden;
 
     background-image: linear-gradient(rgba(255,0,255,0), rgba(255,255,255,1) 25%, rgba(255,255,255,1));
 }

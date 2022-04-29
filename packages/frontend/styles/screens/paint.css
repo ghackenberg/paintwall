@@ -1,17 +1,10 @@
 /* Header */
 
 body > #paint > header {
-    position: absolute;
-
-    top: 1em;
-    left: 5em;
-    right: 5em;
-
-    height: 1em;
-
-    overflow: hidden;
-    
     z-index: 0;
+
+    padding-left: 5em;
+    padding-right: 5em;
 }
 
 /* Main */
@@ -54,15 +47,5 @@ body > #paint > main > #qrcode > * {
 /* Footer */
 
 body > #paint > footer {
-    position: absolute;
-    
-    left: 1em;
-    right: 1em;
-    bottom: 1em;
-
-    height: 1em;
-
-    overflow: hidden;
-
     z-index: 0;
 }

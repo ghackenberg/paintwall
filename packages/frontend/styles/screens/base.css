@@ -7,11 +7,57 @@ body > div.screen {
     bottom: 0;
 }
 
+/* Header */
+
 body > div.screen > header {
-    font-weight: bold;
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    right: 0;
+
+    padding-left: 1em;
+    padding-right: 1em;
+
+    height: 3em;
+
+    line-height: 3em;
+
+    overflow: hidden;
+    
     text-align: center;
+
+    font-weight: bold;
 }
 
+body > div.screen > header > #logo {
+    display: inline-block;
+
+    padding-left: 2em;
+
+    background-image: url(../../images/icon-any-128.png);
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    background-position: left center;
+}
+
+/* Footer */
+
 body > div.screen > footer {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    padding-left: 1em;
+    padding-right: 1em;
+
+    height: 3em;
+
+    line-height: 3em;
+
+    overflow: hidden;
+
     text-align: center;
 }

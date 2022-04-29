@@ -8,9 +8,13 @@ class BaseScreen {
     // Non-static
 
     constructor(id) {
+        // Text
+        this.logoNode = document.createElement('span')
+        this.logoNode.id = 'logo'
+        this.logoNode.textContent = "PaintWall"
         // Header
         this.headerNode = document.createElement('header')
-        this.headerNode.textContent = "PaintWall"
+        this.headerNode.appendChild(this.logoNode)
         // Main
         this.mainNode = document.createElement('main')
         // Footer
