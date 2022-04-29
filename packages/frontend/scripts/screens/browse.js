@@ -3,8 +3,6 @@
 class BrowseScreen extends BaseScreen {
     constructor() {
         super('browse')
-        // Self
-        const self = this
         // States
         this.canvasModels = []
         // Count
@@ -19,6 +17,26 @@ class BrowseScreen extends BaseScreen {
         // Main
         this.headerNode.appendChild(this.countNode)
         this.headerNode.appendChild(this.buttonNode)
+        // Connect
+        this.connect()
+    }
+    show() {
+        super.show()
+        // Load
+        this.load()
+    }
+    hide() {
+        super.hide()
+        // Clear main
+        while (this.mainNode.firstChild) {
+            this.mainNode.removeChild(this.mainNode.firstChild)
+        }
+        // Reset state
+        this.canvasModels = []
+    }
+    connect() {
+        // Self
+        const self = this
         // Socket
         this.socket = new WebSocket(makeSocketURL('/api/v1/client/'))
         this.socket.onmessage = function(event) {
@@ -33,9 +51,16 @@ class BrowseScreen extends BaseScreen {
                 }
             }
         }
+        this.socket.onerror = function(event) {
+            // Close
+            self.socket.close()
+        }
+        this.socket.onclose = function(event) {
+            // Connect
+            self.connect()
+        }
     }
-    show() {
-        super.show()
+    load() {
         // Self
         const self = this
         // Request
@@ -76,14 +101,5 @@ class BrowseScreen extends BaseScreen {
         }
         this.request.open('GET', '/api/v1/canvas/')
         this.request.send()
-    }
-    hide() {
-        super.hide()
-        // Clear main
-        while (this.mainNode.firstChild) {
-            this.mainNode.removeChild(this.mainNode.firstChild)
-        }
-        // Reset state
-        this.canvasModels = []
     }
 }
