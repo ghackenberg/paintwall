@@ -31,13 +31,21 @@ class BrowseScreen extends BaseScreen {
                     const canvasId = canvasObject.canvasId
                     const clients = canvasObject.clients
                     const lines = canvasObject.lines
+                    const live = Object.entries(clients).length
                     // Canvas node
                     const canvasNode = document.createElement('canvas')
-                    canvasNode.addEventListener('click', (event) => {
+                    // Info node
+                    const infoNode = document.createElement('div')
+                    infoNode.textContent = live + ' live'
+                    // Container node
+                    const containerNode = document.createElement('div')
+                    containerNode.appendChild(canvasNode)
+                    containerNode.appendChild(infoNode)
+                    containerNode.addEventListener('click', (event) => {
                         location.hash = 'paint/' + canvasObject.canvasId
                     })
                     // Main node
-                    self.mainNode.appendChild(canvasNode)
+                    self.mainNode.appendChild(containerNode)
                     // Canvas model
                     const canvasModel = new CanvasModel(canvasNode, canvasId, clients, lines)
                     canvasModel.draw()
@@ -51,9 +59,11 @@ class BrowseScreen extends BaseScreen {
     }
     hide() {
         super.hide()
-        // Remove childs
-        while (this.canvasModels.length > 0) {
-            this.mainNode.removeChild(this.canvasModels.pop().canvasNode)
+        // Clear main
+        while (this.mainNode.firstChild) {
+            this.mainNode.removeChild(this.mainNode.firstChild)
         }
+        // Reset state
+        this.canvasModels = []
     }
 }

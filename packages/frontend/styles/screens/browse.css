@@ -62,7 +62,7 @@ body > #browse > main {
     padding-bottom: 3em;
 }
 
-body > #browse > main > canvas {
+body > #browse > main > div {
     margin: 1em;
 
     border-radius: 0.5em;
@@ -70,6 +70,18 @@ body > #browse > main > canvas {
     box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
 
     cursor: pointer;
+}
+
+body > #browse > main > div > div {
+    padding: 1em;
+
+    border-top: 1px solid rgba(0,0,0,0.2);
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+
+    background-image: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.025), rgba(0,0,0,0.075));
+
+    text-align: center;
 }
 
 /* Footer */
