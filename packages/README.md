@@ -1,3 +1,3 @@
-# Collaborative Paint PWA Packages
+# PaintWall Packages
 
 TODO

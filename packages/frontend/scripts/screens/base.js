@@ -10,7 +10,7 @@ class BaseScreen {
     constructor(id) {
         // Header
         this.headerNode = document.createElement('header')
-        this.headerNode.textContent = 'Collaborative Paint PWA'
+        this.headerNode.textContent = "PaintWall"
         // Main
         this.mainNode = document.createElement('main')
         // Footer

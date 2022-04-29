@@ -1,3 +1,3 @@
-# Collaborative Paint PWA Screenshots
+# PaintWall Screenshots
 
 TODO

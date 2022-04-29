@@ -1,7 +1,7 @@
 {
-    "short_name": "Collaborative Paint PWA",
-    "name": "Collaborative Paint PWA",
-    "description": "Create simple paintings collaboratively",
+    "short_name": "PaintWall",
+    "name": "PaintWall Progressive Web Application (PWA)",
+    "description": "Create simple paintings instantly and collaboratively",
     "start_url": "./",
     "scope": "./",
     "display": "standalone",
