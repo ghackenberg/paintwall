@@ -15,7 +15,7 @@ class CanvasModel {
         this.lines = lines || {}
         this.socket = null
     }
-    connect(clientName) {
+    connect(name, color, width, alpha, position) {
         if (this.socket != null) {
             return
         }
@@ -25,7 +25,7 @@ class CanvasModel {
         this.socket = new WebSocket(socketProtocol + '//' + socketHost + path)
 
         this.socket.onopen = (event) => {
-            this.broadcast('join', clientName)
+            this.broadcast('join', { name, color, width, alpha, position })
         }
         this.socket.onmessage = (event) => {
             // Parse
@@ -34,9 +34,13 @@ class CanvasModel {
             switch (message.type) {
                 case 'join': {
                     const clientId = message.clientId
-                    const name = message.data
+                    const name = message.data.name
+                    const color = message.data.color
+                    const width = message.data.width
+                    const alpha = message.data.alpha
+                    const position = message.data.position
 
-                    this.clients[clientId] = new Client(clientId, name, 'black', 5, 0.5, undefined)
+                    this.clients[clientId] = new Client(clientId, name, color, width, alpha, position)
 
                     break
                 }

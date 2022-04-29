@@ -96,7 +96,7 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     const canvasObject = canvasObjectMap[canvasId]
 
     // Remember client
-    canvasObject.clients[clientId] = { clientId, name: 'Anonymous', color: 'black', width: 5, alpha: 0.5, position: undefined }
+    canvasObject.clients[clientId] = { clientId, name: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
     
     // Synchronize client and line data
     for (const client of Object.values(canvasObject.clients)) {
@@ -116,11 +116,11 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         switch (message.type) {
             case 'join': {
                 if (clientId in canvasObject.clients) {
-                    canvasObject.clients[clientId].name = message.data
-                    canvasObject.clients[clientId].color = 'black'
-                    canvasObject.clients[clientId].width = 5
-                    canvasObject.clients[clientId].alpha = 0.5
-                    canvasObject.clients[clientId].position = undefined
+                    canvasObject.clients[clientId].name = message.data.name
+                    canvasObject.clients[clientId].color = message.data.color
+                    canvasObject.clients[clientId].width = message.data.width
+                    canvasObject.clients[clientId].alpha = message.data.alpha
+                    canvasObject.clients[clientId].position = message.data.position
                 }
                 break
             }

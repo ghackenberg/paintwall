@@ -8,9 +8,9 @@ class PaintScreen extends BaseScreen {
         this.clientName = undefined
         this.canvasModel = undefined
         this.lineId = undefined
-        this.color = 'black'
-        this.width = 5
-        this.alpha = 0.5
+        this.color = localStorage.getItem('color') || 'black'
+        this.width = parseFloat(localStorage.getItem('width') || '5.0')
+        this.alpha = parseFloat(localStorage.getItem('alpha') || '0.5')
         // Handlers (resize)
         this.handleResize = this.handleResize.bind(this)
         // Handlers (mouse)
@@ -64,7 +64,7 @@ class PaintScreen extends BaseScreen {
         this.qrcodeModel.makeCode(location.href)
         // Canvas model
         this.canvasModel = new CanvasModel(this.canvasNode, this.canvasId)
-        this.canvasModel.connect(this.clientName)
+        this.canvasModel.connect(this.clientName, this.color, this.width, this.alpha, undefined)
         // Resize
         this.handleResize()
         // Window
@@ -147,6 +147,8 @@ class PaintScreen extends BaseScreen {
     handleChange(event) {
         // Update
         this.color = event.target.value
+        // Remember
+        localStorage.setItem('color', color)
         // Broadcast
         this.canvasModel.broadcast('color', this.color)
     }
@@ -161,12 +163,14 @@ class PaintScreen extends BaseScreen {
         this.canvasModel.broadcast('start', { lineId: this.lineId, point })
     }
     continueLine(x, y) {
-        // Create
-        const point = { x, y }
         // Update
-        this.canvasModel.lines[this.lineId].points.push(point)
-        this.canvasModel.draw()
-        // Broadcast
-        this.canvasModel.broadcast('continue', { lineId: this.lineId, point })
+        if (this.lineId in this.canvasModel.lines) {
+            // Create
+            const point = { x, y }
+            this.canvasModel.lines[this.lineId].points.push(point)
+            this.canvasModel.draw()
+            // Broadcast
+            this.canvasModel.broadcast('continue', { lineId: this.lineId, point })    
+        }
     }
 }
