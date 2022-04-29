@@ -5,10 +5,11 @@ class BrowseScreen extends BaseScreen {
         super('browse')
         // States
         this.canvasModels = []
+        this.liveNodes = {}
         // Count
         this.countNode = document.createElement('span')
         this.countNode.id = 'count'
-        this.countNode.textContent = '0'
+        this.countNode.textContent = '1 online'
         // Button
         this.createNode = document.createElement('button')
         this.createNode.id = 'create'
@@ -35,6 +36,7 @@ class BrowseScreen extends BaseScreen {
         }
         // Reset state
         this.canvasModels = []
+        this.liveNodes = {}
     }
     connect() {
         // Self
@@ -46,9 +48,22 @@ class BrowseScreen extends BaseScreen {
             const message = JSON.parse(event.data)
             // Switch
             switch (message.type) {
-                case 'count': {
+                case 'online': {
                     const count = message.data
                     self.countNode.textContent = count + ' online'
+                    break
+                }
+                case 'live': {
+                    const canvasId = message.data.canvasId
+                    const count = message.data.count
+                    if (canvasId in self.liveNodes) {
+                        self.liveNodes[canvasId].textContent = count + ' live'
+                    }
+                    break
+                }
+                case 'canvas': {
+                    const canvasId = message.data.canvasId
+                    // TODO Show new canvas?
                     break
                 }
             }
@@ -82,12 +97,12 @@ class BrowseScreen extends BaseScreen {
                     // Canvas node
                     const canvasNode = document.createElement('canvas')
                     // Info node
-                    const infoNode = document.createElement('div')
-                    infoNode.textContent = live + ' live'
+                    const liveNode = document.createElement('div')
+                    liveNode.textContent = live + ' live'
                     // Container node
                     const containerNode = document.createElement('div')
                     containerNode.appendChild(canvasNode)
-                    containerNode.appendChild(infoNode)
+                    containerNode.appendChild(liveNode)
                     containerNode.addEventListener('click', (event) => {
                         location.hash = 'paint/' + canvasObject.canvasId
                     })
@@ -98,6 +113,7 @@ class BrowseScreen extends BaseScreen {
                     canvasModel.draw()
                     // Update state
                     self.canvasModels.push(canvasModel)
+                    self.liveNodes[canvasId] = liveNode
                 }
             }
         }

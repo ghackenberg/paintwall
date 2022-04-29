@@ -72,6 +72,15 @@ app.get('/api/v1/canvas/:canvas', (request, response) => {
 
 // Socket handlers
 
+function broadcast(sockets, message) {
+    // String
+    const string = JSON.stringify(message)
+    // Send
+    for (const socket of sockets) {
+        socket.send(string)
+    }
+}
+
 app.ws('/api/v1/client/:client', (socket, request) => {
     // Extract path parameters
     const clientId = request.params.client
@@ -80,13 +89,9 @@ app.ws('/api/v1/client/:client', (socket, request) => {
     clientSocketMap[clientId] = socket
 
     // Message
-    const message = { type: 'count', data: Object.entries(clientSocketMap).length }
-    // String
-    const string = JSON.stringify(message)
-    // Send
-    for (const otherSocket of Object.values(clientSocketMap)) {
-        otherSocket.send(string)
-    }
+    const message = { type: 'online', data: Object.entries(clientSocketMap).length }
+    // Broadcast
+    broadcast(Object.values(clientSocketMap), message)
 
     // Handle
     socket.on('close', () => {
@@ -94,13 +99,9 @@ app.ws('/api/v1/client/:client', (socket, request) => {
         delete clientSocketMap[clientId]
 
         // Message
-        const message = { type: 'count', data: Object.entries(clientSocketMap).length }
-        // String
-        const string = JSON.stringify(message)
-        // Send
-        for (const otherSocket of Object.values(clientSocketMap)) {
-            otherSocket.send(string)
-        }
+        const message = { type: 'online', data: Object.entries(clientSocketMap).length }
+        // Broadcast
+        broadcast(Object.values(clientSocketMap), message)
     })
 })
 app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
@@ -127,6 +128,11 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         const lines = {}
         // Create canvas object
         canvasObjectMap[canvasId] = { canvasId, timestamps, clients, lines }
+
+        // Message
+        const message = { type: 'canvas', data: canvasId }
+        // Broadcast
+        broadcast(Object.values(clientSocketMap), message)
     }
 
     // Retrieve canvas object
@@ -142,6 +148,11 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     for (const line of Object.values(canvasObject.lines)) {
         socket.send(JSON.stringify({ type: 'line', data: line }))
     }
+
+    // Message
+    const message = { type: 'live', data: { canvasId, count: Object.entries(canvasObject.clients).length } }
+    // Broadcast
+    broadcast(Object.values(clientSocketMap), message)
 
     // Handle
     socket.on('message', (data) => {
@@ -221,28 +232,27 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                 break
             }
         }
-        // String
-        const string = JSON.stringify(message)
-        // Forward
-        for (const [otherClientId, otherSocket] of Object.entries(canvasSocket)) {
-            if (otherClientId != clientId) {
-                otherSocket.send(string)
-            }
-        }
+        // Broadcast
+        broadcast(Object.entries(canvasSocket).filter(pair => pair[0] != clientId).map(pair => pair[1]), message)
     })
     socket.on('close', () => {
         // Remove socket
         delete canvasSocket[clientId]
         // Remove client
         delete canvasObject.clients[clientId]
-
-        // Message
-        const message = { clientId, type: 'leave' }
-        // String
-        const string = JSON.stringify(message)
-        // Forward
-        for (const otherSocket of Object.values(canvasSocket)) {
-            otherSocket.send(string)
+        // Local broadcast
+        {
+            // Message
+            const message = { clientId, type: 'leave' }
+            // Broadcast
+            broadcast(Object.values(canvasSocket), message)
+        }
+        // Global broadcast
+        {
+            // Message
+            const message = { type: 'live', data: { canvasId, count: Object.entries(canvasObject.clients).length } }
+            // Broadcast
+            broadcast(Object.values(clientSocketMap), message)
         }
     })
 })
