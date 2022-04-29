@@ -3,14 +3,16 @@
 class PaintScreen extends BaseScreen {
     constructor() {
         super('paint')
+        // Constants
+        const name = undefined
+        const color = localStorage.getItem('color') || 'black'
+        const width = parseFloat(localStorage.getItem('width') || '5.0')
+        const alpha = parseFloat(localStorage.getItem('alpha') || '0.5')
+        const position = undefined
         // States
-        this.canvasId = undefined
-        this.clientName = undefined
+        this.clientModel = new ClientModel(clientId, name, color, width, alpha, position)
         this.canvasModel = undefined
-        this.lineId = undefined
-        this.color = localStorage.getItem('color') || 'black'
-        this.width = parseFloat(localStorage.getItem('width') || '5.0')
-        this.alpha = parseFloat(localStorage.getItem('alpha') || '0.5')
+        this.lineModel = undefined
         // Handlers (resize)
         this.handleResize = this.handleResize.bind(this)
         // Handlers (mouse)
@@ -38,7 +40,7 @@ class PaintScreen extends BaseScreen {
         this.colorNode = document.createElement('input')
         this.colorNode.id = 'color'
         this.colorNode.type = 'color'
-        this.colorNode.value = this.color
+        this.colorNode.value = this.clientModel.color
         this.colorNode.addEventListener('change', this.handleChange)
         // Nodes (code)
         this.qrcodeNode = document.createElement('div')
@@ -54,17 +56,17 @@ class PaintScreen extends BaseScreen {
         // Node
         super.show()
         // Canvas id
-        this.canvasId = location.hash.substring(location.hash.indexOf('/') + 1)
-        // Client name
-        this.clientName = localStorage.getItem('name') || 'Anonymous'
-        this.clientName = prompt("How do you want to be called?", this.clientName) || 'Anonymous'
-        localStorage.setItem('name', this.clientName)
+        const canvasId = location.hash.substring(location.hash.indexOf('/') + 1)
         // QR-Code model
         this.qrcodeModel.clear()
         this.qrcodeModel.makeCode(location.href)
+        // Client name
+        this.clientModel.name = localStorage.getItem('name') || 'Anonymous'
+        this.clientModel.name = prompt("How do you want to be called?", this.clientModel.name) || 'Anonymous'
+        localStorage.setItem('name', this.clientModel.name)
         // Canvas model
-        this.canvasModel = new CanvasModel(this.canvasNode, this.canvasId)
-        this.canvasModel.connect(this.clientName, this.color, this.width, this.alpha, undefined)
+        this.canvasModel = new CanvasModel(this.canvasNode, canvasId)
+        this.canvasModel.connect(this.clientModel)
         // Resize
         this.handleResize()
         // Window
@@ -75,6 +77,8 @@ class PaintScreen extends BaseScreen {
         super.hide()
         // Canvas
         this.canvasModel.disconnect()
+        this.canvasModel = undefined
+        this.lineModel = undefined
         // Window
         window.removeEventListener('resize', this.handleResize)
     }
@@ -146,31 +150,37 @@ class PaintScreen extends BaseScreen {
     }
     handleChange(event) {
         // Update
-        this.color = event.target.value
+        this.clientModel.color = event.target.value
         // Remember
-        localStorage.setItem('color', this.color)
+        localStorage.setItem('color', this.clientModel.color)
         // Broadcast
-        this.canvasModel.broadcast('color', this.color)
+        this.canvasModel.broadcast('color', this.clientModel.color)
     }
     startLine(x, y) {
-        // Create
-        this.lineId = '' + Math.random().toString(16).substring(2)
+        // Define
+        const lineId = '' + Math.random().toString(16).substring(2)
+        const color = this.clientModel.color
+        const width = this.clientModel.width
+        const alpha = this.clientModel.alpha
         const point = { x, y }
+        // Create
+        this.lineModel = new LineModel(lineId, clientId, color, width, alpha, [point])
         // Update
-        this.canvasModel.lines[this.lineId] = new Line(this.lineId, clientId, this.color, this.width, this.alpha, [point])
+        this.canvasModel.lines[lineId] = this.lineModel
         this.canvasModel.draw()
         // Broadcast
-        this.canvasModel.broadcast('start', { lineId: this.lineId, point })
+        this.canvasModel.broadcast('start', { lineId: this.lineModel.lineId, point })
     }
     continueLine(x, y) {
-        // Update
-        if (this.lineId in this.canvasModel.lines) {
-            // Create
+        if (this.lineModel) {
+            // Define
             const point = { x, y }
-            this.canvasModel.lines[this.lineId].points.push(point)
+            // Update
+            this.lineModel.points.push(point)
+            // Draw
             this.canvasModel.draw()
             // Broadcast
-            this.canvasModel.broadcast('continue', { lineId: this.lineId, point })    
+            this.canvasModel.broadcast('continue', { lineId: this.lineModel.lineId, point })    
         }
     }
 }

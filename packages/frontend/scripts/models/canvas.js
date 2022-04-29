@@ -8,7 +8,9 @@ class CanvasModel {
         this.lines = lines || {}
         this.socket = null
     }
-    connect(name, color, width, alpha, position) {
+    connect(client) {
+        this.reconnect = true
+
         if (this.socket != null) {
             return
         }
@@ -16,7 +18,7 @@ class CanvasModel {
         this.socket = new WebSocket(makeSocketURL('/api/v1/canvas/' + this.canvasId + '/client/'))
 
         this.socket.onopen = (event) => {
-            this.broadcast('join', { name, color, width, alpha, position })
+            this.broadcast('join', client)
         }
         this.socket.onmessage = (event) => {
             // Parse
@@ -31,7 +33,7 @@ class CanvasModel {
                     const alpha = message.data.alpha
                     const position = message.data.position
 
-                    this.clients[clientId] = new Client(clientId, name, color, width, alpha, position)
+                    this.clients[clientId] = new ClientModel(clientId, name, color, width, alpha, position)
 
                     break
                 }
@@ -112,7 +114,7 @@ class CanvasModel {
                     const width = this.clients[clientId].width
                     const alpha = this.clients[clientId].alpha
 
-                    this.lines[lineId] = new Line(lineId, clientId, color, width, alpha, [point])
+                    this.lines[lineId] = new LineModel(lineId, clientId, color, width, alpha, [point])
 
                     break
                 }
@@ -134,7 +136,7 @@ class CanvasModel {
                     const alpha = message.data.alpha
                     const position = message.data.position
 
-                    this.clients[clientId] = new Client(clientId, name, color, width, alpha, position)
+                    this.clients[clientId] = new ClientModel(clientId, name, color, width, alpha, position)
 
                     break
                 }
@@ -146,7 +148,7 @@ class CanvasModel {
                     const alpha = message.data.alpha
                     const points = message.data.points
 
-                    this.lines[lineId] = new Line(lineId, clientId, color, width, alpha, points)
+                    this.lines[lineId] = new LineModel(lineId, clientId, color, width, alpha, points)
 
                     break
                 }
@@ -154,9 +156,25 @@ class CanvasModel {
             // Draw
             this.draw()
         }
+        this.socket.onerror = function(event) {
+            // Close
+            this.socket.close()
+        }
+        this.socket.onclose = function(event) {
+            // Reset socket
+            this.socket = null
+            // Check reconnection
+            if (this.reconnect) {
+                // Reconnect socket
+                this.connect(client)
+            }
+        }
     }
     disconnect() {
         if (this.socket && this.socket.readyState == WebSocket.OPEN) {
+            // Prevent reconnection
+            this.reconnect = false
+            // Close socket
             this.socket.close()
             this.socket = null
         }
