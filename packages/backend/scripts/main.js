@@ -26,6 +26,11 @@ const clientSocketMap = {}
 const canvasSocketMap = {}
 const canvasObjectMap = loadCanvasObjectMap()
 
+// Reset clients
+for (const canvasObject of Object.values(canvasObjectMap)) {
+    canvasObject.clients = {}
+}
+
 setInterval(saveCanvasObjectMap, 30000)
 
 const app = express()
