@@ -25,7 +25,7 @@ function saveCanvasObjectMap() {
 const canvasSocketMap = {}
 const canvasObjectMap = loadCanvasObjectMap()
 
-setInterval(saveCanvasObjectMap, 10000)
+setInterval(saveCanvasObjectMap, 30000)
 
 const app = express()
 
