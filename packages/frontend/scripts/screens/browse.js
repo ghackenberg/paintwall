@@ -48,7 +48,7 @@ class BrowseScreen extends BaseScreen {
             switch (message.type) {
                 case 'count': {
                     const count = message.data
-                    self.countNode.textContent = count + ' users online'
+                    self.countNode.textContent = count + ' online'
                     break
                 }
             }
@@ -83,7 +83,7 @@ class BrowseScreen extends BaseScreen {
                     const canvasNode = document.createElement('canvas')
                     // Info node
                     const infoNode = document.createElement('div')
-                    infoNode.textContent = live + ' users live'
+                    infoNode.textContent = live + ' live'
                     // Container node
                     const containerNode = document.createElement('div')
                     containerNode.appendChild(canvasNode)
