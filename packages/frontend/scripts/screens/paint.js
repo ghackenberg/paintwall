@@ -148,7 +148,7 @@ class PaintScreen extends BaseScreen {
         // Update
         this.color = event.target.value
         // Remember
-        localStorage.setItem('color', color)
+        localStorage.setItem('color', this.color)
         // Broadcast
         this.canvasModel.broadcast('color', this.color)
     }

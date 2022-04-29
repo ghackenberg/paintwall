@@ -1,10 +1,3 @@
-// CONSTANTS
-
-const clientId = Math.random().toString(16).substring(2)
-
-const socketProtocol = location.protocol == 'http:' ? 'ws:' : 'wss:'
-const socketHost = location.host
-
 // CLASSES
 
 class CanvasModel {
@@ -20,9 +13,7 @@ class CanvasModel {
             return
         }
 
-        const path = '/api/v1/canvas/' + this.canvasId + '/client/' + clientId
-
-        this.socket = new WebSocket(socketProtocol + '//' + socketHost + path)
+        this.socket = new WebSocket(makeSocketURL('/api/v1/canvas/' + this.canvasId + '/client/'))
 
         this.socket.onopen = (event) => {
             this.broadcast('join', { name, color, width, alpha, position })

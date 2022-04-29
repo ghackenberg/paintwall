@@ -22,6 +22,7 @@ function saveCanvasObjectMap() {
     }
 }
 
+const clientSocketMap = {}
 const canvasSocketMap = {}
 const canvasObjectMap = loadCanvasObjectMap()
 
@@ -66,6 +67,37 @@ app.get('/api/v1/canvas/:canvas', (request, response) => {
 
 // Socket handlers
 
+app.ws('/api/v1/client/:client', (socket, request) => {
+    // Extract path parameters
+    const clientId = request.params.client
+
+    // Remember socket
+    clientSocketMap[clientId] = socket
+
+    // Message
+    const message = { type: 'count', data: Object.entries(clientSocketMap).length }
+    // String
+    const string = JSON.stringify(message)
+    // Send
+    for (const otherSocket of Object.values(clientSocketMap)) {
+        otherSocket.send(string)
+    }
+
+    // Handle
+    socket.on('close', () => {
+        // Remove socket
+        delete clientSocketMap[clientId]
+
+        // Message
+        const message = { type: 'count', data: Object.entries(clientSocketMap).length }
+        // String
+        const string = JSON.stringify(message)
+        // Send
+        for (const otherSocket of Object.values(clientSocketMap)) {
+            otherSocket.send(string)
+        }
+    })
+})
 app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     // Extract path parameters
     const canvasId = request.params.canvas
@@ -198,6 +230,7 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         delete canvasSocket[clientId]
         // Remove client
         delete canvasObject.clients[clientId]
+
         // Message
         const message = { clientId, type: 'leave' }
         // String

@@ -3,16 +3,36 @@
 class BrowseScreen extends BaseScreen {
     constructor() {
         super('browse')
+        // Self
+        const self = this
         // States
         this.canvasModels = []
+        // Count
+        this.countNode = document.createElement('span')
+        this.countNode.textContent = '0'
         // Button
         this.buttonNode = document.createElement('button')
-        this.buttonNode.textContent = 'New'
+        this.buttonNode.textContent = 'New canvas'
         this.buttonNode.onclick = function() {
             location.hash = 'paint/' + Math.random().toString(16).substring(2)
         }
         // Main
+        this.headerNode.appendChild(this.countNode)
         this.headerNode.appendChild(this.buttonNode)
+        // Socket
+        this.socket = new WebSocket(makeSocketURL('/api/v1/client/'))
+        this.socket.onmessage = function(event) {
+            // Parse
+            const message = JSON.parse(event.data)
+            // Switch
+            switch (message.type) {
+                case 'count': {
+                    const count = message.data
+                    self.countNode.textContent = count + ' users online'
+                    break
+                }
+            }
+        }
     }
     show() {
         super.show()
@@ -36,7 +56,7 @@ class BrowseScreen extends BaseScreen {
                     const canvasNode = document.createElement('canvas')
                     // Info node
                     const infoNode = document.createElement('div')
-                    infoNode.textContent = live + ' live'
+                    infoNode.textContent = live + ' users live'
                     // Container node
                     const containerNode = document.createElement('div')
                     containerNode.appendChild(canvasNode)

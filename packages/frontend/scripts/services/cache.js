@@ -20,6 +20,7 @@ const files = [
     '../../styles/screens/paint.css',
     '../../scripts/main.js',
     '../../scripts/dependencies/qrcode.js',
+    '../../scripts/functions/socket.js',
     '../../scripts/functions/draw.js',
     '../../scripts/models/canvas.js',
     '../../scripts/models/client.js',
