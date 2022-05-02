@@ -66,6 +66,7 @@ function drawLine(context, line) {
         context.globalAlpha = alpha
         context.strokeStyle = color
         context.lineWidth = width
+        context.lineCap = 'round'
         // Paint
         context.stroke()
     }
