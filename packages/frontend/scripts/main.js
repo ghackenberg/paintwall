@@ -2,43 +2,38 @@
 
 const browseScreen = new BrowseScreen()
 const paintScreen = new PaintScreen()
+const errorScreen = new ErrorScreen()
 
 // FUNCTIONS
 
+/**
+ * Fired when the page was loaded.
+ */
 function handleLoad() {
     // Initialize
-    if (!location.hash.startsWith('#browse')) {
-        const hash = location.hash
-        history.replaceState(null, undefined, '#browse')
-        history.pushState(null, undefined, hash)
-    }
+    initializeHistory()
+    // Overwrite
+    overwriteHistoryPushState()
+    overwriteHistoryReplaceState()
     // Route
     route()
 }
 
-function handleHashChange() {
+/**
+ * Fired, e.g., when the back button is pressed
+ */
+function handlePopState() {
     // Route
     route()
-}
-
-function route() {
-    // Switch
-    if (location.hash.startsWith('#browse')) {
-        browseScreen.show()
-    } else if (location.hash.startsWith('#paint')) {
-        paintScreen.show()
-    } else {
-        location.hash = 'browse'
-    }
 }
 
 // CALLS
 
 // Service workers
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./scripts/services/cache.js', { scope: './' })
+    navigator.serviceWorker.register('/scripts/services/cache.js', { scope: '/' })
 }
 
 // Event listeners
 window.addEventListener('load', handleLoad)
-window.addEventListener('hashchange', handleHashChange)
+window.addEventListener('popstate', handlePopState)

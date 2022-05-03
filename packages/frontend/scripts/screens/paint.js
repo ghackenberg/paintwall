@@ -56,7 +56,7 @@ class PaintScreen extends BaseScreen {
         // Node
         super.show()
         // Canvas id
-        const canvasId = location.hash.substring(location.hash.indexOf('/') + 1)
+        const canvasId = location.pathname.substring(location.pathname.lastIndexOf('/') + 1)
         // QR-Code model
         this.qrcodeModel.clear()
         this.qrcodeModel.makeCode(location.href)

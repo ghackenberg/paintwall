@@ -15,7 +15,7 @@ class BrowseScreen extends BaseScreen {
         this.createNode.id = 'create'
         this.createNode.textContent = 'New canvas'
         this.createNode.onclick = function() {
-            location.hash = 'paint/' + Math.random().toString(16).substring(2)
+            history.pushState(null, undefined, '/canvas/' + Math.random().toString(16).substring(2))
         }
         // Main
         this.headerNode.appendChild(this.countNode)
@@ -104,7 +104,7 @@ class BrowseScreen extends BaseScreen {
                     containerNode.appendChild(canvasNode)
                     containerNode.appendChild(liveNode)
                     containerNode.addEventListener('click', (event) => {
-                        location.hash = 'paint/' + canvasObject.canvasId
+                        history.pushState(null, undefined, '/canvas/' + canvasObject.canvasId)
                     })
                     // Main node
                     self.mainNode.appendChild(containerNode)

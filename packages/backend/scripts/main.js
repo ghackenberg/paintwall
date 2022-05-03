@@ -1,6 +1,7 @@
 import express from 'express'
 import ws from 'express-ws'
 import fs from 'fs'
+import path from 'path'
 
 const canvasObjectMapFile = 'database.json'
 
@@ -43,9 +44,8 @@ app.use((request, response, next) => {
     response.header('Service-Worker-Allowed', '/')
     next()
 })
-app.use(express.static('../frontend'))
 
-// Request handlers
+// Request handlers (API)
 
 app.get('/api/v1/canvas/', (request, response) => {
     const result = []
@@ -70,7 +70,7 @@ app.get('/api/v1/canvas/:canvas', (request, response) => {
     }
 })
 
-// Socket handlers
+// Socket handlers (API)
 
 function broadcast(sockets, message) {
     // String
@@ -255,6 +255,24 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
             broadcast(Object.values(clientSocketMap), message)
         }
     })
+})
+
+// Request handlers (frontend)
+
+app.get('/images/*', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url))
+})
+app.get('/styles/*', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url))
+})
+app.get('/scripts/*', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url))
+})
+app.get('/manifest.json', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url))
+})
+app.get('/*', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', 'index.html'))
 })
 
 // Listen

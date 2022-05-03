@@ -1,0 +1,36 @@
+function initializeHistory() {
+    if (location.pathname.startsWith('/canvas/')) {
+        // Remember
+        const pathname = location.pathname
+        // Replace
+        history.replaceState(null, undefined, '/')
+        // Push
+        history.pushState(null, undefined, pathname)
+    } else if (location.pathname != '/') {
+        history.replaceState(null, undefined, '/')
+    }
+}
+
+function overwriteHistoryPushState() {
+    // Remember
+    const pushState = history.pushState
+    // Overwrite
+    history.pushState = function(data, unused, url) {
+        // Apply
+        pushState.apply(history, [data, unused, url])
+        // Route
+        route()
+    }
+}
+
+function overwriteHistoryReplaceState() {
+    // Remember
+    const replaceState = history.replaceState
+    // Overwrite
+    history.replaceState = function(data, unused, url) {
+        // Apply
+        replaceState.apply(history, [data, unused, url])
+        // Route
+        route()
+    }
+}
