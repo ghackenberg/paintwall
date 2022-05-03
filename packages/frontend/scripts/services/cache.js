@@ -16,6 +16,7 @@ const files = [
     '/images/icon-mono-512.png',
     '/styles/main.css',
     '/styles/screens/base.css',
+    '/styles/screens/error.css',
     '/styles/screens/browse.css',
     '/styles/screens/paint.css',
     '/scripts/main.js',

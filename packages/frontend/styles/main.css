@@ -1,4 +1,5 @@
 @import url(./screens/base.css);
+@import url(./screens/error.css);
 @import url(./screens/browse.css);
 @import url(./screens/paint.css);
 
