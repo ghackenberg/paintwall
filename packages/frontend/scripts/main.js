@@ -10,6 +10,10 @@ const errorScreen = new ErrorScreen()
  * Fired when the page was loaded.
  */
 function handleLoad() {
+    google.accounts.id.initialize({
+        client_id: "588185443061-bv71e7gfo3vhrivhe9ekuvafvsir3smp.apps.googleusercontent.com",
+        callback: () => { console.log(arguments) }
+    });
     // Initialize
     initializeHistory()
     // Overwrite

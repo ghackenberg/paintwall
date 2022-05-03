@@ -17,9 +17,13 @@ class BrowseScreen extends BaseScreen {
         this.createNode.onclick = function() {
             history.pushState(null, undefined, '/canvas/' + Math.random().toString(16).substring(2))
         }
+        // Google
+        this.googleNode = document.createElement('div')
+        this.googleNode.id = 'google'
         // Main
         this.headerNode.appendChild(this.countNode)
         this.headerNode.appendChild(this.createNode)
+        this.headerNode.appendChild(this.googleNode)
         // Connect
         this.connect()
     }
@@ -27,6 +31,8 @@ class BrowseScreen extends BaseScreen {
         super.show()
         // Load
         this.load()
+        // Google
+        google.accounts.id.renderButton(this.googleNode, { theme: "outline", size: "medium" })
     }
     hide() {
         super.hide()
