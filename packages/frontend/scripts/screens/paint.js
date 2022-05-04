@@ -24,6 +24,7 @@ class PaintScreen extends BaseScreen {
         // Handlers (resize)
         this.handleResize = this.handleResize.bind(this)
         // Handlers (mouse)
+        this.handleWheel = this.handleWheel.bind(this)
         this.handleMouseDown = this.handleMouseDown.bind(this)
         this.handleMouseMove = this.handleMouseMove.bind(this)
         this.handleMouseOver = this.handleMouseOver.bind(this)
@@ -37,6 +38,7 @@ class PaintScreen extends BaseScreen {
         // Nodes (canvas)
         this.canvasNode = document.createElement('canvas')
         this.canvasNode.id = 'canvas'
+        this.canvasNode.addEventListener('wheel', this.handleWheel)
         this.canvasNode.addEventListener('mousedown', this.handleMouseDown)
         this.canvasNode.addEventListener('mousemove', this.handleMouseMove)
         this.canvasNode.addEventListener('mouseover', this.handleMouseOver)
@@ -124,6 +126,10 @@ class PaintScreen extends BaseScreen {
         this.canvasNode.width = window.innerWidth
         this.canvasNode.height = window.innerHeight
         // Draw
+        this.canvasModel.draw()
+    }
+    handleWheel(event) {
+        this.canvasModel.zoom = Math.max(0.1, this.canvasModel.zoom * (1 - event.deltaY / 500))
         this.canvasModel.draw()
     }
     handleMouseDown(event) {

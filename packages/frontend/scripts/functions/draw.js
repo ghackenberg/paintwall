@@ -16,7 +16,10 @@ function drawGrid(canvas, context, center, zoom) {
     const cx = canvas.width / 2
     const cy = canvas.height / 2
     // Calculate delta
-    const delta = 50 * zoom
+    var delta = 50 * zoom
+    while (delta < 15) {
+        delta *= 5
+    }
     // Calculate steps
     const stepsX = Math.floor(cx / delta)
     const stepsY = Math.floor(cy / delta)
