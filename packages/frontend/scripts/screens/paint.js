@@ -1,13 +1,21 @@
 // CLASSES
 
 class PaintScreen extends BaseScreen {
+    // Static
+
+    static COLORS = ['mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'dodgerblue', 'gray', 'black']
+    static WIDTHS = [5.0]
+    static ALPHAS = [0.5]
+
+    // Non-static
+
     constructor() {
         super('paint')
         // Constants
         const name = undefined
-        const color = localStorage.getItem('color') || 'black'
-        const width = parseFloat(localStorage.getItem('width') || '5.0')
-        const alpha = parseFloat(localStorage.getItem('alpha') || '0.5')
+        const color = localStorage.getItem('color') || PaintScreen.COLORS[0]
+        const width = parseFloat(localStorage.getItem('width') || ('' + PaintScreen.WIDTHS[0]))
+        const alpha = parseFloat(localStorage.getItem('alpha') || ('' + PaintScreen.ALPHAS[0]))
         const position = undefined
         // States
         this.clientModel = new ClientModel(clientId, name, color, width, alpha, position)
@@ -36,18 +44,43 @@ class PaintScreen extends BaseScreen {
         this.canvasNode.addEventListener('touchstart', this.handleTouchStart)
         this.canvasNode.addEventListener('touchmove', this.handleTouchMove)
         this.canvasNode.addEventListener('touchend', this.handleTouchEnd)
+        // Nodes (back)
+        this.backNode = document.createElement('img')
+        this.backNode.id = 'back'
+        this.backNode.className = 'back'
+        this.backNode.src = base + '/images/back.png'
+        this.backNode.onclick = function() {
+            history.back()
+        }
         // Nodes (color)
-        this.colorNode = document.createElement('input')
+        this.colorNode = document.createElement('div')
         this.colorNode.id = 'color'
-        this.colorNode.type = 'color'
-        this.colorNode.value = this.clientModel.color
-        this.colorNode.addEventListener('change', this.handleChange)
+        // Nodes (colors)
+        this.colorNodes = {}
+        for (const otherColor of PaintScreen.COLORS) {
+            // Create
+            const colorNode = document.createElement('span')
+            // Update
+            colorNode.id = otherColor
+            colorNode.classList.add('color')
+            if (otherColor == color) {
+                colorNode.classList.add('active')
+            }
+            colorNode.style.backgroundColor = otherColor
+            colorNode.value = otherColor
+            colorNode.onclick = this.handleChange
+            // Remember
+            this.colorNodes[otherColor] = colorNode
+            // Append
+            this.colorNode.appendChild(colorNode)
+        }
         // Nodes (code)
         this.qrcodeNode = document.createElement('div')
         this.qrcodeNode.id = 'qrcode'
         // Nodes (main)
         this.mainNode.appendChild(this.qrcodeNode)
         this.mainNode.appendChild(this.canvasNode)
+        this.mainNode.appendChild(this.backNode)
         this.mainNode.appendChild(this.colorNode)
         // Models
         this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })
@@ -153,8 +186,12 @@ class PaintScreen extends BaseScreen {
         this.canvasModel.broadcast('out')
     }
     handleChange(event) {
+        // Deactivate
+        this.colorNodes[this.clientModel.color].classList.remove('active')
         // Update
         this.clientModel.color = event.target.value
+        // Activate
+        this.colorNodes[this.clientModel.color].classList.add('active')
         // Remember
         localStorage.setItem('color', this.clientModel.color)
         // Broadcast

@@ -27,11 +27,56 @@ body > #paint > main > #canvas {
     right: 0;
     bottom: 0;
 }
-body > #paint > main > #color {
+body > #paint > main > #back {
+    display: block;
+
     position: absolute;
 
     top: 1em;
     left: 1em;
+
+    width: 1em;
+    height: 1em;
+
+    padding: 1em;
+
+    border-radius: 1.5em;
+
+    background-color: white;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+}
+body > #paint > main > #color {
+    position: absolute;
+
+    top: 4em;
+    left: 1em;
+}
+body > #paint > main > #color > .color {
+    display: block;
+
+    margin: 0.5em;
+    margin-top: 1em;
+
+    width: 2em;
+    height: 2em;
+
+    border-radius: 1.5em;
+
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+}
+body > #paint > main > #color > .active {
+    margin: 0;
+    margin-top: 1em;
+
+    width: 3em;
+    height: 3em;
 }
 body > #paint > main > #qrcode {
     position: absolute;

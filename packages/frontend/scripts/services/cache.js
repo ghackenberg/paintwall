@@ -17,6 +17,7 @@ const files = [
     '/images/icon-mono-192.png',
     '/images/icon-mono-512.png',
     '/images/load.png',
+    '/images/back.png',
     '/styles/main.css',
     '/styles/screens/base.css',
     '/styles/screens/load.css',
