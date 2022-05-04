@@ -198,6 +198,9 @@ class PaintScreen extends BaseScreen {
         this.canvasModel.broadcast('color', this.clientModel.color)
     }
     startLine(x, y) {
+        // Unproject
+        x = (x - this.canvasNode.width / 2) / this.canvasModel.zoom + this.canvasModel.center.x
+        y = (y - this.canvasNode.height / 2) / this.canvasModel.zoom + this.canvasModel.center.y
         // Define
         const lineId = '' + Math.random().toString(16).substring(2)
         const color = this.clientModel.color
@@ -214,6 +217,9 @@ class PaintScreen extends BaseScreen {
     }
     continueLine(x, y) {
         if (this.lineModel) {
+            // Unproject
+            x = (x - this.canvasNode.width / 2) / this.canvasModel.zoom + this.canvasModel.center.x
+            y = (y - this.canvasNode.height / 2) / this.canvasModel.zoom + this.canvasModel.center.y
             // Define
             const point = { x, y }
             // Update

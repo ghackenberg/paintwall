@@ -1,38 +1,48 @@
 // FUNCTIONS
 
-function draw(canvas, lines, clients) {
+function draw(canvas, center, zoom, lines, clients) {
     // Context
     const context = canvas.getContext('2d')
     // Clear
     context.clearRect(0, 0, canvas.width, canvas.height)
     // Draw
-    drawGrid(canvas, context)
-    drawLines(context, lines)
-    drawClients(context, clients)
+    drawGrid(canvas, context, center, zoom)
+    drawLines(canvas, context, center, zoom, lines)
+    drawClients(canvas, context, center, zoom, clients)
 }
 
-function drawGrid(canvas, context) {
+function drawGrid(canvas, context, center, zoom) {
+    // Calculate center
+    const cx = canvas.width / 2
+    const cy = canvas.height / 2
+    // Calculate delta
+    const delta = 50 * zoom
+    // Calculate steps
+    const stepsX = Math.floor(cx / delta)
+    const stepsY = Math.floor(cy / delta)
     // Vertical lines
-    for (var x = 50; x < canvas.width; x += 50) {
+    for (var stepX = -stepsX; stepX <= +stepsX; stepX += 1) {
+        const x = cx + stepX * delta
         // Path
         context.beginPath()
         context.moveTo(x, 0)
         context.lineTo(x, canvas.height)
         // Style
-        context.globalAlpha = x % (50 * 5) ? 0.1 : 0.2
+        context.globalAlpha = stepX % 5 ? 0.1 : 0.2
         context.strokeStyle = 'black'
         context.lineWidth = 1
         // Paint
         context.stroke()
     }
     // Horizontal lines
-    for (var y = 50; y < canvas.height; y += 50) {
+    for (var stepY = -stepsY; stepY <= stepsY; stepY += 1) {
+        const y = cy + stepY * delta
         // Path
         context.beginPath()
         context.moveTo(0, y)
         context.lineTo(canvas.width, y)
         // Style
-        context.globalAlpha = y % (50 * 5) ? 0.1 : 0.2
+        context.globalAlpha = stepY % 5 ? 0.1 : 0.2
         context.strokeStyle = 'black'
         context.lineWidth = 1
         // Paint
@@ -40,13 +50,13 @@ function drawGrid(canvas, context) {
     }
 }
 
-function drawLines(context, lines) {
+function drawLines(canvas, context, center, zoom, lines) {
     for (const line of Object.values(lines)) {
-        drawLine(context, line)
+        drawLine(canvas, context, center, zoom, line)
     }
 }
 
-function drawLine(context, line) {
+function drawLine(canvas, context, center, zoom, line) {
     // Extract
     const points = line.points
     const color = line.color
@@ -57,28 +67,28 @@ function drawLine(context, line) {
         // Path
         context.beginPath()
         const first = points[0]
-        context.moveTo(first.x, first.y)
+        context.moveTo(projectX(canvas, center, zoom, first.x), projectY(canvas, center, zoom, first.y))
         for (var innerIndex = 1; innerIndex < points.length; innerIndex++) {
             const next = points[innerIndex]
-            context.lineTo(next.x, next.y)
+            context.lineTo(projectX(canvas, center, zoom, next.x), projectY(canvas, center, zoom, next.y))
         }
         // Style
         context.globalAlpha = alpha
         context.strokeStyle = color
-        context.lineWidth = width
+        context.lineWidth = width * zoom
         context.lineCap = 'round'
         // Paint
         context.stroke()
     }
 }
 
-function drawClients(context, clients) {
+function drawClients(canvas, context, center, zoom, clients) {
     for (const client of Object.values(clients)) {
-        drawClient(context, client)
+        drawClient(canvas, context, center, zoom, client)
     }
 }
 
-function drawClient(context, client) {
+function drawClient(canvas, context, center, zoom, client) {
     // Extract
     const name = client.name
     const color = client.color
@@ -89,7 +99,7 @@ function drawClient(context, client) {
     if (position) {
         // Circle
         context.beginPath()
-        context.arc(position.x, position.y, 10, 0, Math.PI * 2)
+        context.arc(projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y), 10 * zoom, 0, Math.PI * 2)
         context.globalAlpha = 0.25
         context.fillStyle = color
         context.fill()
@@ -98,6 +108,18 @@ function drawClient(context, client) {
         context.textBaseline = 'middle'
         context.globalAlpha = 0.75
         context.fillStyle = 'black'
-        context.fillText(name, position.x, position.y)
+        context.fillText(name, projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y))
     }
+}
+
+function projectX(canvas, center, zoom, x) {
+    const cx = canvas.width / 2
+    const dx = x - center.x
+    return cx + dx * zoom
+}
+
+function projectY(canvas, center, zoom, y) {
+    const cy = canvas.height / 2
+    const dy = y - center.y
+    return cy + dy * zoom
 }

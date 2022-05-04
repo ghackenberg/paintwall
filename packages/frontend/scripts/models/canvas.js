@@ -9,6 +9,41 @@ class CanvasModel {
         this.clients = clients || {}
         this.lines = lines || {}
         this.socket = null
+        this.updateCenter()
+        this.updateZoom()
+    }
+    updateCenter() {
+        if (this.coordinates) {
+            if (this.coordinates.x.min != Number.MAX_VALUE) {
+                const dx = this.coordinates.x.max - this.coordinates.x.min
+                const dy = this.coordinates.y.max - this.coordinates.y.min
+    
+                const cx = this.coordinates.x.min + dx / 2
+                const cy = this.coordinates.y.min + dy / 2
+    
+                this.center = { x: cx, y: cy }
+            } else {
+                const cx = this.canvasNode.width / 2
+                const cy = this.canvasNode.height / 2
+
+                this.center = { x: cx, y: cy }
+            }
+        }
+    }
+    updateZoom() {
+        if (this.coordinates) {
+            if (this.coordinates.x.min != Number.MAX_VALUE) {
+                const dx = (this.coordinates.x.max - this.coordinates.x.min) * 1.2
+                const dy = (this.coordinates.y.max - this.coordinates.y.min) * 1.2
+
+                const width = this.canvasNode.width
+                const height = this.canvasNode.height
+                
+                this.zoom = Math.min(1, width / dx, height / dy)
+            } else {
+                this.zoom = 1
+            }
+        }
     }
     connect(client) {
         this.reconnect = true
@@ -150,6 +185,9 @@ class CanvasModel {
                 case 'coordinates': {
                     this.coordinates = message.data
 
+                    this.updateCenter()
+                    this.updateZoom()
+
                     break
                 }
                 case 'client': {
@@ -213,8 +251,8 @@ class CanvasModel {
         }
     }
     draw() {
-        if (this.coordinates) {
-            draw(this.canvasNode, this.lines, this.clients)
+        if (this.center && this.zoom) {
+            draw(this.canvasNode, this.center, this.zoom, this.lines, this.clients)
         }
     }
 }

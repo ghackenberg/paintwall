@@ -30,25 +30,24 @@ const canvasObjectMap = loadCanvasObjectMap()
 // Reset clients
 for (const canvasObject of Object.values(canvasObjectMap)) {
     // Initialize coordinates
-    if (!canvasObject.coordinates) {
-        const min = Number.MAX_VALUE
-        const max = Number.MIN_VALUE
+    const min = Number.MAX_VALUE
+    const max = Number.MIN_VALUE
 
-        const x = { min, max }
-        const y = { min, max }
+    const x = { min, max }
+    const y = { min, max }
 
-        for (const line of Object.values(canvasObject.lines)) {
-            for (const point of line.points) {
-                x.min = Math.min(x.min, point.x)
-                x.max = Math.max(x.max, point.x)
+    for (const line of Object.values(canvasObject.lines)) {
+        for (const point of line.points) {
+            x.min = Math.min(x.min, point.x)
+            x.max = Math.max(x.max, point.x)
 
-                y.min = Math.min(y.min, point.y)
-                y.max = Math.max(y.max, point.y)
-            }
+            y.min = Math.min(y.min, point.y)
+            y.max = Math.max(y.max, point.y)
         }
-
-        canvasObject.coordinates = { x, y }
     }
+
+    canvasObject.coordinates = { x, y }
+    
     // Initialize clients
     canvasObject.clients = {}
 }
