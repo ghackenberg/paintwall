@@ -41,15 +41,6 @@ body > div.screen > header > #logo {
     background-position: left center;
 }
 
-/* Main */
-
-body > div.screen > main {
-    position: relative;
-
-    min-width: 100%;
-    min-height: 100%;
-}
-
 /* Footer */
 
 body > div.screen > footer {

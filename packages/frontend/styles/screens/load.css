@@ -1,5 +1,12 @@
 /* Main */
 
+body > #load > main {
+    position: relative;
+
+    min-width: 100%;
+    min-height: 100%;
+}
+
 body > #load > main > #image {
     display: block;
 
