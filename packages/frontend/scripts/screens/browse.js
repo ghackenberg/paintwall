@@ -125,6 +125,8 @@ class BrowseScreen extends BaseScreen {
                 for (const canvasObject of canvasObjects.reverse()) {
                     // Extract information
                     const canvasId = canvasObject.canvasId
+                    const timestamps = canvasObject.timestamps
+                    const coordinates = canvasObject.coordinates
                     const clients = canvasObject.clients
                     const lines = canvasObject.lines
                     const live = Object.entries(clients).length
@@ -143,7 +145,7 @@ class BrowseScreen extends BaseScreen {
                     // Main node
                     self.mainNode.appendChild(containerNode)
                     // Canvas model
-                    const canvasModel = new CanvasModel(canvasNode, canvasId, clients, lines)
+                    const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, coordinates, clients, lines)
                     canvasModel.draw()
                     // Update state
                     self.canvasModels.push(canvasModel)

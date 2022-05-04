@@ -29,6 +29,27 @@ const canvasObjectMap = loadCanvasObjectMap()
 
 // Reset clients
 for (const canvasObject of Object.values(canvasObjectMap)) {
+    // Initialize coordinates
+    if (!canvasObject.coordinates) {
+        const min = Number.MAX_VALUE
+        const max = Number.MIN_VALUE
+
+        const x = { min, max }
+        const y = { min, max }
+
+        for (const line of Object.values(canvasObject.lines)) {
+            for (const point of line.points) {
+                x.min = Math.min(x.min, point.x)
+                x.max = Math.max(x.max, point.x)
+
+                y.min = Math.min(y.min, point.y)
+                y.max = Math.max(y.max, point.y)
+            }
+        }
+
+        canvasObject.coordinates = { x, y }
+    }
+    // Initialize clients
     canvasObject.clients = {}
 }
 
@@ -124,12 +145,22 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
 
     // Create canvas object
     if (!(canvasId in canvasObjectMap)) {
+        // Create canvas object data
+        const created = Date.now()
+        const updated = Date.now()
+        const min = Number.MAX_VALUE
+        const max = Number.MIN_VALUE
+        const x = { min, max }
+        const y = { min, max }
+
         // Create canvas object information
-        const timestamps = { created: Date.now(), updated: Date.now() }
+        const timestamps = { created, updated }
+        const coordinates = { x, y }
         const clients = {}
         const lines = {}
+
         // Create canvas object
-        canvasObjectMap[canvasId] = { canvasId, timestamps, clients, lines }
+        canvasObjectMap[canvasId] = { canvasId, timestamps, coordinates, clients, lines }
 
         // Message
         const message = { type: 'canvas', data: canvasId }
@@ -140,86 +171,107 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     // Retrieve canvas object
     const canvasObject = canvasObjectMap[canvasId]
 
+    // Retrieve canvas object information
+    const timestamps = canvasObject.timestamps
+    const coordinates = canvasObject.coordinates
+    const clients = canvasObject.clients
+    const lines = canvasObject.lines
+
+    // Retrieve canvas object data
+    const x = coordinates.x
+    const y = coordinates.y
+
     // Remember client
-    canvasObject.clients[clientId] = { clientId, name: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
+    clients[clientId] = { clientId, name: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
+
+    // Synchronize timestamp and coordinate data
+    socket.send(JSON.stringify({ type: 'timestamps', data: timestamps}))
+    socket.send(JSON.stringify({ type: 'coordinates', data: coordinates}))
     
     // Synchronize client and line data
-    for (const client of Object.values(canvasObject.clients)) {
+    for (const client of Object.values(clients)) {
         socket.send(JSON.stringify({ type: 'client', data: client }))
     }
-    for (const line of Object.values(canvasObject.lines)) {
+    for (const line of Object.values(lines)) {
         socket.send(JSON.stringify({ type: 'line', data: line }))
     }
 
     // Message
-    const message = { type: 'live', data: { canvasId, count: Object.entries(canvasObject.clients).length } }
+    const message = { type: 'live', data: { canvasId, count: Object.entries(clients).length } }
     // Broadcast
     broadcast(Object.values(clientSocketMap), message)
 
     // Handle
     socket.on('message', (data) => {
         // Timestamp
-        canvasObject.timestamps.updated = Date.now()
+        timestamps.updated = Date.now()
         // Message
         const message = { clientId, ...JSON.parse(data) }
         // Remember
         switch (message.type) {
             case 'join': {
-                if (clientId in canvasObject.clients) {
-                    canvasObject.clients[clientId].name = message.data.name
-                    canvasObject.clients[clientId].color = message.data.color
-                    canvasObject.clients[clientId].width = message.data.width
-                    canvasObject.clients[clientId].alpha = message.data.alpha
-                    canvasObject.clients[clientId].position = message.data.position
+                if (clientId in clients) {
+                    clients[clientId].name = message.data.name
+                    clients[clientId].color = message.data.color
+                    clients[clientId].width = message.data.width
+                    clients[clientId].alpha = message.data.alpha
+                    clients[clientId].position = message.data.position
                 }
                 break
             }
             case 'move': {
-                if (clientId in canvasObject.clients) {
-                    canvasObject.clients[clientId].position = message.data
+                if (clientId in clients) {
+                    clients[clientId].position = message.data
                 }
                 break
             }
             case 'out': {
-                if (clientId in canvasObject.clients) {
-                    canvasObject.clients[clientId].position = undefined
+                if (clientId in clients) {
+                    clients[clientId].position = undefined
                 }
                 break
             }
             case 'over': {
-                if (clientId in canvasObject.clients) {
+                if (clientId in clients) {
                     canvasObject.clients[clientId].position = message.data
                 }
                 break
             }
             case 'color': {
-                if (clientId in canvasObject.clients) {
-                    canvasObject.clients[clientId].color = message.data
+                if (clientId in clients) {
+                    clients[clientId].color = message.data
                 }
                 break
             }
             case 'width': {
-                if (clientId in canvasObject.clients) {
-                    canvasObject.clients[clientId].width = message.data
+                if (clientId in clients) {
+                    clients[clientId].width = message.data
                 }
                 break
             }
             case 'alpha': {
-                if (clientId in canvasObject.clients) {
-                    canvasObject.clients[clientId].alpha = message.data
+                if (clientId in clients) {
+                    clients[clientId].alpha = message.data
                 }
                 break
             }
             case 'start': {
                 const clientId = message.clientId
                 const lineId = message.data.lineId
-                const points = [message.data.point]
+                const point = message.data.point
+                const points = [point]
 
-                const color = canvasObject.clients[clientId].color
-                const width = canvasObject.clients[clientId].width
-                const alpha = canvasObject.clients[clientId].alpha
+                const color = clients[clientId].color
+                const width = clients[clientId].width
+                const alpha = clients[clientId].alpha
 
-                canvasObject.lines[lineId] = { lineId, clientId, color, width, alpha, points }
+                lines[lineId] = { lineId, clientId, color, width, alpha, points }
+
+                x.min = Math.min(x.min, point.x)
+                x.max = Math.max(x.max, point.x)
+
+                y.min = Math.min(y.min, point.y)
+                y.max = Math.max(y.max, point.y)
 
                 break
             }
@@ -227,8 +279,14 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                 const lineId = message.data.lineId
                 const point = message.data.point
 
-                if (lineId in canvasObject.lines) {
-                    canvasObject.lines[lineId].points.push(point)
+                if (lineId in lines) {
+                    lines[lineId].points.push(point)
+
+                    x.min = Math.min(x.min, point.x)
+                    x.max = Math.max(x.max, point.x)
+    
+                    y.min = Math.min(y.min, point.y)
+                    y.max = Math.max(y.max, point.y)
                 }
                 
                 break
@@ -241,7 +299,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         // Remove socket
         delete canvasSocket[clientId]
         // Remove client
-        delete canvasObject.clients[clientId]
+        delete clients[clientId]
         // Local broadcast
         {
             // Message
@@ -252,7 +310,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         // Global broadcast
         {
             // Message
-            const message = { type: 'live', data: { canvasId, count: Object.entries(canvasObject.clients).length } }
+            const message = { type: 'live', data: { canvasId, count: Object.entries(clients).length } }
             // Broadcast
             broadcast(Object.values(clientSocketMap), message)
         }

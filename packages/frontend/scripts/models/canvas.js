@@ -1,9 +1,11 @@
 // CLASSES
 
 class CanvasModel {
-    constructor(canvasNode, canvasId, clients, lines) {
+    constructor(canvasNode, canvasId, timestamps, coordinates, clients, lines) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
+        this.timestamps = timestamps
+        this.coordinates = coordinates
         this.clients = clients || {}
         this.lines = lines || {}
         this.socket = null
@@ -116,6 +118,12 @@ class CanvasModel {
 
                     this.lines[lineId] = new LineModel(lineId, clientId, color, width, alpha, [point])
 
+                    this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                    this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+
+                    this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                    this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
+
                     break
                 }
                 case 'continue': {
@@ -124,7 +132,23 @@ class CanvasModel {
 
                     if (lineId in this.lines) {
                         this.lines[lineId].points.push(point)
+
+                        this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                        this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+    
+                        this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                        this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
                     }
+
+                    break
+                }
+                case 'timestamps': {
+                    this.timestamps = message.data
+
+                    break
+                }
+                case 'coordinates': {
+                    this.coordinates = message.data
 
                     break
                 }
@@ -189,6 +213,8 @@ class CanvasModel {
         }
     }
     draw() {
-        draw(this.canvasNode, this.lines, this.clients)
+        if (this.coordinates) {
+            draw(this.canvasNode, this.lines, this.clients)
+        }
     }
 }
