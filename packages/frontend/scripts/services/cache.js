@@ -16,8 +16,10 @@ const files = [
     '/images/icon-mono-128.png',
     '/images/icon-mono-192.png',
     '/images/icon-mono-512.png',
+    '/images/load.png',
     '/styles/main.css',
     '/styles/screens/base.css',
+    '/styles/screens/load.css',
     '/styles/screens/error.css',
     '/styles/screens/browse.css',
     '/styles/screens/paint.css',
@@ -32,6 +34,7 @@ const files = [
     '/scripts/models/client.js',
     '/scripts/models/line.js',
     '/scripts/screens/base.js',
+    '/scripts/screens/load.js',
     '/scripts/screens/error.js',
     '/scripts/screens/browse.js',
     '/scripts/screens/paint.js'

@@ -1,4 +1,5 @@
 @import url(./screens/base.css);
+@import url(./screens/load.css);
 @import url(./screens/error.css);
 @import url(./screens/browse.css);
 @import url(./screens/paint.css);
@@ -8,6 +9,22 @@ body {
     user-select: none;
     font-family: sans-serif;
     line-height: 100%;
+}
+
+@keyframes rotation {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+img.load {
+    animation-name: rotation;
+    animation-duration: 2s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
 }
 
 *.button {

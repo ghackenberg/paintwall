@@ -2,9 +2,12 @@
 
 const base = '/paintwall'
 
+const loadScreen = new LoadScreen()
+const errorScreen = new ErrorScreen()
 const browseScreen = new BrowseScreen()
 const paintScreen = new PaintScreen()
-const errorScreen = new ErrorScreen()
+
+loadScreen.show()
 
 // VARIABLES
 
