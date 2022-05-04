@@ -12,40 +12,44 @@ function draw(canvas, center, zoom, lines, clients) {
 }
 
 function drawGrid(canvas, context, center, zoom) {
-    // Calculate center
-    const cx = canvas.width / 2
-    const cy = canvas.height / 2
-    // Calculate delta
-    var delta = 50 * zoom
-    while (delta < 15) {
+    var delta = 1
+    while (delta * zoom > 15) {
+        delta /= 5
+    }
+    while (delta * zoom < 15) {
         delta *= 5
     }
-    // Calculate steps
-    const stepsX = Math.floor(cx / delta)
-    const stepsY = Math.floor(cy / delta)
+    const width = canvas.width / zoom
+    const height = canvas.height / zoom
+    const x0 = center.x - width / 2
+    const y0 = center.y - height / 2
+    const sx = Math.floor(x0 / delta) * delta
+    const sy = Math.floor(y0 / delta) * delta
+    const stepsX = width / delta
+    const stepsY = height / delta
     // Vertical lines
-    for (var stepX = -stepsX; stepX <= +stepsX; stepX += 1) {
-        const x = cx + stepX * delta
+    for (var stepX = 0; stepX < stepsX; stepX += 1) {
+        const x = projectX(canvas, center, zoom, sx + stepX * delta)
         // Path
         context.beginPath()
         context.moveTo(x, 0)
         context.lineTo(x, canvas.height)
         // Style
-        context.globalAlpha = stepX % 5 ? 0.1 : 0.2
+        context.globalAlpha = (sx + stepX * delta) % (delta * 5) ? 0.1 : 0.2
         context.strokeStyle = 'black'
         context.lineWidth = 1
         // Paint
         context.stroke()
     }
     // Horizontal lines
-    for (var stepY = -stepsY; stepY <= stepsY; stepY += 1) {
-        const y = cy + stepY * delta
+    for (var stepY = 0; stepY < stepsY; stepY += 1) {
+        const y = projectY(canvas, center, zoom, sy + stepY * delta)
         // Path
         context.beginPath()
         context.moveTo(0, y)
         context.lineTo(canvas.width, y)
         // Style
-        context.globalAlpha = stepY % 5 ? 0.1 : 0.2
+        context.globalAlpha = (sy + stepY * delta) % (delta * 5) ? 0.1 : 0.2
         context.strokeStyle = 'black'
         context.lineWidth = 1
         // Paint
@@ -78,7 +82,9 @@ function drawLine(canvas, context, center, zoom, line) {
         // Style
         context.globalAlpha = alpha
         context.strokeStyle = color
-        context.lineWidth = width * zoom
+        //context.shadowColor = color
+        //context.shadowBlur = width// * 2 * zoom
+        context.lineWidth = width// * zoom
         context.lineCap = 'round'
         // Paint
         context.stroke()

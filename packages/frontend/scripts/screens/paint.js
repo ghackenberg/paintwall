@@ -129,7 +129,28 @@ class PaintScreen extends BaseScreen {
         this.canvasModel.draw()
     }
     handleWheel(event) {
-        this.canvasModel.zoom = Math.max(0.1, this.canvasModel.zoom * (1 - event.deltaY / 500))
+        // Mouse
+        const mx = event.clientX
+        const my = event.clientY
+        // Center
+        const cx = this.canvasNode.width / 2
+        const cy = this.canvasNode.height / 2
+        // Zoom
+        const oldZoom = this.canvasModel.zoom
+        const newZoom = oldZoom * (1 - event.deltaY / 500)
+        // Old
+        const ox = (mx - cx) / oldZoom
+        const oy = (my - cy) / oldZoom
+        // New
+        const nx = (mx - cx) / newZoom
+        const ny = (my - cy) / newZoom
+        // Delta
+        const dx = nx - ox
+        const dy = ny - oy
+        // Canvas model
+        this.canvasModel.center.x -= dx
+        this.canvasModel.center.y -= dy
+        this.canvasModel.zoom = newZoom
         this.canvasModel.draw()
     }
     handleMouseDown(event) {
