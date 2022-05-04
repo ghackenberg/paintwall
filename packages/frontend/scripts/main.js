@@ -31,8 +31,7 @@ async function handleLoad() {
             history.replaceState(null, undefined, location.pathname)
         }
         // Retrieve user
-        user = await auth0.getUser()
-        console.log(user)      
+        user = await auth0.getUser()   
     } catch (error) {
         console.error(error)
     }
