@@ -4,9 +4,7 @@ This project contains a collaborative paint application. The application is impl
 
 ## Demos
 
-* [Demo-1 painting](https://iot.fh-wels.at/paintwall/canvas/demo-1)
-* [Demo-2 painting](https://iot.fh-wels.at/paintwall/canvas/demo-2)
-* [Demo-3 painting](https://iot.fh-wels.at/paintwall/canvas/demo-3)
+* https://iot.fh-wels.at/paintwall/
 
 ## Screenshots
 
