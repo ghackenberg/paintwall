@@ -36,6 +36,21 @@ body > #browse > header > #logout {
     cursor: pointer;
 }
 
+@media screen and (max-width: 35em) {
+    body > #browse > header > #count {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 25em) {
+    body > #browse > header > #login {
+        display: none;
+    }
+    body > #browse > header > #logout {
+        display: none;
+    }
+}
+
 /* Main */
 
 body > #browse > main {
