@@ -9,13 +9,35 @@ class BrowseScreen extends BaseScreen {
         // Count
         this.countNode = document.createElement('span')
         this.countNode.id = 'count'
-        this.countNode.textContent = '1 online'
+        this.countNode.className = 'button'
+        this.countNode.textContent = '0 online'
         // Button
         this.createNode = document.createElement('button')
         this.createNode.id = 'create'
+        this.createNode.className = 'button'
         this.createNode.textContent = 'New canvas'
         this.createNode.onclick = function() {
             history.pushState(null, undefined, base + '/canvas/' + Math.random().toString(16).substring(2))
+        }
+        // Login
+        this.loginNode = document.createElement('button')
+        this.loginNode.id = 'login'
+        this.loginNode.className = 'button'
+        this.loginNode.textContent = 'Login'
+        this.loginNode.onclick = async function() {
+            await auth0.loginWithRedirect({
+                redirect_uri: location.href
+            })
+        }
+        // Logout
+        this.logoutNode = document.createElement('button')
+        this.logoutNode.id = 'logout'
+        this.logoutNode.className = 'button'
+        this.logoutNode.textContent = 'Logout'
+        this.logoutNode.onclick = async function() {
+            await auth0.logout({
+                returnTo: location.href
+            })
         }
         // Main
         this.headerNode.appendChild(this.countNode)
@@ -25,11 +47,23 @@ class BrowseScreen extends BaseScreen {
     }
     show() {
         super.show()
+        // Append
+        if (user) {
+            this.headerNode.appendChild(this.logoutNode)
+        } else {
+            this.headerNode.appendChild(this.loginNode)
+        }
         // Load
         this.load()
     }
     hide() {
         super.hide()
+        // Remove header
+        if (user) {
+            this.headerNode.removeChild(this.logoutNode)
+        } else {
+            this.headerNode.removeChild(this.loginNode)
+        }
         // Clear main
         while (this.mainNode.firstChild) {
             this.mainNode.removeChild(this.mainNode.firstChild)

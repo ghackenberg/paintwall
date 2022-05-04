@@ -22,6 +22,7 @@ const files = [
     '/styles/screens/browse.css',
     '/styles/screens/paint.css',
     '/scripts/main.js',
+    '/scripts/dependencies/auth0.js',
     '/scripts/dependencies/qrcode.js',
     '/scripts/functions/route.js',
     '/scripts/functions/history.js',

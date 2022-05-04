@@ -7,55 +7,31 @@ body > #browse > header {
 }
 
 body > #browse > header > #count {
-    display: inline-block;
-
     margin-left: 1em;
 
-    border-width: 0;
-    border-radius: 1.5em;
-    
-    outline: 0;
-    
-    padding-top: 0;
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 0;
-
-    line-height: 2em;
-
     background-color: yellowgreen;
-    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
-
-    color: white;
-
-    font-weight: normal;
-
-    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
 }
 
 body > #browse > header > #create {
-    font-size: inherit;
-
     margin-left: 1em;
 
-    border-width: 0;
-    border-radius: 1.5em;
-    
-    outline: 0;
-    
-    padding-top: 0;
-    padding-left: 1em;
-    padding-right: 1em;
-    padding-bottom: 0;
-
-    line-height: 2em;
-
     background-color: tomato;
-    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
 
-    color: white;
+    cursor: pointer;
+}
 
-    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+body > #browse > header > #login {
+    margin-left: 1em;
+
+    background-color: steelblue;
+
+    cursor: pointer;
+}
+
+body > #browse > header > #logout {
+    margin-left: 1em;
+
+    background-color: steelblue;
 
     cursor: pointer;
 }
