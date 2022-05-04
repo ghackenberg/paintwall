@@ -1,6 +1,15 @@
-[{
-        "relation": ["delegate_permission/common.handle_all_urls"],
-        "target" : { "namespace": "android_app", "package_name": "at.fh_wels.iot.paintwall.twa",
-                     "sha256_cert_fingerprints": ["DC:D0:82:CB:F8:11:D8:7B:A8:60:27:87:7C:5B:7C:C3:6C:2A:34:38:DF:55:E9:06:D7:35:B2:79:4B:49:70:F2"] }
+[
+      {
+            "relation": [
+                  "delegate_permission/common.handle_all_urls"
+            ],
+            "target" : {
+                  "namespace": "android_app",
+                  "package_name": "at.fh_wels.iot.paintwall.twa",
+                  "sha256_cert_fingerprints": [
+                        "DC:D0:82:CB:F8:11:D8:7B:A8:60:27:87:7C:5B:7C:C3:6C:2A:34:38:DF:55:E9:06:D7:35:B2:79:4B:49:70:F2",
+                        "B9:44:BD:41:45:F2:D6:15:11:60:7C:A1:97:07:23:9F:46:F9:30:96:9C:22:51:11:84:48:CD:FC:97:F5:41:FF"
+                  ]
+            }
       }
 ]
