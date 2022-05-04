@@ -73,6 +73,8 @@ self.addEventListener('fetch', function(event) {
         event.respondWith(fetch(event.request))
     } else if (event.request.url.includes(base + '/api/')) {
         event.respondWith(fetch(event.request))
+    } else if (event.request.url.includes(base + '/.well-known/')) {
+        event.respondWith(fetch(event.request))
     } else if (event.request.url.includes(base + '/images/')) {
         event.respondWith(caches.match(event.request))
     } else if (event.request.url.includes(base + '/styles/')) {

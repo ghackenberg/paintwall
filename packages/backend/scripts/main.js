@@ -261,6 +261,9 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
 
 // Request handlers (frontend)
 
+app.get(base + '/.well-known/*', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url.substring(base.length)))
+})
 app.get(base + '/images/*', (request, response) => {
     response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url.substring(base.length)))
 })

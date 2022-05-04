@@ -1,0 +1,6 @@
+[{
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target" : { "namespace": "android_app", "package_name": "at.fh_wels.iot.paintwall.twa",
+                     "sha256_cert_fingerprints": ["DC:D0:82:CB:F8:11:D8:7B:A8:60:27:87:7C:5B:7C:C3:6C:2A:34:38:DF:55:E9:06:D7:35:B2:79:4B:49:70:F2"] }
+      }
+]
