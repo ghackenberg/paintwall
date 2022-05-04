@@ -1,3 +1,4 @@
 # PaintWall Screenshots
 
-TODO
+* [Phone](./phone/)
+* [Tablet](./tablet/)
