@@ -36,14 +36,6 @@ body > #browse > header > #logout {
     cursor: pointer;
 }
 
-body > #browse > header > #google {
-    display: inline-block;
-
-    vertical-align: middle;
-
-    margin-left: 1em;
-}
-
 /* Main */
 
 body > #browse > main {
