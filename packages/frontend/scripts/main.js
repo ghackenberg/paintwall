@@ -1,5 +1,7 @@
 // CONSTANTS
 
+const base = '/paintwall'
+
 const browseScreen = new BrowseScreen()
 const paintScreen = new PaintScreen()
 const errorScreen = new ErrorScreen()
@@ -10,10 +12,6 @@ const errorScreen = new ErrorScreen()
  * Fired when the page was loaded.
  */
 function handleLoad() {
-    google.accounts.id.initialize({
-        client_id: "588185443061-bv71e7gfo3vhrivhe9ekuvafvsir3smp.apps.googleusercontent.com",
-        callback: () => { console.log(arguments) }
-    });
     // Initialize
     initializeHistory()
     // Overwrite
@@ -35,7 +33,7 @@ function handlePopState() {
 
 // Service workers
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/scripts/services/cache.js', { scope: '/' })
+    navigator.serviceWorker.register(base + '/scripts/services/cache.js', { scope: base + '/' })
 }
 
 // Event listeners

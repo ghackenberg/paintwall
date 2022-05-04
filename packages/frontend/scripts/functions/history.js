@@ -1,13 +1,13 @@
 function initializeHistory() {
-    if (location.pathname.startsWith('/canvas/')) {
+    if (location.pathname.startsWith(base + '/canvas/')) {
         // Remember
         const pathname = location.pathname
         // Replace
-        history.replaceState(null, undefined, '/')
+        history.replaceState(null, undefined, base + '/')
         // Push
         history.pushState(null, undefined, pathname)
-    } else if (location.pathname != '/') {
-        history.replaceState(null, undefined, '/')
+    } else if (location.pathname != base + '/') {
+        history.replaceState(null, undefined, base + '/')
     }
 }
 

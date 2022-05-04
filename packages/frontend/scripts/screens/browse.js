@@ -15,15 +15,11 @@ class BrowseScreen extends BaseScreen {
         this.createNode.id = 'create'
         this.createNode.textContent = 'New canvas'
         this.createNode.onclick = function() {
-            history.pushState(null, undefined, '/canvas/' + Math.random().toString(16).substring(2))
+            history.pushState(null, undefined, base + '/canvas/' + Math.random().toString(16).substring(2))
         }
-        // Google
-        this.googleNode = document.createElement('div')
-        this.googleNode.id = 'google'
         // Main
         this.headerNode.appendChild(this.countNode)
         this.headerNode.appendChild(this.createNode)
-        this.headerNode.appendChild(this.googleNode)
         // Connect
         this.connect()
     }
@@ -31,8 +27,6 @@ class BrowseScreen extends BaseScreen {
         super.show()
         // Load
         this.load()
-        // Google
-        google.accounts.id.renderButton(this.googleNode, { theme: "outline", size: "medium" })
     }
     hide() {
         super.hide()
@@ -48,7 +42,7 @@ class BrowseScreen extends BaseScreen {
         // Self
         const self = this
         // Socket
-        this.socket = new WebSocket(makeSocketURL('/api/v1/client/'))
+        this.socket = new WebSocket(makeSocketURL(base + '/api/v1/client/'))
         this.socket.onmessage = function(event) {
             // Parse
             const message = JSON.parse(event.data)
@@ -110,7 +104,7 @@ class BrowseScreen extends BaseScreen {
                     containerNode.appendChild(canvasNode)
                     containerNode.appendChild(liveNode)
                     containerNode.addEventListener('click', (event) => {
-                        history.pushState(null, undefined, '/canvas/' + canvasObject.canvasId)
+                        history.pushState(null, undefined, base + '/canvas/' + canvasObject.canvasId)
                     })
                     // Main node
                     self.mainNode.appendChild(containerNode)
@@ -123,7 +117,7 @@ class BrowseScreen extends BaseScreen {
                 }
             }
         }
-        this.request.open('GET', '/api/v1/canvas/')
+        this.request.open('GET', base + '/api/v1/canvas/')
         this.request.send()
     }
 }

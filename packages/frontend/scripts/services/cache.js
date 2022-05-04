@@ -2,6 +2,8 @@
 
 const version = '0.0.1'
 
+const base = '/paintwall'
+
 const files = [
     '/',
     '/manifest.json',
@@ -51,7 +53,7 @@ function deleteCache(key) {
 // Set up
 
 function setUp() {
-    return caches.open(version).then(cache => cache.addAll(files))
+    return caches.open(version).then(cache => cache.addAll(files.map(file => base + file)))
 }
 
 // EXECUTIONS
@@ -64,17 +66,17 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', function(event) {
     if (event.request.url.startsWith('https')) {
         event.respondWith(fetch(event.request))
-    } else if (event.request.url.includes('/api/')) {
+    } else if (event.request.url.includes(base + '/api/')) {
         event.respondWith(fetch(event.request))
-    } else if (event.request.url.includes('/images/')) {
+    } else if (event.request.url.includes(base + '/images/')) {
         event.respondWith(caches.match(event.request))
-    } else if (event.request.url.includes('/styles/')) {
+    } else if (event.request.url.includes(base + '/styles/')) {
         event.respondWith(caches.match(event.request))
-    } else if (event.request.url.includes('/scripts/')) {
+    } else if (event.request.url.includes(base + '/scripts/')) {
         event.respondWith(caches.match(event.request))
-    } else if (event.request.url.includes('/manifest.json')) {
+    } else if (event.request.url.includes(base + '/manifest.json')) {
         event.respondWith(caches.match(event.request))
     } else {
-        event.respondWith(caches.match('/'))
+        event.respondWith(caches.match(base + '/'))
     }
 })

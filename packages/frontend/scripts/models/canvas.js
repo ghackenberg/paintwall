@@ -15,7 +15,7 @@ class CanvasModel {
             return
         }
 
-        this.socket = new WebSocket(makeSocketURL('/api/v1/canvas/' + this.canvasId + '/client/'))
+        this.socket = new WebSocket(makeSocketURL(base + '/api/v1/canvas/' + this.canvasId + '/client/'))
 
         this.socket.onopen = (event) => {
             this.broadcast('join', client)

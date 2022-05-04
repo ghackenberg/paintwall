@@ -34,6 +34,8 @@ for (const canvasObject of Object.values(canvasObjectMap)) {
 
 setInterval(saveCanvasObjectMap, 30000)
 
+const base = '/paintwall'
+
 const app = express()
 
 ws(app) // Enable WebSocket support
@@ -41,13 +43,13 @@ ws(app) // Enable WebSocket support
 // Middleware
 
 app.use((request, response, next) => {
-    response.header('Service-Worker-Allowed', '/')
+    response.header('Service-Worker-Allowed', base + '/')
     next()
 })
 
 // Request handlers (API)
 
-app.get('/api/v1/canvas/', (request, response) => {
+app.get(base + '/api/v1/canvas/', (request, response) => {
     const result = []
     // Convert database entries into array
     for (const canvasObject of Object.values(canvasObjectMap)) {
@@ -57,7 +59,7 @@ app.get('/api/v1/canvas/', (request, response) => {
     // Send array
     response.send(result.sort((a, b) => a.timestamps.created - b.timestamps.created))
 })
-app.get('/api/v1/canvas/:canvas', (request, response) => {
+app.get(base + '/api/v1/canvas/:canvas', (request, response) => {
     // Parse path parameter
     const canvasId = request.params.canvas
     // Check if canvas exists in database
@@ -81,7 +83,7 @@ function broadcast(sockets, message) {
     }
 }
 
-app.ws('/api/v1/client/:client', (socket, request) => {
+app.ws(base + '/api/v1/client/:client', (socket, request) => {
     // Extract path parameters
     const clientId = request.params.client
 
@@ -104,7 +106,7 @@ app.ws('/api/v1/client/:client', (socket, request) => {
         broadcast(Object.values(clientSocketMap), message)
     })
 })
-app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
+app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     // Extract path parameters
     const canvasId = request.params.canvas
     const clientId = request.params.client
@@ -259,20 +261,26 @@ app.ws('/api/v1/canvas/:canvas/client/:client', (socket, request) => {
 
 // Request handlers (frontend)
 
-app.get('/images/*', (request, response) => {
-    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url))
+app.get(base + '/images/*', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url.substring(base.length)))
 })
-app.get('/styles/*', (request, response) => {
-    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url))
+app.get(base + '/styles/*', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url.substring(base.length)))
 })
-app.get('/scripts/*', (request, response) => {
-    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url))
+app.get(base + '/scripts/*', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url.substring(base.length)))
 })
-app.get('/manifest.json', (request, response) => {
-    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url))
+app.get(base + '/manifest.json', (request, response) => {
+    response.sendFile(path.join(process.cwd(), '..', 'frontend', request.url.substring(base.length)))
 })
-app.get('/*', (request, response) => {
+app.get(base + '/*', (request, response) => {
     response.sendFile(path.join(process.cwd(), '..', 'frontend', 'index.html'))
+})
+
+// Request handlers (other)
+
+app.get('/*', (request, response) => {
+    response.redirect(base + request.url)
 })
 
 // Listen
