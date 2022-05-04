@@ -3,7 +3,7 @@
 class PaintScreen extends BaseScreen {
     // Static
 
-    static COLORS = ['mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'dodgerblue', 'gray', 'black']
+    static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
     static WIDTHS = [5.0]
     static ALPHAS = [0.5]
 
