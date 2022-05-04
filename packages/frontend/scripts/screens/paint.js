@@ -13,9 +13,9 @@ class PaintScreen extends BaseScreen {
         super('paint')
         // Constants
         const name = undefined
-        const color = localStorage.getItem('color') || PaintScreen.COLORS[0]
-        const width = parseFloat(localStorage.getItem('width') || ('' + PaintScreen.WIDTHS[0]))
-        const alpha = parseFloat(localStorage.getItem('alpha') || ('' + PaintScreen.ALPHAS[0]))
+        const color = PaintScreen.COLORS.includes(localStorage.getItem('color')) ? localStorage.getItem('color') : PaintScreen.COLORS[0]
+        const width = PaintScreen.WIDTHS.includes(parseFloat(localStorage.getItem('width'))) ? parseFloat(localStorage.getItem('width')) : PaintScreen.WIDTHS[0]
+        const alpha = PaintScreen.ALPHAS.includes(parseFloat(localStorage.getItem('alpha'))) ? parseFloat(localStorage.getItem('alpha')) : PaintScreen.ALPHAS[0]
         const position = undefined
         // States
         this.clientModel = new ClientModel(clientId, name, color, width, alpha, position)
