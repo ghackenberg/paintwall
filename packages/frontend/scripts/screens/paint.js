@@ -184,35 +184,47 @@ class PaintScreen extends BaseScreen {
 
     handleMouseDown(event) {
         event.preventDefault()
+        // Unproject
+        const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
+        const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
         // Call
-        this.startLine(event.clientX, event.clientY)
+        this.startLine(x, y)
     }
 
     handleMouseMove(event) {
         event.preventDefault()
+        // Unproject
+        const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
+        const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
         // Check
         if (event.buttons > 0) {
-            this.continueLine(event.clientX, event.clientY)
+            this.continueLine(x, y)
         }
         // Broadcast
-        this.canvasModel.broadcast('move', { x: event.clientX, y: event.clientY })
+        this.canvasModel.broadcast('move', { x, y })
     }
 
     handleMouseOver(event) {
         event.preventDefault()
+        // Unproject
+        const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
+        const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
         // Check
         if (event.buttons > 0) {
-            this.startLine(event.clientX, event.clientY)
+            this.startLine(x, y)
         }
         // Broadcast
-        this.canvasModel.broadcast('over', { x: event.clientX, y: event.clientY })
+        this.canvasModel.broadcast('over', { x, y })
     }
 
     handleMouseOut(event) {
         event.preventDefault()
+        // Unproject
+        const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
+        const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
         // Check
         if (event.buttons > 0) {
-            this.continueLine(event.clientX, event.clientY)
+            this.continueLine(x, y)
         }
         // Broadcast
         this.canvasModel.broadcast('out')
@@ -224,30 +236,52 @@ class PaintScreen extends BaseScreen {
         event.preventDefault()
         // Check
         if (event.touches.length == 1) {
-            this.startLine(event.touches[0].clientX, event.touches[0].clientY)
+            // Unproject
+            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
+            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+            // Start
+            this.startLine(x, y)
+            // Broadcast
+            this.canvasModel.broadcast('over', { x, y })
+        } else if (event.touches.length == 2) {
+            // Broadcast
+            this.canvasModel.broadcast('out')
         }
-        // Broadcast
-        this.canvasModel.broadcast('over', { x: event.touches[0].clientX, y: event.touches[0].clientY })
     }
 
     handleTouchMove(event) {
         event.preventDefault()
         // Check
         if (event.touches.length == 1) {
-            this.continueLine(event.touches[0].clientX, event.touches[0].clientY)
+            // Unproject
+            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
+            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+            // Continue
+            this.continueLine(x, y)
+            // Broadcast
+            this.canvasModel.broadcast('move', { x, y })
+        } else if (event.touches.length == 2) {
+            
         }
-        // Broadcast
-        this.canvasModel.broadcast('move', { x: event.touches[0].clientX, y: event.touches[0].clientY })
     }
 
     handleTouchEnd(event) {
         event.preventDefault()
         // Check
-        if (event.touches.length == 1) {
-            this.continueLine(event.touches[0].clientX, event.touches[0].clientY)
+        if (event.touches.length == 0) {
+            // Broadcast
+            this.canvasModel.broadcast('out')
+        } else if (event.touches.length == 1) {
+            // Unproject
+            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
+            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+            // Start
+            this.startLine(x, y)
+            // Broadcast
+            this.canvasModel.broadcast('over', { x, y })
+        } else if (event.touches.length == 2) {
+            
         }
-        // Broadcast
-        this.canvasModel.broadcast('out')
     }
 
     // Handlers (change)
@@ -268,9 +302,6 @@ class PaintScreen extends BaseScreen {
     // Line
 
     startLine(x, y) {
-        // Unproject
-        x = (x - this.canvasNode.width / 2) / this.canvasModel.zoom + this.canvasModel.center.x
-        y = (y - this.canvasNode.height / 2) / this.canvasModel.zoom + this.canvasModel.center.y
         // Define
         const lineId = '' + Math.random().toString(16).substring(2)
         const color = this.clientModel.color
@@ -288,9 +319,6 @@ class PaintScreen extends BaseScreen {
 
     continueLine(x, y) {
         if (this.lineModel) {
-            // Unproject
-            x = (x - this.canvasNode.width / 2) / this.canvasModel.zoom + this.canvasModel.center.x
-            y = (y - this.canvasNode.height / 2) / this.canvasModel.zoom + this.canvasModel.center.y
             // Define
             const point = { x, y }
             // Update

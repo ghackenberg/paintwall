@@ -154,3 +154,11 @@ function projectY(canvas, center, zoom, y) {
     // Return
     return cy + dy * zoom
 }
+
+function unprojectX(canvas, center, zoom, x) {
+    return (x - canvas.width / 2) / zoom + center.x
+}
+
+function unprojectY(canvas, center, zoom, y) {
+    return (y - canvas.height / 2) / zoom + center.y
+}
