@@ -61,6 +61,11 @@ class BrowseScreen extends BaseScreen {
         this.headerNode.appendChild(this.countNode)
         this.headerNode.appendChild(this.createNode)
 
+        // Copy
+        this.copyNode = document.createElement('span')
+        this.copyNode.id = 'copy'
+        this.copyNode.textContent = '© 2022 FHOÖ'
+
         // Data
         this.dataNode = document.createElement('a')
         this.dataNode.id = 'data'
@@ -78,6 +83,7 @@ class BrowseScreen extends BaseScreen {
         }
 
         // Footer
+        this.footerNode.appendChild(this.copyNode)
         this.footerNode.appendChild(this.dataNode)
         this.footerNode.appendChild(this.termsNode)
 

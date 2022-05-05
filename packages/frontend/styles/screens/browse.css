@@ -99,3 +99,17 @@ body > #browse > footer {
 
     background-image: linear-gradient(rgba(255,0,255,0), rgba(255,255,255,1) 25%, rgba(255,255,255,1));
 }
+
+body > #browse > footer > a {
+    cursor: pointer;
+
+    color: blue;
+}
+
+body > #browse > footer > a::before {
+    content: ' | ';
+
+    color: black;
+
+    cursor: default;
+}

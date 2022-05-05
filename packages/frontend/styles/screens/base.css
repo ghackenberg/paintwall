@@ -61,7 +61,3 @@ body > div.screen > footer {
 
     text-align: center;
 }
-
-body > div.screen > footer > a {
-    cursor: pointer;
-}
