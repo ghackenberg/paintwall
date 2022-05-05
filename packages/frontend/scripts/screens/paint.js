@@ -332,8 +332,8 @@ class PaintScreen extends BaseScreen {
                 const currentTouchLength = Math.sqrt(dx * dx + dy * dy)
                 // Update
                 this.canvasModel.zoom *= currentTouchLength / this.previousTouchLength
-                this.canvasModel.center.x += (currentTouchCenter.x - this.previousTouchCenter.x) / this.canvasModel.zoom
-                this.canvasModel.center.y += (currentTouchCenter.y - this.previousTouchCenter.y) / this.canvasModel.zoom
+                this.canvasModel.center.x -= (currentTouchCenter.x - this.previousTouchCenter.x) / this.canvasModel.zoom
+                this.canvasModel.center.y -= (currentTouchCenter.y - this.previousTouchCenter.y) / this.canvasModel.zoom
                 this.canvasModel.draw()
                 // Remember
                 this.previousTouchCenter = currentTouchCenter
