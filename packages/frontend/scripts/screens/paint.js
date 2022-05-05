@@ -210,7 +210,7 @@ class PaintScreen extends BaseScreen {
                 this.startLine(point)
             }
             // Broadcast
-            this.canvasModel.broadcast('move', point)
+            this.canvasModel.broadcast('client-pointer-move', point)
         }
     }
 
@@ -228,7 +228,7 @@ class PaintScreen extends BaseScreen {
                 this.startLine(point)
             }
             // Broadcast
-            this.canvasModel.broadcast('move', point)
+            this.canvasModel.broadcast('client-pointer-move', point)
         }
     }
 
@@ -246,7 +246,7 @@ class PaintScreen extends BaseScreen {
                 this.continueLine(point)
             }
             // Broadcast
-            this.canvasModel.broadcast('move', point)
+            this.canvasModel.broadcast('client-pointer-move', point)
         }
     }
 
@@ -264,7 +264,7 @@ class PaintScreen extends BaseScreen {
                 this.startLine(point)
             }
             // Broadcast
-            this.canvasModel.broadcast('over', point)
+            this.canvasModel.broadcast('client-pointer-over', point)
         }
     }
 
@@ -282,7 +282,7 @@ class PaintScreen extends BaseScreen {
                 this.continueLine(point)
             }
             // Broadcast
-            this.canvasModel.broadcast('out')
+            this.canvasModel.broadcast('client-pointer-out')
         }
     }
 
@@ -302,13 +302,13 @@ class PaintScreen extends BaseScreen {
                 // Start
                 this.previousTouches = [point]
                 // Broadcast
-                this.canvasModel.broadcast('over', point)
+                this.canvasModel.broadcast('client-pointer-over', point)
             } else {
                 if (this.lineModel) {
                     // Reset
                     this.lineModel = undefined
                     // Broadcast
-                    this.canvasModel.broadcast('out')
+                    this.canvasModel.broadcast('client-pointer-out')
                 }
                 if (event.touches.length == 2 || (event.ctrlKey && event.touches.length == 1)) {
                     // Prepare
@@ -350,7 +350,7 @@ class PaintScreen extends BaseScreen {
                     this.continueLine(point)
                 }
                 // Broadcast
-                this.canvasModel.broadcast('move', point)
+                this.canvasModel.broadcast('client-pointer-move', point)
             } else if (event.touches.length == 2 || (event.ctrlKey && event.touches.length == 1)) {
                 // Prepare
                 const x0 = event.touches[0].clientX
@@ -383,7 +383,7 @@ class PaintScreen extends BaseScreen {
                 // Reset
                 this.lineModel = undefined
                 // Broadcast
-                this.canvasModel.broadcast('out')
+                this.canvasModel.broadcast('client-pointer-out')
             }
             if (event.touches.length == 2 || (event.ctrlKey && event.touches.length == 1)) {
                 // Prepare
@@ -412,7 +412,7 @@ class PaintScreen extends BaseScreen {
         // Remember
         localStorage.setItem('color', this.clientModel.color)
         // Broadcast
-        this.canvasModel.broadcast('color', this.clientModel.color)
+        this.canvasModel.broadcast('client-color', this.clientModel.color)
     }
 
     // Line
@@ -429,7 +429,7 @@ class PaintScreen extends BaseScreen {
         this.canvasModel.lines[lineId] = this.lineModel
         this.canvasModel.draw()
         // Broadcast
-        this.canvasModel.broadcast('start', { lineId: this.lineModel.lineId, point })
+        this.canvasModel.broadcast('client-line-start', { lineId: this.lineModel.lineId, point })
     }
 
     continueLine(point) {
@@ -439,7 +439,7 @@ class PaintScreen extends BaseScreen {
             // Draw
             this.canvasModel.draw()
             // Broadcast
-            this.canvasModel.broadcast('continue', { lineId: this.lineModel.lineId, point })    
+            this.canvasModel.broadcast('client-line-continue', { lineId: this.lineModel.lineId, point })    
         }
     }
 }

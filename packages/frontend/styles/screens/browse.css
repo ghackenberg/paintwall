@@ -81,7 +81,7 @@ body > #browse > main > div > canvas {
 }
 
 body > #browse > main > div > div {
-    padding: 1em;
+    padding: 0.5em;
 
     border-top: 1px solid rgba(0,0,0,0.2);
     border-bottom-left-radius: 0.5em;
@@ -90,6 +90,55 @@ body > #browse > main > div > div {
     background-image: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.025), rgba(0,0,0,0.075));
 
     text-align: center;
+}
+
+body > #browse > main > div > div > div.count {
+    display: inline-block;
+}
+
+body > #browse > main > div > div > div.count > span {
+    display: inline-block;
+
+    margin-left: calc(1em / 3);
+    margin-right: calc(1em / 3);
+
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+
+    min-width: 1em;
+
+    line-height: 1.5em;
+
+    border-radius: 0.75em;
+
+    color: white;
+}
+
+body > #browse > main > div > div > div.count.client > span {
+    background-color: gray;
+}
+
+body > #browse > main > div > div > div.count.reaction > span {
+    background-color: gray;
+}
+
+body > #browse > main > div > div > div.count::after {
+    display: inline-block;
+
+    margin-left: calc(1em / 3);
+    margin-right: calc(1em / 3);
+}
+
+body > #browse > main > div > div > div.count.client::after {
+    content: 'clients';
+
+    color: gray;
+}
+
+body > #browse > main > div > div > div.count.reaction::after {
+    content: 'reactions';
+
+    color: gray;
 }
 
 /* Footer */

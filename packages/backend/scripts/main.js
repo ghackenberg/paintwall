@@ -116,7 +116,7 @@ app.ws(base + '/api/v1/client/:client', (socket, request) => {
     clientSocketMap[clientId] = socket
 
     // Message
-    const message = { type: 'online', data: Object.entries(clientSocketMap).length }
+    const message = { type: 'client-count', data: Object.entries(clientSocketMap).length }
     // Broadcast
     broadcast(Object.values(clientSocketMap), message)
 
@@ -126,7 +126,7 @@ app.ws(base + '/api/v1/client/:client', (socket, request) => {
         delete clientSocketMap[clientId]
 
         // Message
-        const message = { type: 'online', data: Object.entries(clientSocketMap).length }
+        const message = { type: 'client-count', data: Object.entries(clientSocketMap).length }
         // Broadcast
         broadcast(Object.values(clientSocketMap), message)
     })
@@ -168,7 +168,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         canvasObjectMap[canvasId] = { canvasId, timestamps, coordinates, reactions, clients, lines }
 
         // Message
-        const message = { type: 'canvas', data: canvasId }
+        const message = { type: 'canvas-create', data: canvasId }
         // Broadcast
         broadcast(Object.values(clientSocketMap), message)
     }
@@ -191,20 +191,20 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     clients[clientId] = { clientId, name: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
 
     // Synchronize timestamp and coordinate data
-    socket.send(JSON.stringify({ type: 'timestamps', data: timestamps}))
-    socket.send(JSON.stringify({ type: 'coordinates', data: coordinates}))
-    socket.send(JSON.stringify({ type: 'reactions', data: reactions}))
+    socket.send(JSON.stringify({ type: 'init-timestamps', data: timestamps}))
+    socket.send(JSON.stringify({ type: 'init-coordinates', data: coordinates}))
+    socket.send(JSON.stringify({ type: 'init-reactions', data: reactions}))
 
     // Synchronize client and line data
     for (const client of Object.values(clients)) {
-        socket.send(JSON.stringify({ type: 'client', data: client }))
+        socket.send(JSON.stringify({ type: 'init-client', data: client }))
     }
     for (const line of Object.values(lines)) {
-        socket.send(JSON.stringify({ type: 'line', data: line }))
+        socket.send(JSON.stringify({ type: 'init-line', data: line }))
     }
 
     // Message
-    const message = { type: 'live', data: { canvasId, count: Object.entries(clients).length } }
+    const message = { type: 'canvas-client-count', data: { canvasId, count: Object.entries(clients).length } }
     // Broadcast
     broadcast(Object.values(clientSocketMap), message)
 
@@ -216,7 +216,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         const message = { clientId, ...JSON.parse(data) }
         // Remember
         switch (message.type) {
-            case 'join': {
+            case 'client-enter': {
                 if (clientId in clients) {
                     clients[clientId].name = message.data.name
                     clients[clientId].color = message.data.color
@@ -226,43 +226,43 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                 }
                 break
             }
-            case 'move': {
+            case 'client-pointer-move': {
                 if (clientId in clients) {
                     clients[clientId].position = message.data
                 }
                 break
             }
-            case 'out': {
+            case 'client-pointer-out': {
                 if (clientId in clients) {
                     clients[clientId].position = undefined
                 }
                 break
             }
-            case 'over': {
+            case 'client-pointer-over': {
                 if (clientId in clients) {
                     canvasObject.clients[clientId].position = message.data
                 }
                 break
             }
-            case 'color': {
+            case 'client-color': {
                 if (clientId in clients) {
                     clients[clientId].color = message.data
                 }
                 break
             }
-            case 'width': {
+            case 'client-width': {
                 if (clientId in clients) {
                     clients[clientId].width = message.data
                 }
                 break
             }
-            case 'alpha': {
+            case 'client-alpha': {
                 if (clientId in clients) {
                     clients[clientId].alpha = message.data
                 }
                 break
             }
-            case 'start': {
+            case 'client-line-start': {
                 const clientId = message.clientId
                 const lineId = message.data.lineId
                 const point = message.data.point
@@ -282,7 +282,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
 
                 break
             }
-            case 'continue': {
+            case 'client-line-continue': {
                 const lineId = message.data.lineId
                 const point = message.data.point
 
@@ -298,7 +298,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                 
                 break
             }
-            case 'react': {
+            case 'client-react': {
                 const reaction = message.data
 
                 if (!(reaction in reactions)) {
@@ -307,7 +307,9 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                     reactions[reaction]++
                 }
 
-                broadcast(Object.values(clientSocketMap), { type: 'react', data: { canvasId, reaction, count: reactions[reaction] } })
+                const count = Object.values(reactions).reduce((a, b) => a + b, 0)
+
+                broadcast(Object.values(clientSocketMap), { type: 'canvas-reaction-count', data: { canvasId, count } })
 
                 break
             }
@@ -323,14 +325,14 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         // Local broadcast
         {
             // Message
-            const message = { clientId, type: 'leave' }
+            const message = { clientId, type: 'client-leave' }
             // Broadcast
             broadcast(Object.values(canvasSocket), message)
         }
         // Global broadcast
         {
             // Message
-            const message = { type: 'live', data: { canvasId, count: Object.entries(clients).length } }
+            const message = { type: 'canvas-client-count', data: { canvasId, count: Object.entries(clients).length } }
             // Broadcast
             broadcast(Object.values(clientSocketMap), message)
         }

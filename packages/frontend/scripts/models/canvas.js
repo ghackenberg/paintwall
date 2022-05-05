@@ -1,11 +1,12 @@
 // CLASSES
 
 class CanvasModel {
-    constructor(canvasNode, canvasId, timestamps, coordinates, clients, lines) {
+    constructor(canvasNode, canvasId, timestamps, coordinates, reactions, clients, lines) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
         this.timestamps = timestamps
         this.coordinates = coordinates
+        this.reactions = reactions || {}
         this.clients = clients || {}
         this.lines = lines || {}
         this.socket = null
@@ -55,14 +56,14 @@ class CanvasModel {
         this.socket = new WebSocket(makeSocketURL(base + '/api/v1/canvas/' + this.canvasId + '/client/'))
 
         this.socket.onopen = (event) => {
-            this.broadcast('join', client)
+            this.broadcast('client-enter', client)
         }
         this.socket.onmessage = (event) => {
             // Parse
             const message = JSON.parse(event.data)
             // Process
             switch (message.type) {
-                case 'join': {
+                case 'client-enter': {
                     const clientId = message.clientId
                     const name = message.data.name
                     const color = message.data.color
@@ -74,7 +75,7 @@ class CanvasModel {
 
                     break
                 }
-                case 'leave': {
+                case 'client-leave': {
                     const clientId = message.clientId
 
                     if (clientId in this.clients) {
@@ -83,7 +84,7 @@ class CanvasModel {
 
                     break
                 }
-                case 'move': {
+                case 'client-pointer-move': {
                     const clientId = message.clientId
                     const position = message.data
 
@@ -93,7 +94,7 @@ class CanvasModel {
 
                     break
                 }
-                case 'out': {
+                case 'client-pointer-out': {
                     const clientId = message.clientId
 
                     if (clientId in this.clients) {
@@ -102,7 +103,7 @@ class CanvasModel {
 
                     break
                 }
-                case 'over': {
+                case 'client-pointer-over': {
                     const clientId = message.clientId
                     const position = message.data
 
@@ -112,7 +113,7 @@ class CanvasModel {
 
                     break
                 }
-                case 'color': {
+                case 'client-color': {
                     const clientId = message.clientId
                     const color = message.data
                     
@@ -122,7 +123,7 @@ class CanvasModel {
                     
                     break
                 }
-                case 'width': {
+                case 'client-width': {
                     const clientId = message.clientId
                     const width = message.data
                     
@@ -132,7 +133,7 @@ class CanvasModel {
 
                     break
                 }
-                case 'alpha': {
+                case 'client-alpha': {
                     const clientId = message.clientId
                     const alpha = message.data
                     
@@ -142,7 +143,7 @@ class CanvasModel {
 
                     break
                 }
-                case 'start': {
+                case 'client-line-start': {
                     const clientId = message.clientId
                     const lineId = message.data.lineId
                     const point = message.data.point
@@ -161,7 +162,7 @@ class CanvasModel {
 
                     break
                 }
-                case 'continue': {
+                case 'client-line-continue': {
                     const lineId = message.data.lineId
                     const point = message.data.point
 
@@ -177,12 +178,23 @@ class CanvasModel {
 
                     break
                 }
-                case 'timestamps': {
+                case 'client-react': {
+                    const reaction = message.data
+
+                    if (!(reaction in this.reactions)) {
+                        this.reactions[reaction] = 1
+                    } else {
+                        this.reactions[reaction]++
+                    }
+
+                    break
+                }
+                case 'init-timestamps': {
                     this.timestamps = message.data
 
                     break
                 }
-                case 'coordinates': {
+                case 'init-coordinates': {
                     this.coordinates = message.data
 
                     this.updateCenter()
@@ -190,7 +202,12 @@ class CanvasModel {
 
                     break
                 }
-                case 'client': {
+                case 'init-reactions': {
+                    this.reactions = message.data
+
+                    break
+                }
+                case 'init-client': {
                     const clientId = message.data.clientId
                     const name = message.data.name
                     const color = message.data.color
@@ -202,7 +219,7 @@ class CanvasModel {
 
                     break
                 }
-                case 'line': {
+                case 'init-line': {
                     const lineId = message.data.lineId
                     const clientId = message.data.clientId
                     const color = message.data.color

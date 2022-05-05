@@ -7,7 +7,8 @@ class BrowseScreen extends BaseScreen {
 
     // Nodes
 
-    liveNodes = {}
+    clientCountNodes = {}
+    reactionCountNodes = {}
 
     // Constructor
 
@@ -118,7 +119,8 @@ class BrowseScreen extends BaseScreen {
         // Reset models
         this.canvasModels = []
         // Reset nodes
-        this.liveNodes = {}
+        this.clientCountNodes = {}
+        this.reactionCountNodes = {}
     }
 
     connect() {
@@ -131,20 +133,30 @@ class BrowseScreen extends BaseScreen {
             const message = JSON.parse(event.data)
             // Switch
             switch (message.type) {
-                case 'online': {
+                case 'client-count': {
                     const count = message.data
                     self.countNode.textContent = count + ' online'
                     break
                 }
-                case 'live': {
+                case 'canvas-client-count': {
                     const canvasId = message.data.canvasId
                     const count = message.data.count
-                    if (canvasId in self.liveNodes) {
-                        self.liveNodes[canvasId].textContent = count + ' live'
+                    if (canvasId in self.clientCountNodes) {
+                        self.clientCountNodes[canvasId].textContent = '' + count
                     }
                     break
                 }
-                case 'canvas': {
+                case 'canvas-reaction-count': {
+                    const canvasId = message.data.canvasId
+                    const count = message.data.count
+
+                    if (canvasId in self.reactionCountNodes) {
+                        self.reactionCountNodes[canvasId].textContent = '' + count
+                    }
+
+                    break
+                }
+                case 'canvas-create': {
                     const canvasId = message.data.canvasId
                     // TODO Show new canvas?
                     break
@@ -177,29 +189,61 @@ class BrowseScreen extends BaseScreen {
                     const canvasId = canvasObject.canvasId
                     const timestamps = canvasObject.timestamps
                     const coordinates = canvasObject.coordinates
+                    const reactions = canvasObject.reactions
                     const clients = canvasObject.clients
                     const lines = canvasObject.lines
-                    const live = Object.entries(clients).length
+
+                    // Calculate informaton
+                    const clientCount = Object.entries(clients).length
+                    const reactionCount = Object.values(reactions).reduce((a, b) => a + b, 0)
+
                     // Canvas node
                     const canvasNode = document.createElement('canvas')
+                    
+                    // Client count node
+                    const clientCountNode = document.createElement('span')
+                    clientCountNode.textContent = '' + clientCount
+                    
+                    // Reaction count node
+                    const reactionCountNode = document.createElement('span')
+                    reactionCountNode.textContent = '' + reactionCount
+
+                    // Client count container node
+                    const clientCountContainerNode = document.createElement('div')
+                    clientCountContainerNode.className = 'count client'
+                    clientCountContainerNode.appendChild(clientCountNode)
+
+                    // Reaction count container node
+                    const reactionCountContainerNode = document.createElement('div')
+                    reactionCountContainerNode.className = 'count reaction'
+                    reactionCountContainerNode.appendChild(reactionCountNode)
+                    
                     // Info node
-                    const liveNode = document.createElement('div')
-                    liveNode.textContent = live + ' live'
+                    const infoNode = document.createElement('div')
+                    infoNode.appendChild(clientCountContainerNode)
+                    infoNode.appendChild(reactionCountContainerNode)
+                    
                     // Container node
                     const containerNode = document.createElement('div')
                     containerNode.appendChild(canvasNode)
-                    containerNode.appendChild(liveNode)
+                    containerNode.appendChild(infoNode)
                     containerNode.addEventListener('click', (event) => {
                         history.pushState(null, undefined, base + '/canvas/' + canvasObject.canvasId)
                     })
+                    
                     // Main node
                     self.mainNode.appendChild(containerNode)
+                    
                     // Canvas model
-                    const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, coordinates, clients, lines)
+                    const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, coordinates, reactions, clients, lines)
                     canvasModel.draw()
-                    // Update state
+                    
+                    // Update models
                     self.canvasModels.push(canvasModel)
-                    self.liveNodes[canvasId] = liveNode
+
+                    // Update nodes
+                    self.clientCountNodes[canvasId] = clientCountNode
+                    self.reactionCountNodes[canvasId] = reactionCountNode
                 }
             }
         }
