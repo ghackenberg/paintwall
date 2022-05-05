@@ -112,13 +112,7 @@ class PaintScreen extends BaseScreen {
         this.qrcodeModel.clear()
         this.qrcodeModel.makeCode(location.href)
         // Client name
-        if (user) {
-            this.clientModel.name = user.nickname
-        } else {
-            this.clientModel.name = localStorage.getItem('name') || 'Anonymous'
-            this.clientModel.name = prompt("How do you want to be called?", this.clientModel.name) || 'Anonymous'
-            localStorage.setItem('name', this.clientModel.name)
-        }
+        this.clientModel.name = user ? user.nickname : 'Anonymous'
         // Canvas model
         this.canvasModel = new CanvasModel(this.canvasNode, canvasId)
         this.canvasModel.connect(this.clientModel)
