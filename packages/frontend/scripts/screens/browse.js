@@ -52,6 +52,7 @@ class BrowseScreen extends BaseScreen {
         // Connect
         this.connect()
     }
+
     show() {
         super.show()
         // Append
@@ -63,6 +64,7 @@ class BrowseScreen extends BaseScreen {
         // Load
         this.load()
     }
+
     hide() {
         super.hide()
         // Remove header
@@ -79,6 +81,7 @@ class BrowseScreen extends BaseScreen {
         this.canvasModels = []
         this.liveNodes = {}
     }
+
     connect() {
         // Self
         const self = this
@@ -118,6 +121,7 @@ class BrowseScreen extends BaseScreen {
             self.connect()
         }
     }
+    
     load() {
         // Self
         const self = this

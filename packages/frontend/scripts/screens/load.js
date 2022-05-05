@@ -11,9 +11,11 @@ class LoadScreen extends BaseScreen {
         // Main node
         this.mainNode.appendChild(this.imageNode)
     }
+
     show() {
         super.show()
     }
+    
     hide() {
         super.hide()
     }

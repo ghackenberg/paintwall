@@ -30,6 +30,7 @@ class BaseScreen {
         // Body
         document.body.appendChild(this.rootNode)
     }
+
     show() {
         // Hide previous active screen
         if (BaseScreen.ACTIVE) {
@@ -40,6 +41,7 @@ class BaseScreen {
         // Show own screen
         this.rootNode.style.display = 'block'
     }
+    
     hide() {
         // Hide own screen
         this.rootNode.style.display = 'none'

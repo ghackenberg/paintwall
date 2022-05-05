@@ -100,6 +100,9 @@ class PaintScreen extends BaseScreen {
         // Models
         this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })
     }
+
+    // Screen
+
     show() {
         // Node
         super.show()
@@ -124,6 +127,7 @@ class PaintScreen extends BaseScreen {
         // Window
         window.addEventListener('resize', this.handleResize)
     }
+
     hide() {
         // Node
         super.hide()
@@ -134,6 +138,9 @@ class PaintScreen extends BaseScreen {
         // Window
         window.removeEventListener('resize', this.handleResize)
     }
+
+    // Handlers (resize)
+
     handleResize() {
         // Resize
         this.canvasNode.width = window.innerWidth
@@ -141,6 +148,9 @@ class PaintScreen extends BaseScreen {
         // Draw
         this.canvasModel.draw()
     }
+
+    // Handlers (wheel)
+
     handleWheel(event) {
         // Mouse
         const mx = event.clientX
@@ -166,11 +176,15 @@ class PaintScreen extends BaseScreen {
         this.canvasModel.zoom = newZoom
         this.canvasModel.draw()
     }
+
+    // Handlers (mouse)
+
     handleMouseDown(event) {
         event.preventDefault()
         // Call
         this.startLine(event.clientX, event.clientY)
     }
+
     handleMouseMove(event) {
         event.preventDefault()
         // Check
@@ -180,6 +194,7 @@ class PaintScreen extends BaseScreen {
         // Broadcast
         this.canvasModel.broadcast('move', { x: event.clientX, y: event.clientY })
     }
+
     handleMouseOver(event) {
         event.preventDefault()
         // Check
@@ -189,6 +204,7 @@ class PaintScreen extends BaseScreen {
         // Broadcast
         this.canvasModel.broadcast('over', { x: event.clientX, y: event.clientY })
     }
+
     handleMouseOut(event) {
         event.preventDefault()
         // Check
@@ -198,6 +214,9 @@ class PaintScreen extends BaseScreen {
         // Broadcast
         this.canvasModel.broadcast('out')
     }
+
+    // Handler (touch)
+
     handleTouchStart(event) {
         event.preventDefault()
         // Check
@@ -207,6 +226,7 @@ class PaintScreen extends BaseScreen {
         // Broadcast
         this.canvasModel.broadcast('over', { x: event.touches[0].clientX, y: event.touches[0].clientY })
     }
+
     handleTouchMove(event) {
         event.preventDefault()
         // Check
@@ -216,6 +236,7 @@ class PaintScreen extends BaseScreen {
         // Broadcast
         this.canvasModel.broadcast('move', { x: event.touches[0].clientX, y: event.touches[0].clientY })
     }
+
     handleTouchEnd(event) {
         event.preventDefault()
         // Check
@@ -225,6 +246,9 @@ class PaintScreen extends BaseScreen {
         // Broadcast
         this.canvasModel.broadcast('out')
     }
+
+    // Handlers (change)
+
     handleChange(event) {
         // Deactivate
         this.colorNodes[this.clientModel.color].classList.remove('active')
@@ -237,6 +261,9 @@ class PaintScreen extends BaseScreen {
         // Broadcast
         this.canvasModel.broadcast('color', this.clientModel.color)
     }
+
+    // Line
+
     startLine(x, y) {
         // Unproject
         x = (x - this.canvasNode.width / 2) / this.canvasModel.zoom + this.canvasModel.center.x
@@ -255,6 +282,7 @@ class PaintScreen extends BaseScreen {
         // Broadcast
         this.canvasModel.broadcast('start', { lineId: this.lineModel.lineId, point })
     }
+
     continueLine(x, y) {
         if (this.lineModel) {
             // Unproject
