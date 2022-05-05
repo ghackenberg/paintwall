@@ -334,6 +334,7 @@ class PaintScreen extends BaseScreen {
                 this.canvasModel.center.x += currentTouchCenter.x - previousTouchCenter.x
                 this.canvasModel.center.y += currentTouchCenter.y - previousTouchCenter.y
                 this.canvasModel.zoom *= currentTouchLength / previousTouchLength
+                this.canvasModel.draw()
                 // Remember
                 this.previousTouchCenter = currentTouchCenter
                 this.previousTouchLength = currentTouchLength
