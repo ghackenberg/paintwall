@@ -289,19 +289,25 @@ class PaintScreen extends BaseScreen {
                 this.startLine(x, y)
                 // Broadcast
                 this.canvasModel.broadcast('over', { x, y })
-            } else if (event.touches.length == 2 || event.touches.length == 1) {
-                // Prepare
-                const x0 = event.touches[0].clientX
-                const y0 = event.touches[0].clientY
-                const x1 = event.touches.length == 2 ? event.touches[1].clientX : 0
-                const y1 = event.touches.length == 2 ? event.touches[1].clientY : 0
-                const dx = x1 - x0
-                const dy = y1 - y0
-                // Remember
-                this.previousTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
-                this.previousTouchLength = Math.sqrt(dx * dx + dy * dy)
-                // Broadcast
-                this.canvasModel.broadcast('out')
+            } else {
+                if (this.lineModel) {
+                    // Reset
+                    this.lineModel = undefined
+                    // Broadcast
+                    this.canvasModel.broadcast('out')
+                }
+                if (event.touches.length == 2 || (event.ctrlKey && event.touches.length == 1)) {
+                    // Prepare
+                    const x0 = event.touches[0].clientX
+                    const y0 = event.touches[0].clientY
+                    const x1 = event.touches.length == 2 ? event.touches[1].clientX : 0
+                    const y1 = event.touches.length == 2 ? event.touches[1].clientY : 0
+                    const dx = x1 - x0
+                    const dy = y1 - y0
+                    // Remember
+                    this.previousTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
+                    this.previousTouchLength = Math.sqrt(dx * dx + dy * dy)
+                }
             }
         }
     }
@@ -319,7 +325,7 @@ class PaintScreen extends BaseScreen {
                 this.continueLine(x, y)
                 // Broadcast
                 this.canvasModel.broadcast('move', { x, y })
-            } else if (event.touches.length == 2 || event.touches.length == 1) {
+            } else if (event.touches.length == 2 || (event.ctrlKey && event.touches.length == 1)) {
                 // Prepare
                 const x0 = event.touches[0].clientX
                 const y0 = event.touches[0].clientY
@@ -347,18 +353,13 @@ class PaintScreen extends BaseScreen {
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
             // Check
-            if (event.touches.length == 0) {
+            if (this.lineModel) {
+                // Reset
+                this.lineModel = undefined
                 // Broadcast
                 this.canvasModel.broadcast('out')
-            } else if (event.touches.length == 1 && !event.ctrlKey) {
-                // Unproject
-                const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
-                const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
-                // Start
-                this.startLine(x, y)
-                // Broadcast
-                this.canvasModel.broadcast('over', { x, y })
-            } else if (event.touches.length == 2 || event.touches.length == 1) {
+            }
+            if (event.touches.length == 2 || (event.ctrlKey && event.touches.length == 1)) {
                 // Prepare
                 const x0 = event.touches[0].clientX
                 const y0 = event.touches[0].clientY
