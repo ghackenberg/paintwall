@@ -9,6 +9,18 @@ class PaintScreen extends BaseScreen {
 
     // Non-static
 
+    // Models
+    
+    clientModel = undefined
+    canvasModel = undefined
+    lineModel = undefined
+
+    // Nodes
+
+    colorNodes = {}
+
+    // Constructor
+
     constructor() {
         super('paint')
         
@@ -21,8 +33,6 @@ class PaintScreen extends BaseScreen {
 
         // States
         this.clientModel = new ClientModel(clientId, name, color, width, alpha, position)
-        this.canvasModel = undefined
-        this.lineModel = undefined
 
         // Handlers (resize)
         this.handleResize = this.handleResize.bind(this)
@@ -68,7 +78,6 @@ class PaintScreen extends BaseScreen {
         this.colorNode = document.createElement('div')
         this.colorNode.id = 'color'
         // Nodes (colors)
-        this.colorNodes = {}
         for (const otherColor of PaintScreen.COLORS) {
             // Create
             const colorNode = document.createElement('span')

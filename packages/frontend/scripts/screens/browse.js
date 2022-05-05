@@ -1,12 +1,18 @@
 // CLASSES
 
 class BrowseScreen extends BaseScreen {
+    // Models
+
+    canvasModels = []
+
+    // Nodes
+
+    liveNodes = {}
+
+    // Constructor
+
     constructor() {
         super('browse')
-
-        // States
-        this.canvasModels = []
-        this.liveNodes = {}
 
         // Count
         this.countNode = document.createElement('span')
@@ -77,8 +83,9 @@ class BrowseScreen extends BaseScreen {
         while (this.mainNode.firstChild) {
             this.mainNode.removeChild(this.mainNode.firstChild)
         }
-        // Reset state
+        // Reset models
         this.canvasModels = []
+        // Reset nodes
         this.liveNodes = {}
     }
 
@@ -121,7 +128,7 @@ class BrowseScreen extends BaseScreen {
             self.connect()
         }
     }
-    
+
     load() {
         // Self
         const self = this
