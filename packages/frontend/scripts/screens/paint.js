@@ -21,6 +21,7 @@ class PaintScreen extends BaseScreen {
 
     // Coordinates
 
+    previousTouches = []
     previousTouchCenter = undefined
     previousTouchLength = undefined
 
@@ -201,12 +202,14 @@ class PaintScreen extends BaseScreen {
             // Unproject
             const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
             const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Define
+            const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.startLine(x, y)
+                this.startLine(point)
             }
             // Broadcast
-            this.canvasModel.broadcast('move', { x, y })
+            this.canvasModel.broadcast('move', point)
         }
     }
 
@@ -217,12 +220,14 @@ class PaintScreen extends BaseScreen {
             // Unproject
             const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
             const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Define
+            const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.startLine(x, y)
+                this.startLine(point)
             }
             // Broadcast
-            this.canvasModel.broadcast('move', { x, y })
+            this.canvasModel.broadcast('move', point)
         }
     }
 
@@ -233,12 +238,14 @@ class PaintScreen extends BaseScreen {
             // Unproject
             const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
             const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Define
+            const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.continueLine(x, y)
+                this.continueLine(point)
             }
             // Broadcast
-            this.canvasModel.broadcast('move', { x, y })
+            this.canvasModel.broadcast('move', point)
         }
     }
 
@@ -249,12 +256,14 @@ class PaintScreen extends BaseScreen {
             // Unproject
             const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
             const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Define
+            const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.startLine(x, y)
+                this.startLine(point)
             }
             // Broadcast
-            this.canvasModel.broadcast('over', { x, y })
+            this.canvasModel.broadcast('over', point)
         }
     }
 
@@ -265,9 +274,11 @@ class PaintScreen extends BaseScreen {
             // Unproject
             const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
             const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Define
+            const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.continueLine(x, y)
+                this.continueLine(point)
             }
             // Broadcast
             this.canvasModel.broadcast('out')
@@ -285,10 +296,12 @@ class PaintScreen extends BaseScreen {
                 // Unproject
                 const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
                 const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+                // Define
+                const point = { x, y }
                 // Start
-                this.startLine(x, y)
+                this.previousTouches = [point]
                 // Broadcast
-                this.canvasModel.broadcast('over', { x, y })
+                this.canvasModel.broadcast('over', point)
             } else {
                 if (this.lineModel) {
                     // Reset
@@ -321,10 +334,22 @@ class PaintScreen extends BaseScreen {
                 // Unproject
                 const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
                 const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+                // Define
+                const point = { x, y }
                 // Continue
-                this.continueLine(x, y)
+                if (this.previousTouches.length > 0) {
+                    this.previousTouches.push(point)
+                    if (this.previousTouches.length > 5) {
+                        this.startLine(this.previousTouches.shift())
+                        while (this.previousTouches.length > 0) {
+                            this.continueLine(this.previousTouches.shift())
+                        }
+                    }
+                } else {
+                    this.continueLine(point)
+                }
                 // Broadcast
-                this.canvasModel.broadcast('move', { x, y })
+                this.canvasModel.broadcast('move', point)
             } else if (event.touches.length == 2 || (event.ctrlKey && event.touches.length == 1)) {
                 // Prepare
                 const x0 = event.touches[0].clientX
@@ -391,13 +416,12 @@ class PaintScreen extends BaseScreen {
 
     // Line
 
-    startLine(x, y) {
+    startLine(point) {
         // Define
         const lineId = '' + Math.random().toString(16).substring(2)
         const color = this.clientModel.color
         const width = this.clientModel.width
         const alpha = this.clientModel.alpha
-        const point = { x, y }
         // Create
         this.lineModel = new LineModel(lineId, clientId, color, width, alpha, [point])
         // Update
@@ -407,10 +431,8 @@ class PaintScreen extends BaseScreen {
         this.canvasModel.broadcast('start', { lineId: this.lineModel.lineId, point })
     }
 
-    continueLine(x, y) {
+    continueLine(point) {
         if (this.lineModel) {
-            // Define
-            const point = { x, y }
             // Update
             this.lineModel.points.push(point)
             // Draw
