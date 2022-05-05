@@ -76,6 +76,10 @@ body > #browse > main > div {
     cursor: pointer;
 }
 
+body > #browse > main > div > canvas {
+    display: block;
+}
+
 body > #browse > main > div > div {
     padding: 1em;
 
