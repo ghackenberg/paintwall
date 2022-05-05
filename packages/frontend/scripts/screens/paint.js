@@ -19,6 +19,11 @@ class PaintScreen extends BaseScreen {
 
     colorNodes = {}
 
+    // Coordinates
+
+    previousTouchCenter = undefined
+    previousTouchLength = undefined
+
     // Constructor
 
     constructor() {
@@ -285,6 +290,16 @@ class PaintScreen extends BaseScreen {
                 // Broadcast
                 this.canvasModel.broadcast('over', { x, y })
             } else if (event.touches.length == 2) {
+                // Prepare
+                const x0 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
+                const y0 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+                const x1 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientX)
+                const y1 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientY)
+                const dx = x1 - x0
+                const dy = y1 - y0
+                // Remember
+                this.previousTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
+                this.previousTouchLength = Math.sqrt(dx * dx + dy * dy)
                 // Broadcast
                 this.canvasModel.broadcast('out')
             }
@@ -305,7 +320,23 @@ class PaintScreen extends BaseScreen {
                 // Broadcast
                 this.canvasModel.broadcast('move', { x, y })
             } else if (event.touches.length == 2) {
-                
+                // Prepare
+                const x0 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
+                const y0 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+                const x1 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientX)
+                const y1 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientY)
+                const dx = x1 - x0
+                const dy = y1 - y0
+                // Define
+                const currentTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
+                const currentTouchLength = Math.sqrt(dx * dx + dy * dy)
+                // Update
+                this.canvasModel.center.x += currentTouchCenter.x - previousTouchCenter.x
+                this.canvasModel.center.y += currentTouchCenter.y - previousTouchCenter.y
+                this.canvasModel.zoom *= currentTouchLength / previousTouchLength
+                // Remember
+                this.previousTouchCenter = currentTouchCenter
+                this.previousTouchLength = currentTouchLength
             }
         }
     }
@@ -327,7 +358,16 @@ class PaintScreen extends BaseScreen {
                 // Broadcast
                 this.canvasModel.broadcast('over', { x, y })
             } else if (event.touches.length == 2) {
-                
+                // Prepare
+                const x0 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
+                const y0 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+                const x1 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientX)
+                const y1 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientY)
+                const dx = x1 - x0
+                const dy = y1 - y0
+                // Remember
+                this.previousTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
+                this.previousTouchLength = Math.sqrt(dx * dx + dy * dy)
             }
         }
     }
