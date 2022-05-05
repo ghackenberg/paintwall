@@ -47,6 +47,11 @@ for (const canvasObject of Object.values(canvasObjectMap)) {
     }
 
     canvasObject.coordinates = { x, y }
+
+    // Initialize reactions
+    if (!canvasObject.reactions) {
+        canvasObject.reactions = {}
+    }
     
     // Initialize clients
     canvasObject.clients = {}
@@ -155,11 +160,12 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         // Create canvas object information
         const timestamps = { created, updated }
         const coordinates = { x, y }
+        const reactions = {}
         const clients = {}
         const lines = {}
 
         // Create canvas object
-        canvasObjectMap[canvasId] = { canvasId, timestamps, coordinates, clients, lines }
+        canvasObjectMap[canvasId] = { canvasId, timestamps, coordinates, reactions, clients, lines }
 
         // Message
         const message = { type: 'canvas', data: canvasId }
@@ -173,6 +179,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     // Retrieve canvas object information
     const timestamps = canvasObject.timestamps
     const coordinates = canvasObject.coordinates
+    const reactions = canvasObject.reactions
     const clients = canvasObject.clients
     const lines = canvasObject.lines
 
@@ -186,7 +193,8 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     // Synchronize timestamp and coordinate data
     socket.send(JSON.stringify({ type: 'timestamps', data: timestamps}))
     socket.send(JSON.stringify({ type: 'coordinates', data: coordinates}))
-    
+    socket.send(JSON.stringify({ type: 'reactions', data: reactions}))
+
     // Synchronize client and line data
     for (const client of Object.values(clients)) {
         socket.send(JSON.stringify({ type: 'client', data: client }))
@@ -288,6 +296,19 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                     y.max = Math.max(y.max, point.y)
                 }
                 
+                break
+            }
+            case 'react': {
+                const reaction = message.data
+
+                if (!(reaction in reactions)) {
+                    reactions[reaction] = 1
+                } else {
+                    reactions[reaction]++
+                }
+
+                broadcast(Object.values(clientSocketMap), { type: 'react', data: { canvasId, reaction, count: reactions[reaction] } })
+
                 break
             }
         }
