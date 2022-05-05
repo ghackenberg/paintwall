@@ -6,7 +6,22 @@ function initializeHistory() {
         history.replaceState(null, undefined, base + '/')
         // Push
         history.pushState(null, undefined, pathname)
+    } else if (location.pathname == base + '/data-protection') {
+        // Remember
+        const pathname = location.pathname
+        // Replace
+        history.replaceState(null, undefined, base + '/')
+        // Push
+        history.pushState(null, undefined, pathname)
+    } else if (location.pathname == base + '/terms-of-use') {
+        // Remember
+        const pathname = location.pathname
+        // Replace
+        history.replaceState(null, undefined, base + '/')
+        // Push
+        history.pushState(null, undefined, pathname)
     } else if (location.pathname != base + '/') {
+        // Replace
         history.replaceState(null, undefined, base + '/')
     }
 }

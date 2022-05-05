@@ -6,6 +6,7 @@ class PaintScreen extends BaseScreen {
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
     static WIDTHS = [5.0]
     static ALPHAS = [0.5]
+    static REACTIONS = ['❤', '🚀', '🧠', '💐']
 
     // Non-static
 

@@ -6,6 +6,8 @@ const loadScreen = new LoadScreen()
 const errorScreen = new ErrorScreen()
 const browseScreen = new BrowseScreen()
 const paintScreen = new PaintScreen()
+const dataScreen = new DataScreen()
+const termsScreen = new TermsScreen()
 
 loadScreen.show()
 

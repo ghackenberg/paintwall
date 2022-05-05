@@ -58,23 +58,23 @@
     ],
     "screenshots": [
         {
-            "src": "https://raw.githubusercontent.com/ghackenberg/cpa2il/master/screenshots/screenshot-1.png",
+            "src": "https://raw.githubusercontent.com/ghackenberg/paintwall/master/screenshots/phone/browse.png",
             "type": "image/png",
-            "sizes": "501x890",
+            "sizes": "450x800",
             "platform": "narrow",
-            "label": "Screenshot 1"
+            "label": "Browse screen (phone)"
         },{
-            "src": "https://raw.githubusercontent.com/ghackenberg/cpa2il/master/screenshots/screenshot-2.png",
+            "src": "https://raw.githubusercontent.com/ghackenberg/paintwall/master/screenshots/phone/paint.png",
             "type": "image/png",
-            "sizes": "501x890",
+            "sizes": "450x800",
             "platform": "narrow",
-            "label": "Screenshot 2"
+            "label": "Paint screen (phone)"
         },{
-            "src": "https://raw.githubusercontent.com/ghackenberg/cpa2il/master/screenshots/screenshot-3.png",
+            "src": "https://raw.githubusercontent.com/ghackenberg/paintwall/master/screenshots/phone/login.png",
             "type": "image/png",
-            "sizes": "501x890",
+            "sizes": "450x800",
             "platform": "narrow",
-            "label": "Screenshot 3"
+            "label": "Login screen (phone)"
         }
     ]
 }
