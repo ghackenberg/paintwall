@@ -14,6 +14,11 @@ class BrowseScreen extends BaseScreen {
     constructor() {
         super('browse')
 
+        // Logo
+        this.logoNode = document.createElement('span')
+        this.logoNode.id = 'logo'
+        this.logoNode.textContent = "PaintWall"
+
         // Count
         this.countNode = document.createElement('span')
         this.countNode.id = 'count'
@@ -51,9 +56,30 @@ class BrowseScreen extends BaseScreen {
             })
         }
 
-        // Main
+        // Header
+        this.headerNode.appendChild(this.logoNode)
         this.headerNode.appendChild(this.countNode)
         this.headerNode.appendChild(this.createNode)
+
+        // Data
+        this.dataNode = document.createElement('a')
+        this.dataNode.id = 'data'
+        this.dataNode.textContent = 'Data protection'
+        this.dataNode.onclick = function() {
+            history.pushState(null, undefined, base + '/data-protection')
+        }
+
+        // Terms
+        this.termsNode = document.createElement('a')
+        this.termsNode.id = 'terms'
+        this.termsNode.textContent = 'Terms of use'
+        this.termsNode.onclick = function() {
+            history.pushState(null, undefined, base + '/terms-of-use')
+        }
+
+        // Footer
+        this.footerNode.appendChild(this.dataNode)
+        this.footerNode.appendChild(this.termsNode)
 
         // Connect
         this.connect()
