@@ -281,7 +281,7 @@ class PaintScreen extends BaseScreen {
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
             // Check
-            if (event.touches.length == 1) {
+            if (event.touches.length == 1 && !event.ctrlKey) {
                 // Unproject
                 const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
                 const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
@@ -289,12 +289,12 @@ class PaintScreen extends BaseScreen {
                 this.startLine(x, y)
                 // Broadcast
                 this.canvasModel.broadcast('over', { x, y })
-            } else if (event.touches.length == 2) {
+            } else if (event.touches.length == 2 || event.touches.length == 1) {
                 // Prepare
                 const x0 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
                 const y0 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
-                const x1 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientX)
-                const y1 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientY)
+                const x1 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches.length == 2 ? event.touches[1].clientX : 0)
+                const y1 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches.length == 2 ? event.touches[1].clientY : 0)
                 const dx = x1 - x0
                 const dy = y1 - y0
                 // Remember
@@ -311,7 +311,7 @@ class PaintScreen extends BaseScreen {
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
             // Check
-            if (event.touches.length == 1) {
+            if (event.touches.length == 1 && !event.ctrlKey) {
                 // Unproject
                 const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
                 const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
@@ -319,21 +319,21 @@ class PaintScreen extends BaseScreen {
                 this.continueLine(x, y)
                 // Broadcast
                 this.canvasModel.broadcast('move', { x, y })
-            } else if (event.touches.length == 2) {
+            } else if (event.touches.length == 2 || event.touches.length == 1) {
                 // Prepare
                 const x0 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
                 const y0 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
-                const x1 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientX)
-                const y1 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientY)
+                const x1 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches.length == 2 ? event.touches[1].clientX : 0)
+                const y1 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches.length == 2 ? event.touches[1].clientY : 0)
                 const dx = x1 - x0
                 const dy = y1 - y0
                 // Define
                 const currentTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
                 const currentTouchLength = Math.sqrt(dx * dx + dy * dy)
                 // Update
-                this.canvasModel.center.x += currentTouchCenter.x - previousTouchCenter.x
-                this.canvasModel.center.y += currentTouchCenter.y - previousTouchCenter.y
-                this.canvasModel.zoom *= currentTouchLength / previousTouchLength
+                this.canvasModel.center.x += currentTouchCenter.x - this.previousTouchCenter.x
+                this.canvasModel.center.y += currentTouchCenter.y - this.previousTouchCenter.y
+                this.canvasModel.zoom *= currentTouchLength / this.previousTouchLength
                 this.canvasModel.draw()
                 // Remember
                 this.previousTouchCenter = currentTouchCenter
@@ -350,7 +350,7 @@ class PaintScreen extends BaseScreen {
             if (event.touches.length == 0) {
                 // Broadcast
                 this.canvasModel.broadcast('out')
-            } else if (event.touches.length == 1) {
+            } else if (event.touches.length == 1 && !event.ctrlKey) {
                 // Unproject
                 const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
                 const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
@@ -358,12 +358,12 @@ class PaintScreen extends BaseScreen {
                 this.startLine(x, y)
                 // Broadcast
                 this.canvasModel.broadcast('over', { x, y })
-            } else if (event.touches.length == 2) {
+            } else if (event.touches.length == 2 || event.touches.length == 1) {
                 // Prepare
                 const x0 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
                 const y0 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
-                const x1 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientX)
-                const y1 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[1].clientY)
+                const x1 = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches.length == 2 ? event.touches[1].clientX : 0)
+                const y1 = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches.length == 2 ? event.touches[1].clientY : 0)
                 const dx = x1 - x0
                 const dy = y1 - y0
                 // Remember
