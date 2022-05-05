@@ -339,7 +339,7 @@ class PaintScreen extends BaseScreen {
                 // Continue
                 if (this.previousTouches.length > 0) {
                     this.previousTouches.push(point)
-                    if (this.previousTouches.length > 5) {
+                    if (this.previousTouches.length > 10) {
                         this.startLine(this.previousTouches.shift())
                         while (this.previousTouches.length > 0) {
                             this.continueLine(this.previousTouches.shift())
