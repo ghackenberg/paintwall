@@ -3,14 +3,17 @@
 class BrowseScreen extends BaseScreen {
     constructor() {
         super('browse')
+
         // States
         this.canvasModels = []
         this.liveNodes = {}
+
         // Count
         this.countNode = document.createElement('span')
         this.countNode.id = 'count'
         this.countNode.className = 'button'
         this.countNode.textContent = '0 online'
+
         // Button
         this.createNode = document.createElement('button')
         this.createNode.id = 'create'
@@ -19,6 +22,7 @@ class BrowseScreen extends BaseScreen {
         this.createNode.onclick = function() {
             history.pushState(null, undefined, base + '/canvas/' + Math.random().toString(16).substring(2))
         }
+
         // Login
         this.loginNode = document.createElement('button')
         this.loginNode.id = 'login'
@@ -29,6 +33,7 @@ class BrowseScreen extends BaseScreen {
                 redirect_uri: location.href
             })
         }
+
         // Logout
         this.logoutNode = document.createElement('button')
         this.logoutNode.id = 'logout'
@@ -39,9 +44,11 @@ class BrowseScreen extends BaseScreen {
                 returnTo: location.href
             })
         }
+
         // Main
         this.headerNode.appendChild(this.countNode)
         this.headerNode.appendChild(this.createNode)
+
         // Connect
         this.connect()
     }
