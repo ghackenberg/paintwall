@@ -1,3 +1,7 @@
+body > #paint {
+    overflow: hidden;
+}
+
 /* Header */
 
 body > #paint > header {
