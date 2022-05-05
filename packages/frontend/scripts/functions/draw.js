@@ -34,7 +34,7 @@ function drawGrid(canvas, context, center, zoom) {
     const stepsY = height / delta
 
     // Vertical lines
-    for (var stepX = 0; stepX < stepsX; stepX += 1) {
+    for (var stepX = 0; stepX < stepsX + 1; stepX += 1) {
         // Project
         const x = projectX(canvas, center, zoom, sx + stepX * delta)
 
@@ -53,7 +53,7 @@ function drawGrid(canvas, context, center, zoom) {
     }
 
     // Horizontal lines
-    for (var stepY = 0; stepY < stepsY; stepY += 1) {
+    for (var stepY = 0; stepY < stepsY + 1; stepY += 1) {
         // Project
         const y = projectY(canvas, center, zoom, sy + stepY * delta)
 
