@@ -40,6 +40,7 @@ class PaintScreen extends BaseScreen {
         this.handleWheel = this.handleWheel.bind(this)
         // Handlers (mouse)
         this.handleMouseDown = this.handleMouseDown.bind(this)
+        this.handleMouseUp = this.handleMouseUp.bind(this)
         this.handleMouseMove = this.handleMouseMove.bind(this)
         this.handleMouseOver = this.handleMouseOver.bind(this)
         this.handleMouseOut = this.handleMouseOut.bind(this)
@@ -53,10 +54,13 @@ class PaintScreen extends BaseScreen {
         // Nodes (canvas)
         this.canvasNode = document.createElement('canvas')
         this.canvasNode.id = 'canvas'
+        // Context menu
+        this.canvasNode.addEventListener('contextmenu', event => event.preventDefault())
         // Wheel
         this.canvasNode.addEventListener('wheel', this.handleWheel)
         // Mouse
         this.canvasNode.addEventListener('mousedown', this.handleMouseDown)
+        this.canvasNode.addEventListener('mouseup', this.handleMouseUp)
         this.canvasNode.addEventListener('mousemove', this.handleMouseMove)
         this.canvasNode.addEventListener('mouseover', this.handleMouseOver)
         this.canvasNode.addEventListener('mouseout', this.handleMouseOut)
@@ -155,79 +159,114 @@ class PaintScreen extends BaseScreen {
     // Handlers (wheel)
 
     handleWheel(event) {
-        // Mouse
-        const mx = event.clientX
-        const my = event.clientY
-        // Center
-        const cx = this.canvasNode.width / 2
-        const cy = this.canvasNode.height / 2
-        // Zoom
-        const oldZoom = this.canvasModel.zoom
-        const newZoom = oldZoom * (1 - event.deltaY / 500)
-        // Old
-        const ox = (mx - cx) / oldZoom
-        const oy = (my - cy) / oldZoom
-        // New
-        const nx = (mx - cx) / newZoom
-        const ny = (my - cy) / newZoom
-        // Delta
-        const dx = nx - ox
-        const dy = ny - oy
-        // Canvas model
-        this.canvasModel.center.x -= dx
-        this.canvasModel.center.y -= dy
-        this.canvasModel.zoom = newZoom
-        this.canvasModel.draw()
+        // Check
+        if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
+            // Mouse
+            const mx = event.clientX
+            const my = event.clientY
+            // Center
+            const cx = this.canvasNode.width / 2
+            const cy = this.canvasNode.height / 2
+            // Zoom
+            const oldZoom = this.canvasModel.zoom
+            const newZoom = oldZoom * (1 - event.deltaY / 500)
+            // Old
+            const ox = (mx - cx) / oldZoom
+            const oy = (my - cy) / oldZoom
+            // New
+            const nx = (mx - cx) / newZoom
+            const ny = (my - cy) / newZoom
+            // Delta
+            const dx = nx - ox
+            const dy = ny - oy
+            // Canvas model
+            this.canvasModel.center.x -= dx
+            this.canvasModel.center.y -= dy
+            this.canvasModel.zoom = newZoom
+            this.canvasModel.draw()
+        }
     }
 
     // Handlers (mouse)
 
     handleMouseDown(event) {
         event.preventDefault()
-        // Unproject
-        const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
-        const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
-        // Call
-        this.startLine(x, y)
+        // Check
+        if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
+            // Unproject
+            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
+            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Check
+            if (event.buttons == 1) {
+                this.startLine(x, y)
+            }
+            // Broadcast
+            this.canvasModel.broadcast('move', { x, y })
+        }
+    }
+
+    handleMouseUp(event) {
+        event.preventDefault()
+        // Check
+        if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
+            // Unproject
+            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
+            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Check
+            if (event.buttons == 1) {
+                this.startLine(x, y)
+            }
+            // Broadcast
+            this.canvasModel.broadcast('move', { x, y })
+        }
     }
 
     handleMouseMove(event) {
         event.preventDefault()
-        // Unproject
-        const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
-        const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
         // Check
-        if (event.buttons > 0) {
-            this.continueLine(x, y)
+        if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
+            // Unproject
+            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
+            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Check
+            if (event.buttons == 1) {
+                this.continueLine(x, y)
+            }
+            // Broadcast
+            this.canvasModel.broadcast('move', { x, y })
         }
-        // Broadcast
-        this.canvasModel.broadcast('move', { x, y })
     }
 
     handleMouseOver(event) {
         event.preventDefault()
-        // Unproject
-        const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
-        const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
         // Check
-        if (event.buttons > 0) {
-            this.startLine(x, y)
+        if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
+            // Unproject
+            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
+            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Check
+            if (event.buttons == 1) {
+                this.startLine(x, y)
+            }
+            // Broadcast
+            this.canvasModel.broadcast('over', { x, y })
         }
-        // Broadcast
-        this.canvasModel.broadcast('over', { x, y })
     }
 
     handleMouseOut(event) {
         event.preventDefault()
-        // Unproject
-        const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
-        const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
         // Check
-        if (event.buttons > 0) {
-            this.continueLine(x, y)
+        if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
+            // Unproject
+            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientX)
+            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.clientY)
+            // Check
+            if (event.buttons == 1) {
+                this.continueLine(x, y)
+            }
+            // Broadcast
+            this.canvasModel.broadcast('out')
         }
-        // Broadcast
-        this.canvasModel.broadcast('out')
     }
 
     // Handler (touch)
@@ -235,52 +274,61 @@ class PaintScreen extends BaseScreen {
     handleTouchStart(event) {
         event.preventDefault()
         // Check
-        if (event.touches.length == 1) {
-            // Unproject
-            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
-            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
-            // Start
-            this.startLine(x, y)
-            // Broadcast
-            this.canvasModel.broadcast('over', { x, y })
-        } else if (event.touches.length == 2) {
-            // Broadcast
-            this.canvasModel.broadcast('out')
+        if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
+            // Check
+            if (event.touches.length == 1) {
+                // Unproject
+                const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
+                const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+                // Start
+                this.startLine(x, y)
+                // Broadcast
+                this.canvasModel.broadcast('over', { x, y })
+            } else if (event.touches.length == 2) {
+                // Broadcast
+                this.canvasModel.broadcast('out')
+            }
         }
     }
 
     handleTouchMove(event) {
         event.preventDefault()
         // Check
-        if (event.touches.length == 1) {
-            // Unproject
-            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
-            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
-            // Continue
-            this.continueLine(x, y)
-            // Broadcast
-            this.canvasModel.broadcast('move', { x, y })
-        } else if (event.touches.length == 2) {
-            
+        if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
+            // Check
+            if (event.touches.length == 1) {
+                // Unproject
+                const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
+                const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+                // Continue
+                this.continueLine(x, y)
+                // Broadcast
+                this.canvasModel.broadcast('move', { x, y })
+            } else if (event.touches.length == 2) {
+                
+            }
         }
     }
 
     handleTouchEnd(event) {
         event.preventDefault()
         // Check
-        if (event.touches.length == 0) {
-            // Broadcast
-            this.canvasModel.broadcast('out')
-        } else if (event.touches.length == 1) {
-            // Unproject
-            const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
-            const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
-            // Start
-            this.startLine(x, y)
-            // Broadcast
-            this.canvasModel.broadcast('over', { x, y })
-        } else if (event.touches.length == 2) {
-            
+        if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
+            // Check
+            if (event.touches.length == 0) {
+                // Broadcast
+                this.canvasModel.broadcast('out')
+            } else if (event.touches.length == 1) {
+                // Unproject
+                const x = unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientX)
+                const y = unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, event.touches[0].clientY)
+                // Start
+                this.startLine(x, y)
+                // Broadcast
+                this.canvasModel.broadcast('over', { x, y })
+            } else if (event.touches.length == 2) {
+                
+            }
         }
     }
 
