@@ -210,7 +210,6 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
 
     // Handle
     socket.on('message', (data) => {
-        console.log(data)
         // Timestamp
         timestamps.updated = Date.now()
         // Message
