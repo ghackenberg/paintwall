@@ -40,7 +40,7 @@ body > #browse > header > #logout {
     cursor: pointer;
 }
 
-@media screen and (max-width: 35em) {
+@media screen and (max-width: 31em) {
     body > #browse > header > #login {
         display: none;
     }
@@ -49,7 +49,7 @@ body > #browse > header > #logout {
     }
 }
 
-@media screen and (max-width: 27.5em) {
+@media screen and (max-width: 25em) {
     body > #browse > header > #count {
         display: none;
     }
