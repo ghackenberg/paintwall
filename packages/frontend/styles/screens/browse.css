@@ -6,6 +6,15 @@ body > #browse > header {
     background-image: linear-gradient(rgba(255,255,255,1), rgba(255,255,255,1) 75%, rgba(255,0,255,0));
 }
 
+body > #browse > header > #logo {
+    margin-bottom: 1.5em;
+}
+
+body > #browse > header > .button {
+    margin-top: 0.5em;
+    margin-bottom: 2.5em;
+}
+
 body > #browse > header > #count {
     margin-left: 1em;
 
@@ -46,21 +55,6 @@ body > #browse > header > #wait {
     background-color: steelblue;
 
     cursor: pointer;
-}
-
-@media screen and (max-width: 31em) {
-    body > #browse > header > #login {
-        display: none;
-    }
-    body > #browse > header > #logout {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 25em) {
-    body > #browse > header > #count {
-        display: none;
-    }
 }
 
 /* Main */
