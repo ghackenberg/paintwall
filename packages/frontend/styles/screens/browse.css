@@ -71,8 +71,6 @@ body > #browse > main {
 }
 
 body > #browse > main > div {
-    position: relative;
-
     margin: 1em;
 
     border-radius: 0.5em;
@@ -94,6 +92,8 @@ body > #browse > main > div {
 }
 
 body > #browse > main > div.placeholder {
+    position: relative;
+    
     background-color: lightgray;
 }
 
