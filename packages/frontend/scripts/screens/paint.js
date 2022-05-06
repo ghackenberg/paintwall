@@ -44,6 +44,9 @@ class PaintScreen extends BaseScreen {
         // Handlers
         this.handleResize = this.handleResize.bind(this)
 
+        // Nodes (load)
+        this.loadNode = img({ className: 'load', src: base + '/images/load.png' })
+
         // Nodes (canvas)
         this.canvasNode = canvas({ id: 'canvas',
             oncontextmenu: event => event.preventDefault(),
@@ -63,6 +66,9 @@ class PaintScreen extends BaseScreen {
             onclick: () => history.back()
         })
 
+        // Nodes (qrcode)
+        this.qrcodeNode = div({ id: 'qrcode' })
+
         // Nodes (colors)
         for (const otherColor of PaintScreen.COLORS) {
             // Prepare
@@ -78,11 +84,8 @@ class PaintScreen extends BaseScreen {
         // Nodes (color)
         this.colorNode = div({ id: 'color' }, Object.values(this.colorNodes))
 
-        // Nodes (code)
-        this.qrcodeNode = div({ id: 'qrcode' })
-
         // Nodes (main)
-        append(this.mainNode, [ this.qrcodeNode, this.canvasNode, this.backNode, this.colorNode ])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.qrcodeNode, this.colorNode ])
 
         // Models
         this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })

@@ -71,6 +71,13 @@ app.use((request, response, next) => {
     response.header('Service-Worker-Allowed', base + '/')
     next()
 })
+app.use((request, response, next) => {
+    if (process.env.NODE_ENV == 'development' && request.url.includes('/api/')) {
+        setTimeout(next, 1000)
+    } else {
+        next()
+    }
+})
 
 // Request handlers (API)
 

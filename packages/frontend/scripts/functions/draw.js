@@ -5,7 +5,9 @@ function draw(canvas, center, zoom, lines, clients) {
     const context = canvas.getContext('2d')
 
     // Clear
-    context.clearRect(0, 0, canvas.width, canvas.height)
+    context.globalAlpha = 1
+    context.fillStyle = 'white'
+    context.fillRect(0, 0, canvas.width, canvas.height)
 
     // Draw
     drawGrid(canvas, context, center, zoom)

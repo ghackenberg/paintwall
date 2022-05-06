@@ -10,6 +10,7 @@
         "email": "georg.hackenberg@gmail.com"
     },
     "dependencies": {
+        "cross-env": "^7.0.3",
         "express": "^4.17.3",
         "express-ws": "^5.0.2"
     },
@@ -17,7 +18,7 @@
         "nodemon": "^2.0.15"
     },
     "scripts": {
-        "start": "node .",
-        "dev": "nodemon --ignore database.json ."
+        "start": "cross-env NODE_ENV=production node .",
+        "dev": "cross-env NODE_ENV=development nodemon --ignore database.json ."
     }
 }
