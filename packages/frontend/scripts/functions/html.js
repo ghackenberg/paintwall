@@ -11,35 +11,51 @@ function element(tagname) {
     const result = document.createElement(tagname)
 
     // Set attributes
+    set(result, attributes)
+
+    // Append children
+    append(result, children)
+
+    // Return element
+    return result
+}
+
+function set(parent, attributes) {
     for (const [name, value] of Object.entries(attributes)) {
         switch (name) {
             case 'style': {
                 for (const [propName, propValue] of Object.entries(value)) {
-                    result[name][propName] = propValue
+                    parent[name][propName] = propValue
                 }
                 break
             }
             default:
-                result[name] = value
+                parent[name] = value
         }
     }
+}
 
-    // Append children
+function append(parent, children) {
     for (const child of children) {
         switch (typeof child) {
             case 'string': {
-                result.appendChild(document.createTextNode(child))
+                parent.appendChild(document.createTextNode(child))
                 break
             }
             case 'object': {
-                result.appendChild(child)
+                parent.appendChild(child)
                 break
             }
         }
     }
+}
 
-    // Return element
-    return result
+function
+
+function clear(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild)
+    }
 }
 
 function define(tagname) {
