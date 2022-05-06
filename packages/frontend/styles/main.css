@@ -30,6 +30,28 @@ img.load {
     animation-iteration-count: infinite;
 }
 
+img.back {
+    display: block;
+
+    position: absolute;
+
+    top: 1em;
+    left: 1em;
+
+    width: 1em;
+    height: 1em;
+
+    padding: 1em;
+
+    border-radius: 1.5em;
+
+    background-color: white;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+}
+
 *.button {
     display: inline-block;
 
