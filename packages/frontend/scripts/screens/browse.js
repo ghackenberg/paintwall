@@ -1,6 +1,10 @@
 // CLASSES
 
 class BrowseScreen extends BaseScreen {
+    // Counts
+
+    canvasCount = 0
+
     // Models
 
     canvasModels = []
@@ -60,6 +64,15 @@ class BrowseScreen extends BaseScreen {
         // Load
         this.loadNode = img({ className: 'load', src: base + '/images/load.png' })
 
+        // Canvas count
+        this.canvasCountNode = span({ id: 'canvas-count' })
+
+        // Canvas
+        this.canvasNode = div()
+
+        // Main
+        append(this.mainNode, [ this.canvasNode ])
+
         // Imprint
         this.imprintNode = a({ id: 'imprint',
             onclick: () => {
@@ -107,6 +120,24 @@ class BrowseScreen extends BaseScreen {
         }
     }
 
+    updateCanvasCount(total) {
+        const loaded = this.canvasModels.length
+        const difference = total - loaded
+
+        this.canvasCount = total
+        this.canvasCountNode.textContent = difference
+
+        if (loaded > 0 && difference > 0) {
+            if (!this.canvasCountNode.parentNode) {
+                prepend(this.mainNode, [ this.canvasCountNode ])
+            }
+        } else {
+            if (this.canvasCountNode.parentNode) {
+                remove(this.mainNode, [ this.canvasCountNode ])
+            }
+        }
+    }
+
     connect() {
         // Check
         if (this.socket) {
@@ -126,6 +157,11 @@ class BrowseScreen extends BaseScreen {
                     self.clientCountNode.textContent = count
                     break
                 }
+                case 'canvas-count': {
+                    const count = message.data
+                    self.updateCanvasCount(count)
+                    break
+                }
                 case 'canvas-client-count': {
                     const canvasId = message.data.canvasId
                     const count = message.data.count
@@ -137,16 +173,9 @@ class BrowseScreen extends BaseScreen {
                 case 'canvas-reaction-count': {
                     const canvasId = message.data.canvasId
                     const count = message.data.count
-
                     if (canvasId in self.reactionCountNodes) {
                         self.reactionCountNodes[canvasId].textContent = count
                     }
-
-                    break
-                }
-                case 'canvas-create': {
-                    const canvasId = message.data.canvasId
-                    // TODO Show new canvas?
                     break
                 }
             }
@@ -229,7 +258,7 @@ class BrowseScreen extends BaseScreen {
                     }, canvasNode, infoNode)
                     
                     // Main node
-                    self.mainNode.appendChild(containerNode)
+                    append(self.canvasNode, [ containerNode ])
                     
                     // Canvas model
                     const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, coordinates, reactions, clients, lines)
@@ -242,6 +271,8 @@ class BrowseScreen extends BaseScreen {
                     self.clientCountNodes[canvasId] = clientCountNode
                     self.reactionCountNodes[canvasId] = reactionCountNode
                 }
+                // Count
+                self.updateCanvasCount(Math.max(self.canvasCount, self.canvasModels.length))
             }
         }
         this.request.open('GET', base + '/api/v1/canvas/')
@@ -250,12 +281,19 @@ class BrowseScreen extends BaseScreen {
 
     hide() {
         super.hide()
+        // Request
+        if (this.request) {
+            this.request.abort()
+            this.request = null
+        }
         // Clear main
-        clear(this.mainNode)
+        clear(this.canvasNode)
         // Reset models
         this.canvasModels = []
         // Reset nodes
         this.clientCountNodes = {}
         this.reactionCountNodes = {}
+        // Update
+        this.updateCanvasCount(this.canvasCount)
     }
 }

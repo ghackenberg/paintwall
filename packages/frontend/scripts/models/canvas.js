@@ -260,11 +260,7 @@ class CanvasModel {
     }
     broadcast(type, data) {
         if (this.socket && this.socket.readyState == WebSocket.OPEN) {
-            if (data) {
-                this.socket.send(JSON.stringify({ type, data }))
-            } else {
-                this.socket.send(JSON.stringify({ type }))
-            }
+            this.socket.send(JSON.stringify({ type, data }))
         }
     }
     draw() {

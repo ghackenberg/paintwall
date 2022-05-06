@@ -60,19 +60,63 @@ body > #browse > header > #user-wait {
 /* Main */
 
 body > #browse > main {
+    padding-top: 3em;
+    padding-bottom: 3em;
+
+    text-align: center;
+}
+
+@keyframes fade {
+    0% {
+        margin-top: 0;
+        margin-bottom: 0;
+
+        height: 0;
+
+        opacity: 0;
+    }
+    100% {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+
+        height: 1em;
+
+        opacity: 1;
+    }
+}
+
+body > #browse > main > span {
+    animation-name: fade;
+    animation-duration: 1s;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+
+    display: inline-block;
+
+    font-size: 75%;
+
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+
+    color: gray;
+}
+
+body > #browse > main > div {
     display: flex;
 
     flex-wrap: wrap;
 
     justify-content: center;
 
-    padding-top: 3em;
     padding-left: 1em;
     padding-right: 1em;
-    padding-bottom: 3em;
 }
 
-body > #browse > main > div {
+body > #browse > main > span::after {
+    content: ' new canvases'
+}
+
+body > #browse > main > div > div {
     margin: 1em;
 
     border-radius: 0.5em;
@@ -84,11 +128,11 @@ body > #browse > main > div {
     overflow: hidden;
 }
 
-body > #browse > main > div > canvas {
+body > #browse > main > div > div > canvas {
     display: block;
 }
 
-body > #browse > main > div > div {
+body > #browse > main > div > div > div {
     padding: 0.5em;
 
     border-top: 1px solid rgba(0,0,0,0.2);
@@ -100,11 +144,11 @@ body > #browse > main > div > div {
     text-align: center;
 }
 
-body > #browse > main > div > div > div.count {
+body > #browse > main > div > div > div > div.count {
     display: inline-block;
 }
 
-body > #browse > main > div > div > div.count > span {
+body > #browse > main > div > div > div > div.count > span {
     display: inline-block;
 
     margin-left: calc(1em / 3);
@@ -122,28 +166,28 @@ body > #browse > main > div > div > div.count > span {
     color: white;
 }
 
-body > #browse > main > div > div > div.count.client > span {
+body > #browse > main > div > div > div > div.count.client > span {
     background-color: gray;
 }
 
-body > #browse > main > div > div > div.count.reaction > span {
+body > #browse > main > div > div > div > div.count.reaction > span {
     background-color: gray;
 }
 
-body > #browse > main > div > div > div.count::after {
+body > #browse > main > div > div > div > div.count::after {
     display: inline-block;
 
     margin-left: calc(1em / 3);
     margin-right: calc(1em / 3);
 }
 
-body > #browse > main > div > div > div.count.client::after {
+body > #browse > main > div > div > div > div.count.client::after {
     content: 'clients';
 
     color: gray;
 }
 
-body > #browse > main > div > div > div.count.reaction::after {
+body > #browse > main > div > div > div > div.count.reaction::after {
     content: 'reactions';
 
     color: gray;

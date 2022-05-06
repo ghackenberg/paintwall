@@ -71,13 +71,6 @@ app.use((request, response, next) => {
     response.header('Service-Worker-Allowed', base + '/')
     next()
 })
-app.use((request, response, next) => {
-    if (process.env.NODE_ENV == 'development' && request.url.includes('/api/')) {
-        setTimeout(next, 1000)
-    } else {
-        next()
-    }
-})
 
 // Request handlers (API)
 
@@ -175,7 +168,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         canvasObjectMap[canvasId] = { canvasId, timestamps, coordinates, reactions, clients, lines }
 
         // Message
-        const message = { type: 'canvas-create', data: canvasId }
+        const message = { type: 'canvas-count', data: Object.entries(canvasObjectMap).length }
         // Broadcast
         broadcast(Object.values(clientSocketMap), message)
     }
@@ -217,6 +210,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
 
     // Handle
     socket.on('message', (data) => {
+        console.log(data)
         // Timestamp
         timestamps.updated = Date.now()
         // Message

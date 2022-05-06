@@ -38,22 +38,39 @@ function set(parent, attributes) {
     }
 }
 
+function prepend(parent, children) {
+    for (const child of children) {
+        if (parent.firstChild) {
+            parent.insertBefore(convert(child), parent.firstChild)
+        } else {
+            parent.appendChild(convert(child))
+        }
+    }
+}
+
 function append(parent, children) {
     for (const child of children) {
-        switch (typeof child) {
-            case 'number': {
-                parent.appendChild(document.createTextNode(child))
-                break
-            }
-            case 'string': {
-                parent.appendChild(document.createTextNode(child))
-                break
-            }
-            case 'object': {
-                parent.appendChild(child)
-                break
-            }
+        parent.appendChild(convert(child))
+    }
+}
+
+function convert(data) {
+    switch (typeof data) {
+        case 'number': {
+            return document.createTextNode(data)
         }
+        case 'string': {
+            return document.createTextNode(data)
+        }
+        case 'object': {
+            return data
+        }
+    }
+}
+
+function remove(parent, children) {
+    for (const child of children) {
+        parent.removeChild(child)
     }
 }
 
