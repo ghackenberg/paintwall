@@ -1,6 +1,6 @@
 class ImprintScreen extends BaseScreen {
     constructor() {
-        super('imprint')
+        super('imprint', 'document')
 
         // Back node
         this.backNode = img({ id: 'back', className: 'back', src: base + '/images/back.png',
@@ -8,6 +8,10 @@ class ImprintScreen extends BaseScreen {
         })
 
         // Main node
-        append(this.mainNode, [ this.backNode, h1('Imprint') ])
+        append(this.mainNode, [
+            this.backNode, h1('PaintWall - Imprint'), div(
+                p(em('Coming soon'))
+            )
+        ])
     }
 }

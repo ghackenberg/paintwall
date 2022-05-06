@@ -7,7 +7,7 @@ class BaseScreen {
     
     // Non-static
 
-    constructor(id) {        
+    constructor(id, className) {        
         // Header
         this.headerNode = header()
         
@@ -18,7 +18,7 @@ class BaseScreen {
         this.footerNode = footer()
 
         // Root
-        this.rootNode = div({ id, className: 'screen' }, this.headerNode, this.mainNode, this.footerNode)
+        this.rootNode = div({ id, className: className ? 'screen ' + className : 'screen' }, this.headerNode, this.mainNode, this.footerNode)
 
         // Body
         document.body.appendChild(this.rootNode)

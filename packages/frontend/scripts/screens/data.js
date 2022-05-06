@@ -1,6 +1,6 @@
 class DataScreen extends BaseScreen {
     constructor() {
-        super('data')
+        super('data', 'document')
 
         // Back node
         this.backNode = img({ id: 'back', className: 'back', src: base + '/images/back.png',
@@ -8,6 +8,10 @@ class DataScreen extends BaseScreen {
         })
 
         // Main node
-        append(this.mainNode, [ this.backNode, h1('Data protection') ])
+        append(this.mainNode, [
+            this.backNode, h1('PaintWall - Data protection'), div(
+                p(em('Coming soon'))
+            )
+        ])
     }
 }

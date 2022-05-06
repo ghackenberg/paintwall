@@ -1,6 +1,6 @@
 class TermsScreen extends BaseScreen {
     constructor() {
-        super('terms')
+        super('terms', 'document')
 
         // Back node
         this.backNode = img({ id: 'back', className: 'back', src: base + '/images/back.png',
@@ -8,6 +8,10 @@ class TermsScreen extends BaseScreen {
         })
 
         // Main node
-        append(this.mainNode, [ this.backNode, h1('Terms of use') ])
+        append(this.mainNode, [
+            this.backNode, h1('PaintWall - Terms of use'), div(
+                p(em('Coming soon'))
+            )
+        ])
     }
 }

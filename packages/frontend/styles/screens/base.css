@@ -41,6 +41,55 @@ body > div.screen > header > #logo {
     background-position: left center;
 }
 
+/* Main */
+
+body > div.screen.document > main {
+    min-height: 100%;
+
+    width: 100%;
+}
+
+body > div.screen.document > main > h1 {
+    box-sizing: border-box;
+
+    max-width: 100%;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding-left: 1rem;
+    padding-right: 1rem;
+
+    width: 60rem;
+}
+
+body > div.screen.document > main > div {
+    box-sizing: border-box;
+
+    max-width: 100%;
+    min-height: 100%;
+
+    margin-left: auto;
+    margin-right: auto;
+
+    padding-left: 1em;
+    padding-right: 1em;
+
+    width: 60em;
+}
+
+@media screen and (max-width: 68em) {
+    body > div.screen.document > main > h1 {
+        padding-left: calc(5rem - (100vw - 60rem) / 2);
+    }
+}
+
+@media screen and (max-width: 60em) {
+    body > div.screen.document > main > h1 {
+        padding-left: 5rem;
+    }
+}
+
 /* Footer */
 
 body > div.screen > footer {
