@@ -23,18 +23,18 @@ class BrowseScreen extends BaseScreen {
         // Logo
         this.logoNode = span({ id: 'logo' }, 'PaintWall')
 
-        // Count
-        this.countNode = span({ id: 'count', className: 'button' }, img({ className: 'load', src: base + '/images/load.png' }))
+        // Client count
+        this.clientCountNode = span({ id: 'client-count', className: 'button' }, img({ className: 'load', src: base + '/images/load.png' }))
 
         // Button
-        this.createNode = button({ id: 'create', className: 'button',
+        this.createNode = button({ id: 'canvas-create', className: 'button',
             onclick: () => {
                 history.pushState(null, undefined, base + '/canvas/' + Math.random().toString(16).substring(2))
             }
         }, 'New canvas')
 
         // Login
-        this.loginNode = button({ id: 'login', className: 'button',
+        this.loginNode = button({ id: 'user-login', className: 'button',
             onclick: async () => {
                 await auth0.loginWithRedirect({
                     redirect_uri: location.href
@@ -43,7 +43,7 @@ class BrowseScreen extends BaseScreen {
         }, 'Login')
 
         // Logout
-        this.logoutNode = button({ id: 'logout', className: 'button',
+        this.logoutNode = button({ id: 'user-logout', className: 'button',
             onclick: async () => {
                 await auth0.logout({
                     returnTo: location.href
@@ -52,10 +52,10 @@ class BrowseScreen extends BaseScreen {
         }, 'Logout')
 
         // Wait
-        this.waitNode = button({ id: 'wait', className: 'button' }, img({ className: 'load', src: base + '/images/load.png' }))
+        this.waitNode = button({ id: 'user-wait', className: 'button' }, img({ className: 'load', src: base + '/images/load.png' }))
 
         // Header
-        append(this.headerNode, [ this.logoNode, this.countNode, this.createNode, this.waitNode ])
+        append(this.headerNode, [ this.logoNode, this.clientCountNode, this.createNode, this.waitNode ])
 
         // Load
         this.loadNode = img({ className: 'load', src: base + '/images/load.png' })
@@ -123,7 +123,7 @@ class BrowseScreen extends BaseScreen {
             switch (message.type) {
                 case 'client-count': {
                     const count = message.data
-                    self.countNode.textContent = count
+                    self.clientCountNode.textContent = count
                     break
                 }
                 case 'canvas-client-count': {

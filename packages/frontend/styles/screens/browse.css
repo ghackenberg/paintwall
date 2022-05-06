@@ -15,17 +15,17 @@ body > #browse > header > .button {
     margin-bottom: 2.5em;
 }
 
-body > #browse > header > #count {
+body > #browse > header > #client-count {
     margin-left: 1em;
 
     background-color: yellowgreen;
 }
 
-body > #browse > header > #count::after {
+body > #browse > header > #client-count::after {
     content: ' clients';
 }
 
-body > #browse > header > #create {
+body > #browse > header > #canvas-create {
     margin-left: 1em;
 
     background-color: tomato;
@@ -33,7 +33,7 @@ body > #browse > header > #create {
     cursor: pointer;
 }
 
-body > #browse > header > #login {
+body > #browse > header > #user-login {
     margin-left: 1em;
 
     background-color: steelblue;
@@ -41,7 +41,7 @@ body > #browse > header > #login {
     cursor: pointer;
 }
 
-body > #browse > header > #logout {
+body > #browse > header > #user-logout {
     margin-left: 1em;
 
     background-color: steelblue;
@@ -49,7 +49,7 @@ body > #browse > header > #logout {
     cursor: pointer;
 }
 
-body > #browse > header > #wait {
+body > #browse > header > #user-wait {
     margin-left: 1em;
 
     background-color: steelblue;
