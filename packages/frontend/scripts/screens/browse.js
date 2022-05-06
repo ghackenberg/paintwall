@@ -85,6 +85,19 @@ class BrowseScreen extends BaseScreen {
         } else {
             this.headerNode.appendChild(this.loginNode)
         }
+        // Main
+        for (var i = 0; i < 300; i++) {
+            const canvasNode = canvas()
+
+            const clientCountContainerNode = div({ className:  'count client' }, span('?'))
+            const reactionCountContainerNode = div({ className:  'count reaction' }, span('?'))
+            
+            const infoNode = div(clientCountContainerNode, reactionCountContainerNode)
+
+            this.mainNode.appendChild(div({ className: 'placeholder' }, canvasNode, infoNode))
+        }
+        // Root
+        document.body.style.overflow = 'hidden'
         // Load
         this.load()
     }
@@ -164,6 +177,10 @@ class BrowseScreen extends BaseScreen {
         this.request.onreadystatechange = function() {
             // Check
             if (this.readyState == XMLHttpRequest.DONE) {
+                // Clear
+                clear(self.mainNode)
+                // Body
+                document.body.style.overflow = 'auto'
                 // Parse
                 const canvasObjects = JSON.parse(this.responseText)
                 // Loop
