@@ -9,7 +9,8 @@ class ImprintScreen extends BaseScreen {
 
         // Main node
         append(this.mainNode, [
-            this.backNode, h1('PaintWall - Imprint'), div(
+            this.backNode, h1('PaintWall - Imprint'),
+            div(
                 h2('Contact information'),
                 h3('Person'),
                 p(

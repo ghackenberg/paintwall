@@ -9,7 +9,8 @@ class TermsScreen extends BaseScreen {
 
         // Main node
         append(this.mainNode, [
-            this.backNode, h1('PaintWall - Terms of use'), div(
+            this.backNode, h1('PaintWall - Terms of use'),
+            div(
                 p(em('Coming soon'))
             )
         ])

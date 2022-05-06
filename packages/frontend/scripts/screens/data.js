@@ -9,7 +9,8 @@ class DataScreen extends BaseScreen {
 
         // Main node
         append(this.mainNode, [
-            this.backNode, h1('PaintWall - Data protection'), div(
+            this.backNode, h1('PaintWall - Data protection'),
+            div(
                 p(em('Coming soon'))
             )
         ])
