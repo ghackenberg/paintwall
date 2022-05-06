@@ -51,8 +51,12 @@ class BrowseScreen extends BaseScreen {
         this.headerNode.appendChild(this.countNode)
         this.headerNode.appendChild(this.createNode)
 
-        // Copy
-        this.copyNode = span({ id: 'copy' }, [ '© 2022 FHOÖ' ])
+        // Imprint
+        this.imprintNode = a({ id: 'imprint',
+            onclick: () => {
+                history.pushState(null, undefined, base + '/imprint')
+            }
+        }, [ 'Imprint' ])
 
         // Data
         this.dataNode = a({ id: 'data',
@@ -69,7 +73,7 @@ class BrowseScreen extends BaseScreen {
         }, [ 'Terms of use' ])
 
         // Footer
-        this.footerNode.appendChild(this.copyNode)
+        this.footerNode.appendChild(this.imprintNode)
         this.footerNode.appendChild(this.dataNode)
         this.footerNode.appendChild(this.termsNode)
 

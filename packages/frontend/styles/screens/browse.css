@@ -162,3 +162,7 @@ body > #browse > footer > a::before {
 
     cursor: default;
 }
+
+body > #browse > footer > a:first-child:before {
+    content: none;
+}

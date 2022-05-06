@@ -24,6 +24,7 @@ const files = [
     '/styles/screens/error.css',
     '/styles/screens/browse.css',
     '/styles/screens/paint.css',
+    '/styles/screens/imprint.css',
     '/styles/screens/data.css',
     '/styles/screens/terms.css',
     '/scripts/main.js',
@@ -42,6 +43,7 @@ const files = [
     '/scripts/screens/error.js',
     '/scripts/screens/browse.js',
     '/scripts/screens/paint.js',
+    '/scripts/screens/imprint.js',
     '/scripts/screens/data.js',
     '/scripts/screens/terms.js'
 ]
