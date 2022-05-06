@@ -40,6 +40,14 @@ body > #browse > header > #logout {
     cursor: pointer;
 }
 
+body > #browse > header > #wait {
+    margin-left: 1em;
+
+    background-color: steelblue;
+
+    cursor: pointer;
+}
+
 @media screen and (max-width: 31em) {
     body > #browse > header > #login {
         display: none;
@@ -80,44 +88,6 @@ body > #browse > main > div {
     cursor: pointer;
 
     overflow: hidden;
-}
-
-@keyframes pulse {
-    0% {
-        top: -100%;
-    }
-    100% {
-        top: 100%;
-    }
-}
-
-body > #browse > main > div.placeholder {
-    position: relative;
-    
-    background-color: lightgray;
-}
-
-body > #browse > main > div.placeholder::after {
-    content: '';
-
-    animation-name: pulse;
-    animation-duration: 1s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-
-    display: block;
-
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-
-    border-radius: 0.5;
-
-    height: 100%;
-
-    background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
 }
 
 body > #browse > main > div > canvas {

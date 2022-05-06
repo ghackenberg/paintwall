@@ -14,15 +14,12 @@ loadScreen.show()
 
 // VARIABLES
 
-var auth0
-var user
+var auth0 = null
+var user = null
 
 // FUNCTIONS
 
-/**
- * Fired when the page was loaded.
- */
-async function handleLoad() {
+async function tryAuthorize() {
     try {
         // Initialize client
         auth0 = await createAuth0Client({
@@ -36,11 +33,20 @@ async function handleLoad() {
             // Remove code and state query parameters
             history.replaceState(null, undefined, location.pathname)
         }
-        // Retrieve user
-        user = await auth0.getUser()   
+        // Set user
+        user = await auth0.getUser()
     } catch (error) {
-        console.error(error)
+        // Set user
+        user = null
     }
+    // Dispatch event
+    window.dispatchEvent(new Event('authorize'))
+}
+
+/**
+ * Fired when the page was loaded.
+ */
+async function handleLoad() {
     // Initialize
     initializeHistory()
     // Overwrite
@@ -68,3 +74,6 @@ if ('serviceWorker' in navigator) {
 // Event listeners
 window.addEventListener('load', handleLoad)
 window.addEventListener('popstate', handlePopState)
+
+// Try authorize
+tryAuthorize()

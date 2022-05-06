@@ -10,6 +10,11 @@ class BrowseScreen extends BaseScreen {
     clientCountNodes = {}
     reactionCountNodes = {}
 
+    // Connection
+
+    socket = null
+    request = null
+
     // Constructor
 
     constructor() {
@@ -46,8 +51,14 @@ class BrowseScreen extends BaseScreen {
             }
         }, 'Logout')
 
+        // Wait
+        this.waitNode = button({ id: 'wait', className: 'button' }, '?')
+
         // Header
-        append(this.headerNode, [ this.logoNode, this.countNode, this.createNode ])
+        append(this.headerNode, [ this.logoNode, this.countNode, this.createNode, this.waitNode ])
+
+        // Load
+        this.loadNode = img({ className: 'load', src: base + '/images/load.png' })
 
         // Imprint
         this.imprintNode = a({ id: 'imprint',
@@ -73,53 +84,34 @@ class BrowseScreen extends BaseScreen {
         // Footer
         append(this.footerNode, [ this.imprintNode, this.dataNode, this.termsNode ])
 
+        // Handle
+        this.handleAuthorize()
+
         // Connect
         this.connect()
+
+        // Listen
+        window.addEventListener('authorize', this.handleAuthorize.bind(this))
     }
 
-    show() {
-        super.show()
+    handleAuthorize() {
+        // Remove
+        this.headerNode.removeChild(this.headerNode.lastChild)
         // Append
         if (user) {
             this.headerNode.appendChild(this.logoutNode)
-        } else {
+        } else if (user === undefined) {
             this.headerNode.appendChild(this.loginNode)
+        } else if (user === null) {
+            this.headerNode.appendChild(this.waitNode)
         }
-        // Main
-        for (var i = 0; i < 300; i++) {
-            const canvasNode = canvas()
-
-            const clientCountContainerNode = div({ className:  'count client' }, span('?'))
-            const reactionCountContainerNode = div({ className:  'count reaction' }, span('?'))
-            
-            const infoNode = div(clientCountContainerNode, reactionCountContainerNode)
-
-            this.mainNode.appendChild(div({ className: 'placeholder' }, canvasNode, infoNode))
-        }
-        // Root
-        document.body.style.overflow = 'hidden'
-        // Load
-        this.load()
-    }
-
-    hide() {
-        super.hide()
-        // Remove header
-        if (user) {
-            this.headerNode.removeChild(this.logoutNode)
-        } else {
-            this.headerNode.removeChild(this.loginNode)
-        }
-        // Clear main
-        clear(this.mainNode)
-        // Reset models
-        this.canvasModels = []
-        // Reset nodes
-        this.clientCountNodes = {}
-        this.reactionCountNodes = {}
     }
 
     connect() {
+        // Check
+        if (this.socket) {
+            return
+        }
         // Self
         const self = this
         // Socket
@@ -164,12 +156,26 @@ class BrowseScreen extends BaseScreen {
             self.socket.close()
         }
         this.socket.onclose = function(event) {
+            // Reset
+            self.socket = null
             // Connect
             self.connect()
         }
     }
 
+    show() {
+        super.show()
+        // Main
+        this.mainNode.appendChild(this.loadNode)
+        // Load
+        this.load()
+    }
+
     load() {
+        // Check
+        if (this.request) {
+            return
+        }
         // Self
         const self = this
         // Request
@@ -177,10 +183,10 @@ class BrowseScreen extends BaseScreen {
         this.request.onreadystatechange = function() {
             // Check
             if (this.readyState == XMLHttpRequest.DONE) {
-                // Clear
-                clear(self.mainNode)
-                // Body
-                document.body.style.overflow = 'auto'
+                // Reset
+                self.request = null
+                // Remove
+                self.mainNode.removeChild(self.loadNode)
                 // Parse
                 const canvasObjects = JSON.parse(this.responseText)
                 // Loop
@@ -240,5 +246,16 @@ class BrowseScreen extends BaseScreen {
         }
         this.request.open('GET', base + '/api/v1/canvas/')
         this.request.send()
+    }
+
+    hide() {
+        super.hide()
+        // Clear main
+        clear(this.mainNode)
+        // Reset models
+        this.canvasModels = []
+        // Reset nodes
+        this.clientCountNodes = {}
+        this.reactionCountNodes = {}
     }
 }
