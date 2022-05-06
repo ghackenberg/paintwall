@@ -29,6 +29,7 @@ const files = [
     '/scripts/main.js',
     '/scripts/dependencies/auth0.js',
     '/scripts/dependencies/qrcode.js',
+    '/scripts/functions/html.js',
     '/scripts/functions/route.js',
     '/scripts/functions/history.js',
     '/scripts/functions/socket.js',

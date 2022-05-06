@@ -41,75 +41,47 @@ class PaintScreen extends BaseScreen {
         // States
         this.clientModel = new ClientModel(clientId, name, color, width, alpha, position)
 
-        // Handlers (resize)
+        // Handlers
         this.handleResize = this.handleResize.bind(this)
-        // Handlers (wheel)
-        this.handleWheel = this.handleWheel.bind(this)
-        // Handlers (mouse)
-        this.handleMouseDown = this.handleMouseDown.bind(this)
-        this.handleMouseUp = this.handleMouseUp.bind(this)
-        this.handleMouseMove = this.handleMouseMove.bind(this)
-        this.handleMouseOver = this.handleMouseOver.bind(this)
-        this.handleMouseOut = this.handleMouseOut.bind(this)
-        // Handers (touch)
-        this.handleTouchStart = this.handleTouchStart.bind(this)
-        this.handleTouchMove = this.handleTouchMove.bind(this)
-        this.handleTouchEnd = this.handleTouchEnd.bind(this)
-        // Handlers (change)
-        this.handleChange = this.handleChange.bind(this)
 
         // Nodes (canvas)
-        this.canvasNode = document.createElement('canvas')
-        this.canvasNode.id = 'canvas'
-        // Context menu
-        this.canvasNode.addEventListener('contextmenu', event => event.preventDefault())
-        // Wheel
-        this.canvasNode.addEventListener('wheel', this.handleWheel)
-        // Mouse
-        this.canvasNode.addEventListener('mousedown', this.handleMouseDown)
-        this.canvasNode.addEventListener('mouseup', this.handleMouseUp)
-        this.canvasNode.addEventListener('mousemove', this.handleMouseMove)
-        this.canvasNode.addEventListener('mouseover', this.handleMouseOver)
-        this.canvasNode.addEventListener('mouseout', this.handleMouseOut)
-        // Touch
-        this.canvasNode.addEventListener('touchstart', this.handleTouchStart)
-        this.canvasNode.addEventListener('touchmove', this.handleTouchMove)
-        this.canvasNode.addEventListener('touchend', this.handleTouchEnd)
+        this.canvasNode = canvas({ id: 'canvas',
+            oncontextmenu: event => event.preventDefault(),
+            onwheel: this.handleWheel.bind(this),
+            onmousedown: this.handleMouseDown.bind(this),
+            onmouseup: this.handleMouseUp.bind(this),
+            onmousemove: this.handleMouseMove.bind(this),
+            onmouseover: this.handleMouseOver.bind(this),
+            onmouseout: this.handleMouseOut.bind(this),
+            ontouchstart: this.handleTouchStart.bind(this),
+            ontouchmove: this.handleTouchMove.bind(this),
+            ontouchend: this.handleTouchEnd.bind(this)
+        })
 
         // Nodes (back)
-        this.backNode = document.createElement('img')
-        this.backNode.id = 'back'
-        this.backNode.className = 'back'
-        this.backNode.src = base + '/images/back.png'
-        this.backNode.onclick = function() {
-            history.back()
+        this.backNode = img({ id: 'back', className: 'back', src: base + '/images/back.png',
+            onclick: () => {
+                history.back()
+            }
+        })
+
+        // Nodes (colors)
+        for (const otherColor of PaintScreen.COLORS) {
+            // Prepare
+            const className = otherColor == color ? 'color active' : 'color'
+            const style = { backgroundColor: otherColor }
+            const value = otherColor
+            // Create
+            this.colorNodes[otherColor] = span({ className, style, value,
+                onclick: this.handleChange.bind(this)
+            })
         }
 
         // Nodes (color)
-        this.colorNode = document.createElement('div')
-        this.colorNode.id = 'color'
-        // Nodes (colors)
-        for (const otherColor of PaintScreen.COLORS) {
-            // Create
-            const colorNode = document.createElement('span')
-            // Update
-            colorNode.id = otherColor
-            colorNode.classList.add('color')
-            if (otherColor == color) {
-                colorNode.classList.add('active')
-            }
-            colorNode.style.backgroundColor = otherColor
-            colorNode.value = otherColor
-            colorNode.onclick = this.handleChange
-            // Remember
-            this.colorNodes[otherColor] = colorNode
-            // Append
-            this.colorNode.appendChild(colorNode)
-        }
+        this.colorNode = div({ id: 'color' }, Object.values(this.colorNodes))
 
         // Nodes (code)
-        this.qrcodeNode = document.createElement('div')
-        this.qrcodeNode.id = 'qrcode'
+        this.qrcodeNode = div({ id: 'qrcode' })
 
         // Nodes (main)
         this.mainNode.appendChild(this.qrcodeNode)

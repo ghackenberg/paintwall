@@ -3,10 +3,7 @@ class LoadScreen extends BaseScreen {
         super('load')
         
         // Image node
-        this.imageNode = document.createElement('img')
-        this.imageNode.id = 'image'
-        this.imageNode.className = 'load'
-        this.imageNode.src = base + '/images/load.png'
+        this.imageNode = img({ id: 'image', className: 'load', src: base + '/images/load.png' })
 
         // Main node
         this.mainNode.appendChild(this.imageNode)

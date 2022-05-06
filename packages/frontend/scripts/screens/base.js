@@ -9,21 +9,16 @@ class BaseScreen {
 
     constructor(id) {        
         // Header
-        this.headerNode = document.createElement('header')
+        this.headerNode = header()
         
         // Main
-        this.mainNode = document.createElement('main')
+        this.mainNode = main()
 
         // Footer
-        this.footerNode = document.createElement('footer')
+        this.footerNode = footer()
 
         // Root
-        this.rootNode = document.createElement('div')
-        this.rootNode.id = id
-        this.rootNode.className = 'screen'
-        this.rootNode.appendChild(this.headerNode)
-        this.rootNode.appendChild(this.mainNode)
-        this.rootNode.appendChild(this.footerNode)
+        this.rootNode = div({ id, className: 'screen' }, [ this.headerNode, this.mainNode, this.footerNode ])
 
         // Body
         document.body.appendChild(this.rootNode)

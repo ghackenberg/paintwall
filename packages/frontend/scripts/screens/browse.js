@@ -16,46 +16,35 @@ class BrowseScreen extends BaseScreen {
         super('browse')
 
         // Logo
-        this.logoNode = document.createElement('span')
-        this.logoNode.id = 'logo'
-        this.logoNode.textContent = "PaintWall"
+        this.logoNode = span({ id: 'logo' }, [ 'PaintWall' ])
 
         // Count
-        this.countNode = document.createElement('span')
-        this.countNode.id = 'count'
-        this.countNode.className = 'button'
-        this.countNode.textContent = '0 online'
+        this.countNode = span({ id: 'count', className: 'button' }, [ '0 online' ])
 
         // Button
-        this.createNode = document.createElement('button')
-        this.createNode.id = 'create'
-        this.createNode.className = 'button'
-        this.createNode.textContent = 'New canvas'
-        this.createNode.onclick = function() {
-            history.pushState(null, undefined, base + '/canvas/' + Math.random().toString(16).substring(2))
-        }
+        this.createNode = button({ id: 'create', className: 'button',
+            onclick: () => {
+                history.pushState(null, undefined, base + '/canvas/' + Math.random().toString(16).substring(2))
+            }
+        }, [ 'New canvas' ])
 
         // Login
-        this.loginNode = document.createElement('button')
-        this.loginNode.id = 'login'
-        this.loginNode.className = 'button'
-        this.loginNode.textContent = 'Login'
-        this.loginNode.onclick = async function() {
-            await auth0.loginWithRedirect({
-                redirect_uri: location.href
-            })
-        }
+        this.loginNode = button({ id: 'login', className: 'button',
+            onclick: async () => {
+                await auth0.loginWithRedirect({
+                    redirect_uri: location.href
+                })
+            }
+        }, [ 'Login' ])
 
         // Logout
-        this.logoutNode = document.createElement('button')
-        this.logoutNode.id = 'logout'
-        this.logoutNode.className = 'button'
-        this.logoutNode.textContent = 'Logout'
-        this.logoutNode.onclick = async function() {
-            await auth0.logout({
-                returnTo: location.href
-            })
-        }
+        this.logoutNode = button({ id: 'logout', className: 'button',
+            onclick: async () => {
+                await auth0.logout({
+                    returnTo: location.href
+                })
+            }
+        }, [ 'Logout' ])
 
         // Header
         this.headerNode.appendChild(this.logoNode)
@@ -63,25 +52,21 @@ class BrowseScreen extends BaseScreen {
         this.headerNode.appendChild(this.createNode)
 
         // Copy
-        this.copyNode = document.createElement('span')
-        this.copyNode.id = 'copy'
-        this.copyNode.textContent = '© 2022 FHOÖ'
+        this.copyNode = span({ id: 'copy' }, [ '© 2022 FHOÖ' ])
 
         // Data
-        this.dataNode = document.createElement('a')
-        this.dataNode.id = 'data'
-        this.dataNode.textContent = 'Data protection'
-        this.dataNode.onclick = function() {
-            history.pushState(null, undefined, base + '/data-protection')
-        }
+        this.dataNode = a({ id: 'data',
+            onclick: () => {
+                history.pushState(null, undefined, base + '/data-protection')
+            }
+        }, [ 'Data protection' ])
 
         // Terms
-        this.termsNode = document.createElement('a')
-        this.termsNode.id = 'terms'
-        this.termsNode.textContent = 'Terms of use'
-        this.termsNode.onclick = function() {
-            history.pushState(null, undefined, base + '/terms-of-use')
-        }
+        this.termsNode = a({ id: 'terms',
+            onclick: () => {
+                history.pushState(null, undefined, base + '/terms-of-use')
+            }
+        }, [ 'Terms of use' ])
 
         // Footer
         this.footerNode.appendChild(this.copyNode)
@@ -198,38 +183,29 @@ class BrowseScreen extends BaseScreen {
                     const reactionCount = Object.values(reactions).reduce((a, b) => a + b, 0)
 
                     // Canvas node
-                    const canvasNode = document.createElement('canvas')
+                    const canvasNode = canvas()
                     
                     // Client count node
-                    const clientCountNode = document.createElement('span')
-                    clientCountNode.textContent = '' + clientCount
+                    const clientCountNode = span([ '' + clientCount ])
                     
                     // Reaction count node
-                    const reactionCountNode = document.createElement('span')
-                    reactionCountNode.textContent = '' + reactionCount
+                    const reactionCountNode = span([ '' + reactionCount ])
 
                     // Client count container node
-                    const clientCountContainerNode = document.createElement('div')
-                    clientCountContainerNode.className = 'count client'
-                    clientCountContainerNode.appendChild(clientCountNode)
+                    const clientCountContainerNode = div({ className:  'count client' }, [ clientCountNode ])
 
                     // Reaction count container node
-                    const reactionCountContainerNode = document.createElement('div')
-                    reactionCountContainerNode.className = 'count reaction'
-                    reactionCountContainerNode.appendChild(reactionCountNode)
+                    const reactionCountContainerNode = div({ className: 'count reaction' }, [ reactionCountNode ])
                     
                     // Info node
-                    const infoNode = document.createElement('div')
-                    infoNode.appendChild(clientCountContainerNode)
-                    infoNode.appendChild(reactionCountContainerNode)
+                    const infoNode = div([ clientCountContainerNode, reactionCountContainerNode ])
                     
                     // Container node
-                    const containerNode = document.createElement('div')
-                    containerNode.appendChild(canvasNode)
-                    containerNode.appendChild(infoNode)
-                    containerNode.addEventListener('click', (event) => {
-                        history.pushState(null, undefined, base + '/canvas/' + canvasObject.canvasId)
-                    })
+                    const containerNode = div({
+                        onclick: () => {
+                            history.pushState(null, undefined, base + '/canvas/' + canvasObject.canvasId)
+                        }
+                    }, [ canvasNode, infoNode ])
                     
                     // Main node
                     self.mainNode.appendChild(containerNode)
