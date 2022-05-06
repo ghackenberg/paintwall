@@ -1,3 +1,8 @@
+// VARIABLES
+
+var auth0 = null
+var user = null
+
 // CONSTANTS
 
 const base = '/paintwall'
@@ -11,11 +16,6 @@ const dataScreen = new DataScreen()
 const termsScreen = new TermsScreen()
 
 loadScreen.show()
-
-// VARIABLES
-
-var auth0 = null
-var user = null
 
 // FUNCTIONS
 
