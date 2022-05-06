@@ -16,17 +16,17 @@ class BrowseScreen extends BaseScreen {
         super('browse')
 
         // Logo
-        this.logoNode = span({ id: 'logo' }, [ 'PaintWall' ])
+        this.logoNode = span({ id: 'logo' }, 'PaintWall')
 
         // Count
-        this.countNode = span({ id: 'count', className: 'button' }, [ '0 online' ])
+        this.countNode = span({ id: 'count', className: 'button' }, '0')
 
         // Button
         this.createNode = button({ id: 'create', className: 'button',
             onclick: () => {
                 history.pushState(null, undefined, base + '/canvas/' + Math.random().toString(16).substring(2))
             }
-        }, [ 'New canvas' ])
+        }, 'New canvas')
 
         // Login
         this.loginNode = button({ id: 'login', className: 'button',
@@ -35,7 +35,7 @@ class BrowseScreen extends BaseScreen {
                     redirect_uri: location.href
                 })
             }
-        }, [ 'Login' ])
+        }, 'Login')
 
         // Logout
         this.logoutNode = button({ id: 'logout', className: 'button',
@@ -44,7 +44,7 @@ class BrowseScreen extends BaseScreen {
                     returnTo: location.href
                 })
             }
-        }, [ 'Logout' ])
+        }, 'Logout')
 
         // Header
         append(this.headerNode, [ this.logoNode, this.countNode, this.createNode ])
@@ -54,21 +54,21 @@ class BrowseScreen extends BaseScreen {
             onclick: () => {
                 history.pushState(null, undefined, base + '/imprint')
             }
-        }, [ 'Imprint' ])
+        }, 'Imprint')
 
         // Data
         this.dataNode = a({ id: 'data',
             onclick: () => {
                 history.pushState(null, undefined, base + '/data-protection')
             }
-        }, [ 'Data protection' ])
+        }, 'Data protection')
 
         // Terms
         this.termsNode = a({ id: 'terms',
             onclick: () => {
                 history.pushState(null, undefined, base + '/terms-of-use')
             }
-        }, [ 'Terms of use' ])
+        }, 'Terms of use')
 
         // Footer
         append(this.footerNode, [ this.imprintNode, this.dataNode, this.termsNode ])
@@ -118,14 +118,14 @@ class BrowseScreen extends BaseScreen {
             switch (message.type) {
                 case 'client-count': {
                     const count = message.data
-                    self.countNode.textContent = count + ' online'
+                    self.countNode.textContent = count
                     break
                 }
                 case 'canvas-client-count': {
                     const canvasId = message.data.canvasId
                     const count = message.data.count
                     if (canvasId in self.clientCountNodes) {
-                        self.clientCountNodes[canvasId].textContent = '' + count
+                        self.clientCountNodes[canvasId].textContent = count
                     }
                     break
                 }
@@ -134,7 +134,7 @@ class BrowseScreen extends BaseScreen {
                     const count = message.data.count
 
                     if (canvasId in self.reactionCountNodes) {
-                        self.reactionCountNodes[canvasId].textContent = '' + count
+                        self.reactionCountNodes[canvasId].textContent = count
                     }
 
                     break
@@ -184,26 +184,26 @@ class BrowseScreen extends BaseScreen {
                     const canvasNode = canvas()
                     
                     // Client count node
-                    const clientCountNode = span([ '' + clientCount ])
+                    const clientCountNode = span(clientCount)
                     
                     // Reaction count node
-                    const reactionCountNode = span([ '' + reactionCount ])
+                    const reactionCountNode = span(reactionCount)
 
                     // Client count container node
-                    const clientCountContainerNode = div({ className:  'count client' }, [ clientCountNode ])
+                    const clientCountContainerNode = div({ className:  'count client' }, clientCountNode)
 
                     // Reaction count container node
-                    const reactionCountContainerNode = div({ className: 'count reaction' }, [ reactionCountNode ])
+                    const reactionCountContainerNode = div({ className: 'count reaction' }, reactionCountNode)
                     
                     // Info node
-                    const infoNode = div([ clientCountContainerNode, reactionCountContainerNode ])
+                    const infoNode = div(clientCountContainerNode, reactionCountContainerNode)
                     
                     // Container node
                     const containerNode = div({
                         onclick: () => {
                             history.pushState(null, undefined, base + '/canvas/' + canvasObject.canvasId)
                         }
-                    }, [ canvasNode, infoNode ])
+                    }, canvasNode, infoNode)
                     
                     // Main node
                     self.mainNode.appendChild(containerNode)

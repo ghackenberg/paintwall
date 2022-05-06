@@ -18,7 +18,7 @@ class BaseScreen {
         this.footerNode = footer()
 
         // Root
-        this.rootNode = div({ id, className: 'screen' }, [ this.headerNode, this.mainNode, this.footerNode ])
+        this.rootNode = div({ id, className: 'screen' }, this.headerNode, this.mainNode, this.footerNode)
 
         // Body
         document.body.appendChild(this.rootNode)

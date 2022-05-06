@@ -60,9 +60,7 @@ class PaintScreen extends BaseScreen {
 
         // Nodes (back)
         this.backNode = img({ id: 'back', className: 'back', src: base + '/images/back.png',
-            onclick: () => {
-                history.back()
-            }
+            onclick: () => history.back()
         })
 
         // Nodes (colors)

@@ -3,9 +3,12 @@ function element(tagname) {
     const argOne = arguments.length > 1 ? arguments[1] : undefined
     const argTwo = arguments.length > 2 ? arguments[2] : undefined
 
+    const hasMap = typeof argOne == 'object' && !(argOne instanceof Array) && !(argOne instanceof HTMLElement)
+    const hasArray = (hasMap ? argTwo : argOne) instanceof Array
+
     // Parse arguments
-    const attributes = (typeof argOne == 'object' && !Array.isArray(argOne)) ? argOne : {}
-    const children = Array.isArray(argOne) ? argOne : (Array.isArray(argTwo) ? argTwo : [])
+    const attributes = hasMap ? argOne : {}
+    const children = hasMap ? (hasArray ? argTwo : [...arguments].splice(2)) : (hasArray ? argOne : [...arguments].splice(1))
 
     // Create element
     const result = document.createElement(tagname)
@@ -38,6 +41,10 @@ function set(parent, attributes) {
 function append(parent, children) {
     for (const child of children) {
         switch (typeof child) {
+            case 'number': {
+                parent.appendChild(document.createTextNode(child))
+                break
+            }
             case 'string': {
                 parent.appendChild(document.createTextNode(child))
                 break
