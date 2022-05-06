@@ -24,7 +24,7 @@ class BrowseScreen extends BaseScreen {
         this.logoNode = span({ id: 'logo' }, 'PaintWall')
 
         // Count
-        this.countNode = span({ id: 'count', className: 'button' }, '0')
+        this.countNode = span({ id: 'count', className: 'button' }, img({ className: 'load', src: base + '/images/load.png' }))
 
         // Button
         this.createNode = button({ id: 'create', className: 'button',
@@ -52,7 +52,7 @@ class BrowseScreen extends BaseScreen {
         }, 'Logout')
 
         // Wait
-        this.waitNode = button({ id: 'wait', className: 'button' }, '?')
+        this.waitNode = button({ id: 'wait', className: 'button' }, img({ className: 'load', src: base + '/images/load.png' }))
 
         // Header
         append(this.headerNode, [ this.logoNode, this.countNode, this.createNode, this.waitNode ])

@@ -119,3 +119,19 @@ img.back {
 
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
 }
+
+.button img.load {
+    position: initial;
+
+    display: inline-block;
+
+    vertical-align: top;
+
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+
+    width: 1em;
+    height: 1em;
+
+    filter: invert(1);
+}
