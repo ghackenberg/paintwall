@@ -84,10 +84,7 @@ class PaintScreen extends BaseScreen {
         this.qrcodeNode = div({ id: 'qrcode' })
 
         // Nodes (main)
-        this.mainNode.appendChild(this.qrcodeNode)
-        this.mainNode.appendChild(this.canvasNode)
-        this.mainNode.appendChild(this.backNode)
-        this.mainNode.appendChild(this.colorNode)
+        append(this.mainNode, [ this.qrcodeNode, this.canvasNode, this.backNode, this.colorNode ])
 
         // Models
         this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })

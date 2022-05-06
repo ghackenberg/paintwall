@@ -47,9 +47,7 @@ class BrowseScreen extends BaseScreen {
         }, [ 'Logout' ])
 
         // Header
-        this.headerNode.appendChild(this.logoNode)
-        this.headerNode.appendChild(this.countNode)
-        this.headerNode.appendChild(this.createNode)
+        append(this.headerNode, [ this.logoNode, this.countNode, this.createNode ])
 
         // Imprint
         this.imprintNode = a({ id: 'imprint',
@@ -73,9 +71,7 @@ class BrowseScreen extends BaseScreen {
         }, [ 'Terms of use' ])
 
         // Footer
-        this.footerNode.appendChild(this.imprintNode)
-        this.footerNode.appendChild(this.dataNode)
-        this.footerNode.appendChild(this.termsNode)
+        append(this.footerNode, [ this.imprintNode, this.dataNode, this.termsNode ])
 
         // Connect
         this.connect()
@@ -102,9 +98,7 @@ class BrowseScreen extends BaseScreen {
             this.headerNode.removeChild(this.loginNode)
         }
         // Clear main
-        while (this.mainNode.firstChild) {
-            this.mainNode.removeChild(this.mainNode.firstChild)
-        }
+        clear(this.mainNode)
         // Reset models
         this.canvasModels = []
         // Reset nodes
