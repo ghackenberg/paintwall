@@ -1,15 +1,15 @@
 // CLASSES
 
-class BaseScreen {
+class BaseScreen {      //gilt als Mutterklasse zum erben
     // Static
     
-    static ACTIVE
+    static ACTIVE       //
     
     // Non-static
 
-    constructor(id, className) {        
+    constructor(id, className) {        //Aufbau Construktor   
         // Header
-        this.headerNode = header()
+        this.headerNode = header()      //Konstruktor erzeugt Inhalt aus header
         
         // Main
         this.mainNode = main()
