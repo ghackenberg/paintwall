@@ -68,8 +68,24 @@ class PaintScreen extends BaseScreen {
             onclick: () => history.back()
         })
 
+        // Nodes (shareButton)
+        this.shareNode = img({id: 'share', className: 'share', src: base + '/images/share.png',
+            onclick: () => this.popupNode.style.display = 'block'
+        })
+
+        // Nodes (closePopupButton)
+        this.closePopupNode = img({ id: 'closePopup', className: 'closePopup', src: base + '/images/close.png', 
+            onclick: () => this.popupNode.style.display = 'none' 
+        })
+
         // Nodes (qrcode)
         this.qrcodeNode = div({ id: 'qrcode' })
+
+        // Node (urlNode)
+        this.urlNode = input({ id: 'url', value: location.href })
+
+        // Nodes (popupNode)
+        this.popupNode = div({ id: 'popupNode', style: {display: 'none'}}, this.urlNode, this.closePopupNode, this.qrcodeNode)
 
         // Nodes (colors)
         for (const otherColor of PaintScreen.COLORS) {
@@ -86,7 +102,7 @@ class PaintScreen extends BaseScreen {
         // Nodes (color)
         this.colorNode = div({ id: 'color' }, Object.values(this.colorNodes))
 
-        // Create Reaction_node
+        // Nodes (reactions)
         for (const reaction of PaintScreen.REACTIONS){
             this.reactionCountNodes[reaction] = span("0")
             this.reactionNodes[reaction] = span({
@@ -105,13 +121,14 @@ class PaintScreen extends BaseScreen {
             }, reaction, this.reactionCountNodes[reaction])
         }
 
+        // Nodes (reaction)
         this.reactionNode  = div({id: 'reaction' }, Object.values(this.reactionNodes))
         
         // Nodes (active user count)
         this.activeUserCountNode = div({ id: 'active-user-count' })
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.qrcodeNode, this.colorNode, this.activeUserCountNode, this.reactionNode])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.colorNode, this.shareNode, this.popupNode, this.activeUserCountNode, this.reactionNode])
 
         // Models
         this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })

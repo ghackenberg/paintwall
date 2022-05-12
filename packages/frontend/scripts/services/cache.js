@@ -18,6 +18,8 @@ const files = [
     '/images/icon-mono-512.png',
     '/images/load.png',
     '/images/back.png',
+    '/images/share.png',
+    '/images/close.png',
     '/styles/main.css',
     '/styles/screens/base.css',
     '/styles/screens/load.css',

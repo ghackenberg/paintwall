@@ -62,6 +62,84 @@ body > #paint > main > #color > .active {
     height: 3em;
 }
 
+body > #paint > main > img.share {
+    display: block;
+}
+
+body > #paint > main > #qrcode {
+    position: absolute;
+
+    top: 1em;
+    right: 1em;
+
+    width: 1em;
+    height: 1em;
+
+    padding: 1em;
+
+    border-radius: 1.5em;
+
+    background-color: white;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+}
+
+body > #paint > main > #popupNode {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    border-radius: 1.5em;
+    background-color: white;
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+}
+
+body > #paint > main > #popupNode > img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    padding: 1em;
+    border-radius: 1.5em;
+    cursor: pointer;
+}
+
+body > #paint > main > #popupNode > input {
+    display: block;
+    font-size: inherit;
+    line-height: 100%;
+    border: 0;
+    outline: 0;
+    padding: 1em;
+    padding-right: 4em;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 1.5em;
+    margin: 0;
+}
+
+body > #paint > main > #popupNode > #qrcode > img {
+    display: block;
+    width: 15em;
+    height: 15em;
+    margin: 1em;
+    margin-top: 0;
+}
+
+body > #paint > main > #active-user-count {
+    z-index: 10;
+    position: absolute;
+    top: 96.5vh;
+    left: 10px;
+    color: gray;
+}
+
+body > #paint > main > #active-user-count::before {
+    content: "Active Users: ";
+}
+
 body > #paint > main > #reaction {
     position: absolute;
     bottom: 1em;
@@ -98,30 +176,6 @@ body > #paint > main > #reaction > span > span{
     color: white;
     background-color: red;
 }
-
-body > #paint > main > #qrcode {
-    position: absolute;
-
-    top: 1em;
-    right: 1em;
-}
-body > #paint > main > #qrcode > * {
-    max-width: 15vw;
-    max-height: 15vh;
-}
-
-body > #paint > main > #active-user-count {
-    z-index: 10;
-    position: absolute;
-    top: 96.5vh;
-    left: 10px;
-    color: gray;
-}
-
-body > #paint > main > #active-user-count::before {
-    content: "Active Users: ";
-}
-
 
 /* Footer */
 
