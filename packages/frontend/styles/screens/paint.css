@@ -61,15 +61,69 @@ body > #paint > main > #color > .active {
     width: 3em;
     height: 3em;
 }
-body > #paint > main > #qrcode {
+
+body > #paint > main > img.share {
+    display: block;
+
     position: absolute;
 
     top: 1em;
     right: 1em;
+
+    width: 1em;
+    height: 1em;
+
+    padding: 1em;
+
+    border-radius: 1.5em;
+
+    background-color: white;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
 }
-body > #paint > main > #qrcode > * {
-    max-width: 15vw;
-    max-height: 15vh;
+
+body > #paint > main > #popupNode {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    border-radius: 1.5em;
+    background-color: white;
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+}
+
+body > #paint > main > #popupNode > img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    padding: 1em;
+    border-radius: 1.5em;
+    cursor: pointer;
+}
+
+body > #paint > main > #popupNode > input {
+    display: block;
+    font-size: inherit;
+    line-height: 100%;
+    border: 0;
+    outline: 0;
+    padding: 1em;
+    padding-right: 4em;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 1.5em;
+    margin: 0;
+}
+
+body > #paint > main > #popupNode > #qrcode > img {
+    display: block;
+    width: 15em;
+    height: 15em;
+    margin: 1em;
+    margin-top: 0;
 }
 
 /* Footer */

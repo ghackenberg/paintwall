@@ -66,8 +66,25 @@ class PaintScreen extends BaseScreen {
             onclick: () => history.back()
         })
 
+        // Nodes (shareButton)
+        this.shareNode = img({id: 'share', className: 'share', src: base + '/images/share.png',
+            onclick: () => this.popupNode.style.display = 'block'
+        })
+
+        // Nodes (closePopupButton)
+        this.closePopupNode = img({ id: 'closePopup', className: 'closePopup', src: base + '/images/close.png', 
+        onclick: () => this.popupNode.style.display = 'none' 
+        })
+
         // Nodes (qrcode)
         this.qrcodeNode = div({ id: 'qrcode' })
+
+        // Node (urlNode)
+        this.urlNode = input({ id: 'url', value: location.href })
+
+
+        // Nodes (popupNode)
+        this.popupNode = div({ id: 'popupNode', style: {display: 'none'}}, this.urlNode, this.closePopupNode, this.qrcodeNode)
 
         // Nodes (colors)
         for (const otherColor of PaintScreen.COLORS) {
@@ -85,7 +102,7 @@ class PaintScreen extends BaseScreen {
         this.colorNode = div({ id: 'color' }, Object.values(this.colorNodes))
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.qrcodeNode, this.colorNode ])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.colorNode, this.shareNode, this.popupNode ])
 
         // Models
         this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })
