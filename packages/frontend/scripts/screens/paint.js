@@ -6,7 +6,7 @@ class PaintScreen extends BaseScreen {
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
     static WIDTHS = [5.0]
     static ALPHAS = [0.5]
-    static REACTIONS = ['❤', '🚀', '🧠', '💐']
+    static REACTIONS = ['❤', '🤣', '👍', '😂', '✌']
 
     // Non-static
 
@@ -19,6 +19,8 @@ class PaintScreen extends BaseScreen {
     // Nodes
 
     colorNodes = {}
+    reactionNodes = {}
+    reactionCountNodes = {}
 
     // Coordinates
 
@@ -73,7 +75,7 @@ class PaintScreen extends BaseScreen {
 
         // Nodes (closePopupButton)
         this.closePopupNode = img({ id: 'closePopup', className: 'closePopup', src: base + '/images/close.png', 
-        onclick: () => this.popupNode.style.display = 'none' 
+            onclick: () => this.popupNode.style.display = 'none' 
         })
 
         // Nodes (qrcode)
@@ -81,7 +83,6 @@ class PaintScreen extends BaseScreen {
 
         // Node (urlNode)
         this.urlNode = input({ id: 'url', value: location.href })
-
 
         // Nodes (popupNode)
         this.popupNode = div({ id: 'popupNode', style: {display: 'none'}}, this.urlNode, this.closePopupNode, this.qrcodeNode)
@@ -101,8 +102,33 @@ class PaintScreen extends BaseScreen {
         // Nodes (color)
         this.colorNode = div({ id: 'color' }, Object.values(this.colorNodes))
 
+        // Nodes (reactions)
+        for (const reaction of PaintScreen.REACTIONS){
+            this.reactionCountNodes[reaction] = span("0")
+            this.reactionNodes[reaction] = span({
+                onclick: () => {
+                    // Update reaction count
+                    if (reaction in this.canvasModel.reactions) {
+                        this.canvasModel.reactions[reaction]++
+                    } else {
+                        this.canvasModel.reactions[reaction] = 1
+                    }
+                    // Update reaction count node
+                    this.reactionCountNodes[reaction].textContent = this.canvasModel.reactions[reaction]
+                    // Broadcast reaction
+                    this.canvasModel.broadcast('client-react', reaction)
+                }
+            }, reaction, this.reactionCountNodes[reaction])
+        }
+
+        // Nodes (reaction)
+        this.reactionNode  = div({id: 'reaction' }, Object.values(this.reactionNodes))
+        
+        // Nodes (active user count)
+        this.activeUserCountNode = div({ id: 'active-user-count' })
+
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.colorNode, this.shareNode, this.popupNode ])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.colorNode, this.shareNode, this.popupNode, this.activeUserCountNode, this.reactionNode])
 
         // Models
         this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })
@@ -126,23 +152,35 @@ class PaintScreen extends BaseScreen {
 
         // Canvas model
         this.canvasModel = new CanvasModel(this.canvasNode, canvasId)
-        this.canvasModel.on('init-counts', (clientId, data) => {
-            console.log('init-counts')
+        this.canvasModel.on('init-counts', (data) => {
+            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
         })
-        this.canvasModel.on('init-reactions', (clientId, data) => {
-            console.log('init-reactions')
+        this.canvasModel.on('init-reactions', (data) => {
+            for (const reaction of PaintScreen.REACTIONS){
+                if (reaction in this.canvasModel.reactions) {
+                    this.reactionCountNodes[reaction].textContent = data[reaction]
+                } else {
+                    this.reactionCountNodes[reaction].textContent = 0
+                }
+            }
         })
-        this.canvasModel.on('init-client', (clientId, data) => {
+        this.canvasModel.on('init-client', (data) => {
             console.log('init-client')
         })
         this.canvasModel.on('client-enter', (clientId, data) => {
+            console.log(this.canvasModel.counts.clients)
+            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
             console.log('client-enter')
         })
         this.canvasModel.on('client-leave', (clientId, data) => {
+            console.log(this.canvasModel.counts.clients)
+            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
             console.log('client-leave')
         })
         this.canvasModel.on('client-react', (clientId, data) => {
-            console.log('client-react')
+            if (data in this.reactionCountNodes) {
+                this.reactionCountNodes[data].textContent = this.canvasModel.reactions[data]
+            }
         })
         this.canvasModel.connect(this.clientModel)
 
