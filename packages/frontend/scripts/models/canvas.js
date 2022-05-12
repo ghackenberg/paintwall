@@ -1,6 +1,7 @@
 // CLASSES
 
 class CanvasModel {
+    handlers = {}
     constructor(canvasNode, canvasId, timestamps, counts, coordinates, reactions, clients, lines) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
@@ -44,6 +45,25 @@ class CanvasModel {
                 this.zoom = Math.min(1, width / dx, height / dy)
             } else {
                 this.zoom = 1
+            }
+        }
+    }
+    on(event, handler) {
+        if (!(event in this.handlers)) {
+            this.handlers[event] = []
+        }
+        this.handlers[event].push(handler)
+    }
+    off(event, handler) {
+        if (event in this.handlers) {
+            const index = this.handlers[event].indexOf(handler)
+            this.handlers[event].splice(index, 1)
+        }
+    }
+    dispatch(event, args) {
+        if (event in this.handlers) {
+            for (const handler of this.handlers[event]) {
+                handler(...args)
             }
         }
     }
@@ -244,6 +264,12 @@ class CanvasModel {
 
                     break
                 }
+            }
+            // Dispatch
+            if ('clientId' in message) {
+                this.dispatch(message.type, [message.clientId, message.data])
+            } else {
+                this.dispatch(message.type, [message.data])
             }
             // Draw
             this.draw()
