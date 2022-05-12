@@ -37,6 +37,7 @@ for (const canvasObject of Object.values(canvasObjectMap)) {
         }
         canvasObject.counts = { views: 1, clients: 0, reactions }
     }
+    canvasObject.counts.clients = 0
     // Initialize clients
     canvasObject.clients = {}
 }
