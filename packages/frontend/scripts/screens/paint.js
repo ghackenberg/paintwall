@@ -96,16 +96,39 @@ class PaintScreen extends BaseScreen {
     show() {
         // Node
         super.show()
+
         // Canvas id
         const canvasId = location.pathname.substring(location.pathname.lastIndexOf('/') + 1)
+
         // QR-Code model
         this.qrcodeModel.clear()
         this.qrcodeModel.makeCode(location.href)
+
         // Client name
         this.clientModel.name = user ? user.nickname : 'Anonymous'
+
         // Canvas model
         this.canvasModel = new CanvasModel(this.canvasNode, canvasId)
+        this.canvasModel.on('init-counts', (clientId, data) => {
+            console.log('init-counts')
+        })
+        this.canvasModel.on('init-reactions', (clientId, data) => {
+            console.log('init-reactions')
+        })
+        this.canvasModel.on('init-client', (clientId, data) => {
+            console.log('init-client')
+        })
+        this.canvasModel.on('client-enter', (clientId, data) => {
+            console.log('client-enter')
+        })
+        this.canvasModel.on('client-leave', (clientId, data) => {
+            console.log('client-leave')
+        })
+        this.canvasModel.on('client-react', (clientId, data) => {
+            console.log('client-react')
+        })
         this.canvasModel.connect(this.clientModel)
+
         // Resize
         this.handleResize()
         // Window
