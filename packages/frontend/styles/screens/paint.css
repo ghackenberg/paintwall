@@ -61,6 +61,44 @@ body > #paint > main > #color > .active {
     width: 3em;
     height: 3em;
 }
+
+body > #paint > main > #reaction {
+    position: absolute;
+    bottom: 1em;
+    left: 0 ;
+    right: 0;
+    text-align: center;
+} 
+
+body > #paint > main > #reaction > span {
+    position: relative;
+    display: inline-block;
+    padding: 1em;
+    background-color: white;
+    border-radius: 1.5em;
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    cursor: pointer;
+}
+
+body > #paint > main > #reaction > span > span{
+    position: absolute;
+    display: block;
+    width: 1rem;
+    text-align: center;
+    border-radius: 50%;
+    line-height: 1rem;
+    font-size: 75%;
+    top: 0;
+    right:0;
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+    color: white;
+    background-color: red;
+}
+
 body > #paint > main > #qrcode {
     position: absolute;
 
