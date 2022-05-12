@@ -1,10 +1,11 @@
 // CLASSES
 
 class CanvasModel {
-    constructor(canvasNode, canvasId, timestamps, coordinates, reactions, clients, lines) {
+    constructor(canvasNode, canvasId, timestamps, counts, coordinates, reactions, clients, lines) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
         this.timestamps = timestamps
+        this.counts = counts
         this.coordinates = coordinates
         this.reactions = reactions || {}
         this.clients = clients || {}
@@ -73,6 +74,9 @@ class CanvasModel {
 
                     this.clients[clientId] = new ClientModel(clientId, name, color, width, alpha, position)
 
+                    this.counts.views++
+                    this.counts.clients++
+
                     break
                 }
                 case 'client-leave': {
@@ -81,6 +85,8 @@ class CanvasModel {
                     if (clientId in this.clients) {
                         delete this.clients[clientId]
                     }
+                    
+                    this.counts.clients--
 
                     break
                 }
@@ -187,10 +193,17 @@ class CanvasModel {
                         this.reactions[reaction]++
                     }
 
+                    this.counts.reactions++
+
                     break
                 }
                 case 'init-timestamps': {
                     this.timestamps = message.data
+
+                    break
+                }
+                case 'init-counts': {
+                    this.counts = message.data
 
                     break
                 }

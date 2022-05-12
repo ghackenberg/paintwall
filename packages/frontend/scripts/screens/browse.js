@@ -11,6 +11,7 @@ class BrowseScreen extends BaseScreen {
 
     // Nodes
 
+    viewCountNodes = {}
     clientCountNodes = {}
     reactionCountNodes = {}
 
@@ -162,6 +163,14 @@ class BrowseScreen extends BaseScreen {
                     self.updateCanvasCount(count)
                     break
                 }
+                case 'canvas-view-count': {
+                    const canvasId = message.data.canvasId
+                    const count = message.data.count
+                    if (canvasId in self.viewCountNodes) {
+                        self.viewCountNodes[canvasId].textContent = count
+                    }
+                    break
+                }
                 case 'canvas-client-count': {
                     const canvasId = message.data.canvasId
                     const count = message.data.count
@@ -223,32 +232,36 @@ class BrowseScreen extends BaseScreen {
                     // Extract information
                     const canvasId = canvasObject.canvasId
                     const timestamps = canvasObject.timestamps
+                    const counts = canvasObject.counts
                     const coordinates = canvasObject.coordinates
                     const reactions = canvasObject.reactions
                     const clients = canvasObject.clients
                     const lines = canvasObject.lines
 
                     // Calculate informaton
-                    const clientCount = Object.entries(clients).length
-                    const reactionCount = Object.values(reactions).reduce((a, b) => a + b, 0)
+                    const viewCount = counts.views
+                    const clientCount = counts.clients
+                    const reactionCount = counts.reactions
 
                     // Canvas node
                     const canvasNode = canvas()
                     
+                    // View count node
+                    const viewCountNode = span(viewCount)
                     // Client count node
                     const clientCountNode = span(clientCount)
-                    
                     // Reaction count node
                     const reactionCountNode = span(reactionCount)
 
+                    // View count container node
+                    const viewCountContainerNode = div({ className:  'count view' }, viewCountNode)
                     // Client count container node
                     const clientCountContainerNode = div({ className:  'count client' }, clientCountNode)
-
                     // Reaction count container node
                     const reactionCountContainerNode = div({ className: 'count reaction' }, reactionCountNode)
                     
                     // Info node
-                    const infoNode = div(clientCountContainerNode, reactionCountContainerNode)
+                    const infoNode = div(viewCountContainerNode, clientCountContainerNode, reactionCountContainerNode)
                     
                     // Container node
                     const containerNode = div({
@@ -261,13 +274,14 @@ class BrowseScreen extends BaseScreen {
                     append(self.canvasNode, [ containerNode ])
                     
                     // Canvas model
-                    const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, coordinates, reactions, clients, lines)
+                    const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, counts, coordinates, reactions, clients, lines)
                     canvasModel.draw()
                     
                     // Update models
                     self.canvasModels.push(canvasModel)
 
                     // Update nodes
+                    self.viewCountNodes[canvasId] = viewCountNode
                     self.clientCountNodes[canvasId] = clientCountNode
                     self.reactionCountNodes[canvasId] = reactionCountNode
                 }
