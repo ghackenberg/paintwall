@@ -29,30 +29,14 @@ const canvasObjectMap = loadCanvasObjectMap()
 
 // Reset clients
 for (const canvasObject of Object.values(canvasObjectMap)) {
-    // Initialize coordinates
-    const min = Number.MAX_VALUE
-    const max = Number.MIN_VALUE
-
-    const x = { min, max }
-    const y = { min, max }
-
-    for (const line of Object.values(canvasObject.lines)) {
-        for (const point of line.points) {
-            x.min = Math.min(x.min, point.x)
-            x.max = Math.max(x.max, point.x)
-
-            y.min = Math.min(y.min, point.y)
-            y.max = Math.max(y.max, point.y)
+    // Initialize counts
+    if (!('counts' in canvasObject)) {
+        var reactions = 0
+        for (const count of Object.values(canvasObject.reactions)) {
+            reactions += count
         }
+        canvasObject.counts = { views: 1, clients: 0, reactions }
     }
-
-    canvasObject.coordinates = { x, y }
-
-    // Initialize reactions
-    if (!canvasObject.reactions) {
-        canvasObject.reactions = {}
-    }
-    
     // Initialize clients
     canvasObject.clients = {}
 }
@@ -159,13 +143,14 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
 
         // Create canvas object information
         const timestamps = { created, updated }
+        const counts = { views: 0, clients: 0, reactions: 0 }
         const coordinates = { x, y }
         const reactions = {}
         const clients = {}
         const lines = {}
 
         // Create canvas object
-        canvasObjectMap[canvasId] = { canvasId, timestamps, coordinates, reactions, clients, lines }
+        canvasObjectMap[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines }
 
         // Message
         const message = { type: 'canvas-count', data: Object.entries(canvasObjectMap).length }
@@ -178,6 +163,7 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
 
     // Retrieve canvas object information
     const timestamps = canvasObject.timestamps
+    const counts = canvasObject.counts
     const coordinates = canvasObject.coordinates
     const reactions = canvasObject.reactions
     const clients = canvasObject.clients
@@ -187,11 +173,16 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     const x = coordinates.x
     const y = coordinates.y
 
+    // Update counts
+    counts.views++
+    counts.clients++
+
     // Remember client
     clients[clientId] = { clientId, name: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
 
     // Synchronize timestamp and coordinate data
     socket.send(JSON.stringify({ type: 'init-timestamps', data: timestamps}))
+    socket.send(JSON.stringify({ type: 'init-counts', data: counts}))
     socket.send(JSON.stringify({ type: 'init-coordinates', data: coordinates}))
     socket.send(JSON.stringify({ type: 'init-reactions', data: reactions}))
 
@@ -203,10 +194,9 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
         socket.send(JSON.stringify({ type: 'init-line', data: line }))
     }
 
-    // Message
-    const message = { type: 'canvas-client-count', data: { canvasId, count: Object.entries(clients).length } }
     // Broadcast
-    broadcast(Object.values(clientSocketMap), message)
+    broadcast(Object.values(clientSocketMap), { type: 'canvas-view-count', data: { canvasId, count: counts.views } })
+    broadcast(Object.values(clientSocketMap), { type: 'canvas-client-count', data: { canvasId, count: counts.clients } })
 
     // Handle
     socket.on('message', (data) => {
@@ -307,9 +297,9 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
                     reactions[reaction]++
                 }
 
-                const count = Object.values(reactions).reduce((a, b) => a + b, 0)
+                counts.reactions++
 
-                broadcast(Object.values(clientSocketMap), { type: 'canvas-reaction-count', data: { canvasId, count } })
+                broadcast(Object.values(clientSocketMap), { type: 'canvas-reaction-count', data: { canvasId, count: counts.reactions } })
 
                 break
             }
@@ -320,22 +310,14 @@ app.ws(base + '/api/v1/canvas/:canvas/client/:client', (socket, request) => {
     socket.on('close', () => {
         // Remove socket
         delete canvasSocket[clientId]
+        // Update counts
+        counts.clients--
         // Remove client
         delete clients[clientId]
         // Local broadcast
-        {
-            // Message
-            const message = { clientId, type: 'client-leave' }
-            // Broadcast
-            broadcast(Object.values(canvasSocket), message)
-        }
+        broadcast(Object.values(canvasSocket), { clientId, type: 'client-leave' })
         // Global broadcast
-        {
-            // Message
-            const message = { type: 'canvas-client-count', data: { canvasId, count: Object.entries(clients).length } }
-            // Broadcast
-            broadcast(Object.values(clientSocketMap), message)
-        }
+        broadcast(Object.values(clientSocketMap), { type: 'canvas-client-count', data: { canvasId, count: counts.clients } })
     })
 })
 
