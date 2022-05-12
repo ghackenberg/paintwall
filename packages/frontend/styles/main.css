@@ -45,6 +45,14 @@ p {
     padding-bottom: calc((2rem - 1.3em) / 2);
 }
 
+ul {
+    margin: 0;
+}
+
+li {
+    margin: 0;
+}
+
 @keyframes rotation {
     from {
         transform: rotate(0deg);
