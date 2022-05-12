@@ -84,8 +84,11 @@ class PaintScreen extends BaseScreen {
         // Nodes (color)
         this.colorNode = div({ id: 'color' }, Object.values(this.colorNodes))
 
+        // Nodes (active user count)
+        this.activeUserCountNode = div({ id: 'active-user-count' })
+
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.qrcodeNode, this.colorNode ])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.qrcodeNode, this.colorNode, this.activeUserCountNode ])
 
         // Models
         this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })
@@ -109,19 +112,25 @@ class PaintScreen extends BaseScreen {
 
         // Canvas model
         this.canvasModel = new CanvasModel(this.canvasNode, canvasId)
-        this.canvasModel.on('init-counts', (clientId, data) => {
+        this.canvasModel.on('init-counts', (data) => {
+            console.log(this.canvasModel.counts.clients)
+            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
             console.log('init-counts')
         })
-        this.canvasModel.on('init-reactions', (clientId, data) => {
+        this.canvasModel.on('init-reactions', (data) => {
             console.log('init-reactions')
         })
-        this.canvasModel.on('init-client', (clientId, data) => {
+        this.canvasModel.on('init-client', (data) => {
             console.log('init-client')
         })
         this.canvasModel.on('client-enter', (clientId, data) => {
+            console.log(this.canvasModel.counts.clients)
+            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
             console.log('client-enter')
         })
         this.canvasModel.on('client-leave', (clientId, data) => {
+            console.log(this.canvasModel.counts.clients)
+            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
             console.log('client-leave')
         })
         this.canvasModel.on('client-react', (clientId, data) => {
@@ -133,6 +142,7 @@ class PaintScreen extends BaseScreen {
         this.handleResize()
         // Window
         window.addEventListener('resize', this.handleResize)
+        this.handleUpdateActiveUser()
     }
 
     hide() {
