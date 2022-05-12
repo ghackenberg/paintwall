@@ -110,6 +110,19 @@ body > #paint > main > #qrcode > * {
     max-height: 15vh;
 }
 
+body > #paint > main > #active-user-count {
+    z-index: 10;
+    position: absolute;
+    top: 96.5vh;
+    left: 10px;
+    color: gray;
+}
+
+body > #paint > main > #active-user-count::before {
+    content: "Active Users: ";
+}
+
+
 /* Footer */
 
 body > #paint > footer {

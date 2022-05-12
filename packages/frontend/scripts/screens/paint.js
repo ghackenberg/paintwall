@@ -106,9 +106,12 @@ class PaintScreen extends BaseScreen {
         }
 
         this.reactionNode  = div({id: 'reaction' }, Object.values(this.reactionNodes))
+        
+        // Nodes (active user count)
+        this.activeUserCountNode = div({ id: 'active-user-count' })
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.qrcodeNode, this.colorNode , this.reactionNode])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.qrcodeNode, this.colorNode, this.activeUserCountNode, this.reactionNode])
 
         // Models
         this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })
@@ -133,7 +136,7 @@ class PaintScreen extends BaseScreen {
         // Canvas model
         this.canvasModel = new CanvasModel(this.canvasNode, canvasId)
         this.canvasModel.on('init-counts', (data) => {
-            console.log('init-counts')
+            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
         })
         this.canvasModel.on('init-reactions', (data) => {
             for (const reaction of PaintScreen.REACTIONS){
@@ -148,9 +151,13 @@ class PaintScreen extends BaseScreen {
             console.log('init-client')
         })
         this.canvasModel.on('client-enter', (clientId, data) => {
+            console.log(this.canvasModel.counts.clients)
+            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
             console.log('client-enter')
         })
         this.canvasModel.on('client-leave', (clientId, data) => {
+            console.log(this.canvasModel.counts.clients)
+            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
             console.log('client-leave')
         })
         this.canvasModel.on('client-react', (clientId, data) => {
