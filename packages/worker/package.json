@@ -1,5 +1,5 @@
 {
-    "name": "paintwall-frontend",
+    "name": "paintwall-worker",
     "version": "0.0.1",
     "license": "UNLICENSED",
     "private": true,
@@ -9,11 +9,9 @@
         "email": "georg.hackenberg@gmail.com"
     },
     "dependencies": {
-        "paintwall-common": "^0.0.1",
-        "qrcode": "^1.5.0"
+        "paintwall-common": "^0.0.1"
     },
     "devDependencies": {
-        "@types/qrcode": "^1.4.2",
         "ts-loader": "^9.3.0",
         "webpack": "^5.72.1",
         "webpack-cli": "^4.9.2"

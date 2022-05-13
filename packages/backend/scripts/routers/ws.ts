@@ -1,6 +1,6 @@
 import { Router } from 'express'
+import { BASE } from 'paintwall-common'
 import * as WebSocket from 'ws'
-import { BASE } from '../globals/config'
 import { CANVAS_OBJECT_MAP, CANVAS_SOCKET_MAP, CLIENT_SOCKET_MAP } from '../globals/db'
 
 export function ws() {

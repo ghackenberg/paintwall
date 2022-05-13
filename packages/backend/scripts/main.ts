@@ -1,6 +1,6 @@
 import * as express from 'express'
 import * as expressWs from 'express-ws'
-import { BASE } from './globals/config'
+import { BASE } from 'paintwall-common'
 import { api } from './routers/api'
 import { ui } from './routers/ui'
 import { ws } from './routers/ws'

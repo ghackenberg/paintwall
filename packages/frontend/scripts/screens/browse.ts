@@ -1,24 +1,45 @@
-// CLASSES
+import { BASE, CanvasObject } from 'paintwall-common'
+import { a, append, button, canvas, clear, div, img, prepend, remove, span } from '../functions/html'
+import { makeSocketURL } from '../functions/socket'
+import { CanvasModel } from '../models/canvas'
+import { BaseScreen } from './base'
 
-class BrowseScreen extends BaseScreen {
+interface CountNodeMap {
+    [id: string]: HTMLSpanElement
+}
+
+export class BrowseScreen extends BaseScreen {
     // Counts
 
     canvasCount = 0
 
     // Models
 
-    canvasModels = []
+    canvasModels: CanvasModel[] = []
 
     // Nodes
 
-    viewCountNodes = {}
-    clientCountNodes = {}
-    reactionCountNodes = {}
+    logoNode: HTMLSpanElement
+    createNode: HTMLButtonElement
+
+    loadNode: HTMLImageElement
+    canvasNode: HTMLDivElement
+
+    clientCountNode: HTMLSpanElement
+    canvasCountNode: HTMLSpanElement
+
+    viewCountNodes: CountNodeMap = {}
+    clientCountNodes: CountNodeMap = {}
+    reactionCountNodes: CountNodeMap = {}
+
+    imprintNode: HTMLAnchorElement
+    dataNode: HTMLAnchorElement
+    termsNode: HTMLAnchorElement
 
     // Connection
 
-    socket = null
-    request = null
+    socket: WebSocket = null
+    request: XMLHttpRequest = null
 
     // Constructor
 
@@ -29,41 +50,20 @@ class BrowseScreen extends BaseScreen {
         this.logoNode = span({ id: 'logo' }, 'PaintWall')
 
         // Client count
-        this.clientCountNode = span({ id: 'client-count', className: 'button' }, img({ className: 'load', src: base + '/images/load.png' }))
+        this.clientCountNode = span({ id: 'client-count', className: 'button' }, img({ className: 'load', src: BASE + '/images/load.png' }))
 
         // Button
         this.createNode = button({ id: 'canvas-create', className: 'button',
             onclick: () => {
-                history.pushState(null, undefined, base + '/canvas/' + Math.random().toString(16).substring(2))
+                history.pushState(null, undefined, BASE + '/canvas/' + Math.random().toString(16).substring(2))
             }
         }, 'New canvas')
 
-        // Login
-        this.loginNode = button({ id: 'user-login', className: 'button',
-            onclick: async () => {
-                await auth0.loginWithRedirect({
-                    redirect_uri: location.href
-                })
-            }
-        }, 'Login')
-
-        // Logout
-        this.logoutNode = button({ id: 'user-logout', className: 'button',
-            onclick: async () => {
-                await auth0.logout({
-                    returnTo: location.href
-                })
-            }
-        }, 'Logout')
-
-        // Wait
-        this.waitNode = button({ id: 'user-wait', className: 'button' }, img({ className: 'load', src: base + '/images/load.png' }))
-
         // Header
-        append(this.headerNode, [ this.logoNode, this.clientCountNode, this.createNode, this.waitNode ])
+        append(this.headerNode, [ this.logoNode, this.clientCountNode, this.createNode ])
 
         // Load
-        this.loadNode = img({ className: 'load', src: base + '/images/load.png' })
+        this.loadNode = img({ className: 'load', src: BASE + '/images/load.png' })
 
         // Canvas count
         this.canvasCountNode = span({ id: 'canvas-count' })
@@ -77,56 +77,37 @@ class BrowseScreen extends BaseScreen {
         // Imprint
         this.imprintNode = a({ id: 'imprint',
             onclick: () => {
-                history.pushState(null, undefined, base + '/imprint')
+                history.pushState(null, undefined, BASE + '/imprint')
             }
         }, 'Imprint')
 
         // Data
         this.dataNode = a({ id: 'data',
             onclick: () => {
-                history.pushState(null, undefined, base + '/data-protection')
+                history.pushState(null, undefined, BASE + '/data-protection')
             }
         }, 'Data protection')
 
         // Terms
         this.termsNode = a({ id: 'terms',
             onclick: () => {
-                history.pushState(null, undefined, base + '/terms-of-use')
+                history.pushState(null, undefined, BASE + '/terms-of-use')
             }
         }, 'Terms of use')
 
         // Footer
         append(this.footerNode, [ this.imprintNode, this.dataNode, this.termsNode ])
 
-        // Handle
-        this.handleAuthorize()
-
         // Connect
         this.connect()
-
-        // Listen
-        window.addEventListener('authorize', this.handleAuthorize.bind(this))
     }
 
-    handleAuthorize() {
-        // Remove
-        this.headerNode.removeChild(this.headerNode.lastChild)
-        // Append
-        if (user) {
-            this.headerNode.appendChild(this.logoutNode)
-        } else if (user === undefined) {
-            this.headerNode.appendChild(this.loginNode)
-        } else if (user === null) {
-            this.headerNode.appendChild(this.waitNode)
-        }
-    }
-
-    updateCanvasCount(total) {
+    updateCanvasCount(total: number) {
         const loaded = this.canvasModels.length
         const difference = total - loaded
 
         this.canvasCount = total
-        this.canvasCountNode.textContent = difference
+        this.canvasCountNode.textContent = `${difference}`
 
         if (loaded > 0 && difference > 0) {
             if (!this.canvasCountNode.parentNode) {
@@ -144,60 +125,58 @@ class BrowseScreen extends BaseScreen {
         if (this.socket) {
             return
         }
-        // Self
-        const self = this
         // Socket
-        this.socket = new WebSocket(makeSocketURL(base + '/api/v1/client/'))
-        this.socket.onmessage = function(event) {
+        this.socket = new WebSocket(makeSocketURL(BASE + '/api/v1/client/'))
+        this.socket.onmessage = (event) => {
             // Parse
             const message = JSON.parse(event.data)
             // Switch
             switch (message.type) {
                 case 'client-count': {
                     const count = message.data
-                    self.clientCountNode.textContent = count
+                    this.clientCountNode.textContent = count
                     break
                 }
                 case 'canvas-count': {
                     const count = message.data
-                    self.updateCanvasCount(count)
+                    this.updateCanvasCount(count)
                     break
                 }
                 case 'canvas-view-count': {
                     const canvasId = message.data.canvasId
                     const count = message.data.count
-                    if (canvasId in self.viewCountNodes) {
-                        self.viewCountNodes[canvasId].textContent = count
+                    if (canvasId in this.viewCountNodes) {
+                        this.viewCountNodes[canvasId].textContent = count
                     }
                     break
                 }
                 case 'canvas-client-count': {
                     const canvasId = message.data.canvasId
                     const count = message.data.count
-                    if (canvasId in self.clientCountNodes) {
-                        self.clientCountNodes[canvasId].textContent = count
+                    if (canvasId in this.clientCountNodes) {
+                        this.clientCountNodes[canvasId].textContent = count
                     }
                     break
                 }
                 case 'canvas-reaction-count': {
                     const canvasId = message.data.canvasId
                     const count = message.data.count
-                    if (canvasId in self.reactionCountNodes) {
-                        self.reactionCountNodes[canvasId].textContent = count
+                    if (canvasId in this.reactionCountNodes) {
+                        this.reactionCountNodes[canvasId].textContent = count
                     }
                     break
                 }
             }
         }
-        this.socket.onerror = function(event) {
+        this.socket.onerror = (event) => {
             // Close
-            self.socket.close()
+            this.socket.close()
         }
-        this.socket.onclose = function(event) {
+        this.socket.onclose = (event) => {
             // Reset
-            self.socket = null
+            this.socket = null
             // Connect
-            self.connect()
+            this.connect()
         }
     }
 
@@ -214,19 +193,17 @@ class BrowseScreen extends BaseScreen {
         if (this.request) {
             return
         }
-        // Self
-        const self = this
         // Request
         this.request = new XMLHttpRequest()
-        this.request.onreadystatechange = function() {
+        this.request.onreadystatechange = () => {
             // Check
-            if (this.readyState == XMLHttpRequest.DONE) {
-                // Reset
-                self.request = null
+            if (this.request.readyState == XMLHttpRequest.DONE) {
                 // Remove
-                self.mainNode.removeChild(self.loadNode)
+                this.mainNode.removeChild(this.loadNode)
                 // Parse
-                const canvasObjects = JSON.parse(this.responseText)
+                const canvasObjects: CanvasObject[] = JSON.parse(this.request.responseText)
+                // Reset
+                this.request = null
                 // Loop
                 for (const canvasObject of canvasObjects.reverse()) {
                     // Extract information
@@ -266,30 +243,30 @@ class BrowseScreen extends BaseScreen {
                     // Container node
                     const containerNode = div({
                         onclick: () => {
-                            history.pushState(null, undefined, base + '/canvas/' + canvasObject.canvasId)
+                            history.pushState(null, undefined, BASE + '/canvas/' + canvasObject.canvasId)
                         }
                     }, canvasNode, infoNode)
                     
                     // Main node
-                    append(self.canvasNode, [ containerNode ])
+                    append(this.canvasNode, [ containerNode ])
                     
                     // Canvas model
                     const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, counts, coordinates, reactions, clients, lines)
                     canvasModel.draw()
                     
                     // Update models
-                    self.canvasModels.push(canvasModel)
+                    this.canvasModels.push(canvasModel)
 
                     // Update nodes
-                    self.viewCountNodes[canvasId] = viewCountNode
-                    self.clientCountNodes[canvasId] = clientCountNode
-                    self.reactionCountNodes[canvasId] = reactionCountNode
+                    this.viewCountNodes[canvasId] = viewCountNode
+                    this.clientCountNodes[canvasId] = clientCountNode
+                    this.reactionCountNodes[canvasId] = reactionCountNode
                 }
                 // Count
-                self.updateCanvasCount(Math.max(self.canvasCount, self.canvasModels.length))
+                this.updateCanvasCount(Math.max(this.canvasCount, this.canvasModels.length))
             }
         }
-        this.request.open('GET', base + '/api/v1/canvas/')
+        this.request.open('GET', BASE + '/api/v1/canvas/')
         this.request.send()
     }
 

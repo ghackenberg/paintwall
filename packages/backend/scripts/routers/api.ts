@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { BASE } from '../globals/config'
+import { BASE } from 'paintwall-common'
 import { CANVAS_OBJECT_MAP } from '../globals/db'
 
 export function api() {

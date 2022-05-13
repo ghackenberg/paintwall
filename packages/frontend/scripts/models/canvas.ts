@@ -1,8 +1,37 @@
-// CLASSES
+import { BASE, CanvasObject, ClientObject, ClientObjectMap, CoordinateData, CountData, LineObject, LineObjectMap, PointObject, ReactionData, TimestampData } from 'paintwall-common'
+import { draw } from '../functions/draw'
+import { makeSocketURL } from '../functions/socket'
+import { ClientModel } from './client'
+import { LineModel } from './line'
 
-class CanvasModel {
-    handlers = {}
-    constructor(canvasNode, canvasId, timestamps, counts, coordinates, reactions, clients, lines) {
+interface Handler {
+    (...args: any[]): void
+}
+
+interface HandlerMap {
+    [event: string]: Handler[]   
+}
+
+export class CanvasModel implements CanvasObject {
+
+    handlers: HandlerMap = {}
+
+    socket: WebSocket = null
+    reconnect: boolean = null
+
+    center: PointObject = null
+    zoom: number = null
+
+    canvasNode: HTMLCanvasElement
+    canvasId: string
+    timestamps: TimestampData
+    counts: CountData
+    coordinates: CoordinateData
+    reactions: ReactionData
+    clients: ClientObjectMap
+    lines: LineObjectMap
+
+    constructor(canvasNode: HTMLCanvasElement, canvasId: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
         this.timestamps = timestamps
@@ -11,10 +40,10 @@ class CanvasModel {
         this.reactions = reactions || {}
         this.clients = clients || {}
         this.lines = lines || {}
-        this.socket = null
         this.updateCenter()
         this.updateZoom()
     }
+
     updateCenter() {
         if (this.coordinates) {
             if (this.coordinates.x.min != Number.MAX_VALUE) {
@@ -33,6 +62,7 @@ class CanvasModel {
             }
         }
     }
+
     updateZoom() {
         if (this.coordinates) {
             if (this.coordinates.x.min != Number.MAX_VALUE) {
@@ -48,33 +78,73 @@ class CanvasModel {
             }
         }
     }
-    on(event, handler) {
+
+    on(event: 'init-client', handle: (data: ClientObject) => void): void
+    on(event: 'init-timestamps', handle: (data: TimestampData) => void): void
+    on(event: 'init-counts', handle: (data: CountData) => void): void
+    on(event: 'init-coordinates', handle: (data: CoordinateData) => void): void
+    on(event: 'init-reactions', handle: (data: ReactionData) => void): void
+    on(event: 'init-client', handle: (data: ClientObject) => void): void
+    on(event: 'init-line', handle: (data: LineObject) => void): void
+    on(event: 'client-enter', handler: (clientId: string, data: ClientObject) => void): void
+    on(event: 'client-leave', handler: (clientId: string) => void): void
+    on(event: 'client-color', handler: (clientId: string, data: string) => void): void
+    on(event: 'client-width', handler: (clientId: string, data: number) => void): void
+    on(event: 'client-alpha', handler: (clientId: string, data: number) => void): void
+    on(event: 'client-pointer-over', handler: (clientId: string, data: PointObject) => void): void
+    on(event: 'client-pointer-move', handler: (clientId: string, data: PointObject) => void): void
+    on(event: 'client-pointer-out', handler: (clientId: string) => void): void
+    on(event: 'client-line-start', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
+    on(event: 'client-line-continue', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
+    on(event: 'client-react', handler: (clientId: string, data: string) => void): void
+    on(event: string, handler: Handler) {
         if (!(event in this.handlers)) {
             this.handlers[event] = []
         }
         this.handlers[event].push(handler)
     }
-    off(event, handler) {
+
+    off(event: 'init-client', handle: (data: ClientObject) => void): void
+    off(event: 'init-timestamps', handle: (data: TimestampData) => void): void
+    off(event: 'init-counts', handle: (data: CountData) => void): void
+    off(event: 'init-coordinates', handle: (data: CoordinateData) => void): void
+    off(event: 'init-reactions', handle: (data: ReactionData) => void): void
+    off(event: 'init-client', handle: (data: ClientObject) => void): void
+    off(event: 'init-line', handle: (data: LineObject) => void): void
+    off(event: 'client-enter', handler: (clientId: string, data: ClientObject) => void): void
+    off(event: 'client-leave', handler: (clientId: string) => void): void
+    off(event: 'client-color', handler: (clientId: string, data: string) => void): void
+    off(event: 'client-width', handler: (clientId: string, data: number) => void): void
+    off(event: 'client-alpha', handler: (clientId: string, data: number) => void): void
+    off(event: 'client-pointer-over', handler: (clientId: string, data: PointObject) => void): void
+    off(event: 'client-pointer-move', handler: (clientId: string, data: PointObject) => void): void
+    off(event: 'client-pointer-out', handler: (clientId: string) => void): void
+    off(event: 'client-line-start', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
+    off(event: 'client-line-continue', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
+    off(event: 'client-react', handler: (clientId: string, data: string) => void): void
+    off(event: string, handler: Handler) {
         if (event in this.handlers) {
             const index = this.handlers[event].indexOf(handler)
             this.handlers[event].splice(index, 1)
         }
     }
-    dispatch(event, args) {
+
+    private dispatch(event: string, args: any[]) {
         if (event in this.handlers) {
             for (const handler of this.handlers[event]) {
                 handler(...args)
             }
         }
     }
-    connect(client) {
+
+    connect(client: ClientModel) {
         this.reconnect = true
 
         if (this.socket != null) {
             return
         }
 
-        this.socket = new WebSocket(makeSocketURL(base + '/api/v1/canvas/' + this.canvasId + '/client/'))
+        this.socket = new WebSocket(makeSocketURL(`${BASE}/api/v1/canvas/${this.canvasId}/client/`))
 
         this.socket.onopen = (event) => {
             this.broadcast('client-enter', client)
@@ -266,19 +336,23 @@ class CanvasModel {
                 }
             }
             // Dispatch
-            if ('clientId' in message) {
+            if ('clientId' in message && 'data' in message) {
                 this.dispatch(message.type, [message.clientId, message.data])
-            } else {
+            } else if ('clientId' in message) {
+                this.dispatch(message.type, [message.clientId])
+            } else if ('data' in message) {
                 this.dispatch(message.type, [message.data])
+            } else {
+                this.dispatch(message.type, [])
             }
             // Draw
             this.draw()
         }
-        this.socket.onerror = function(event) {
+        this.socket.onerror = (event) => {
             // Close
             this.socket.close()
         }
-        this.socket.onclose = function(event) {
+        this.socket.onclose = (event) => {
             // Reset socket
             this.socket = null
             // Check reconnection
@@ -288,6 +362,7 @@ class CanvasModel {
             }
         }
     }
+
     disconnect() {
         if (this.socket && this.socket.readyState == WebSocket.OPEN) {
             // Prevent reconnection
@@ -297,11 +372,24 @@ class CanvasModel {
             this.socket = null
         }
     }
-    broadcast(type, data) {
+
+    broadcast(type: 'client-enter', data: ClientObject): void
+    broadcast(type: 'client-leave'): void
+    broadcast(type: 'client-color', data: string): void
+    broadcast(type: 'client-width', data: number): void
+    broadcast(type: 'client-alpha', data: number): void
+    broadcast(type: 'client-pointer-over', data: PointObject): void
+    broadcast(type: 'client-pointer-move', data: PointObject): void
+    broadcast(type: 'client-pointer-out'): void
+    broadcast(type: 'client-line-start', data: { lineId: string, point: PointObject }): void
+    broadcast(type: 'client-line-continue', data: { lineId: string, point: PointObject }): void
+    broadcast(type: 'client-react', data: string): void
+    broadcast(type: string, data?: any) {
         if (this.socket && this.socket.readyState == WebSocket.OPEN) {
             this.socket.send(JSON.stringify({ type, data }))
         }
     }
+
     draw() {
         if (this.center && this.zoom) {
             draw(this.canvasNode, this.center, this.zoom, this.lines, this.clients)

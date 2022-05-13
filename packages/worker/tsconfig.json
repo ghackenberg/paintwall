@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "lib": ["ES2015", "DOM", "WebWorker"],
+        "lib": ["ES2015", "WebWorker", "ScriptHost"],
         "noImplicitAny": true,
         "sourceMap": true
     }

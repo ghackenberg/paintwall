@@ -1,15 +1,16 @@
-class ImprintScreen extends BaseScreen {
+import { BASE } from 'paintwall-common'
+import { append, div, em, h1, h2, h3, img, p, span } from '../functions/html'
+import { BaseScreen } from './base'
+
+export class ImprintScreen extends BaseScreen {
     constructor() {
         super('imprint', 'document')
 
-        // Back node
-        this.backNode = img({ id: 'back', className: 'back', src: base + '/images/back.png',
-            onclick: () => history.back()
-        })
-
-        // Main node
         append(this.mainNode, [
-            this.backNode, h1('PaintWall - Imprint'),
+            img({ id: 'back', className: 'back', src: BASE + '/images/back.png',
+                onclick: () => history.back()
+            }),
+            h1('PaintWall - Imprint'),
             div(
                 p(em('Last updated: May 12, 2022')),
 

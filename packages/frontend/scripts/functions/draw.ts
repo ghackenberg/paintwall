@@ -1,6 +1,6 @@
-// FUNCTIONS
+import { ClientObject, ClientObjectMap, LineObject, LineObjectMap, PointObject } from 'paintwall-common'
 
-function draw(canvas, center, zoom, lines, clients) {
+export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: number, lines: LineObjectMap, clients: ClientObjectMap) {
     // Context
     const context = canvas.getContext('2d')
 
@@ -15,7 +15,7 @@ function draw(canvas, center, zoom, lines, clients) {
     drawClients(canvas, context, center, zoom, clients)
 }
 
-function drawGrid(canvas, context, center, zoom) {
+function drawGrid(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number) {
     // Delta parameter
     var delta = 1
     while (delta * zoom > 15) {
@@ -74,13 +74,13 @@ function drawGrid(canvas, context, center, zoom) {
     }
 }
 
-function drawLines(canvas, context, center, zoom, lines) {
+function drawLines(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, lines: LineObjectMap) {
     for (const line of Object.values(lines)) {
         drawLine(canvas, context, center, zoom, line)
     }
 }
 
-function drawLine(canvas, context, center, zoom, line) {
+function drawLine(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, line: LineObject) {
     // Extract
     const points = line.points
     const color = line.color
@@ -109,13 +109,13 @@ function drawLine(canvas, context, center, zoom, line) {
     }
 }
 
-function drawClients(canvas, context, center, zoom, clients) {
+function drawClients(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, clients: ClientObjectMap) {
     for (const client of Object.values(clients)) {
         drawClient(canvas, context, center, zoom, client)
     }
 }
 
-function drawClient(canvas, context, center, zoom, client) {
+function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, client: ClientObject) {
     // Extract
     const name = client.name
     const color = client.color
@@ -141,7 +141,7 @@ function drawClient(canvas, context, center, zoom, client) {
     }
 }
 
-function projectX(canvas, center, zoom, x) {
+function projectX(canvas: HTMLCanvasElement, center: PointObject, zoom: number, x: number) {
     // Prepare
     const cx = canvas.width / 2
     const dx = x - center.x
@@ -149,7 +149,7 @@ function projectX(canvas, center, zoom, x) {
     return cx + dx * zoom
 }
 
-function projectY(canvas, center, zoom, y) {
+function projectY(canvas: HTMLCanvasElement, center: PointObject, zoom: number, y: number) {
     // Prepare
     const cy = canvas.height / 2
     const dy = y - center.y
@@ -157,10 +157,10 @@ function projectY(canvas, center, zoom, y) {
     return cy + dy * zoom
 }
 
-function unprojectX(canvas, center, zoom, x) {
+export function unprojectX(canvas: HTMLCanvasElement, center: PointObject, zoom: number, x: number) {
     return (x - canvas.width / 2) / zoom + center.x
 }
 
-function unprojectY(canvas, center, zoom, y) {
+export function unprojectY(canvas: HTMLCanvasElement, center: PointObject, zoom: number, y: number) {
     return (y - canvas.height / 2) / zoom + center.y
 }

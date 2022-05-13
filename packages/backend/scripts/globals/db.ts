@@ -1,11 +1,13 @@
+import * as WebSocket from 'ws'
 import { readFileSync, writeFileSync } from 'fs'
-import { CanvasObjectMap, CanvasSocketMap, ClientSocketMap } from 'paintwall-common'
-import { DATABASE } from './config'
+import { CanvasObject } from 'paintwall-common'
+
+const canvasObjectMapFile = 'database.json'
 
 function loadCanvasObjectMap(): CanvasObjectMap {
     try {
         console.log('Loading canvasObjectMap')
-        return JSON.parse(readFileSync(DATABASE, 'utf-8'))
+        return JSON.parse(readFileSync(canvasObjectMapFile, 'utf-8'))
     } catch (error) {
         console.log('Initializing canvasObjectMap')
         return {}
@@ -15,10 +17,22 @@ function loadCanvasObjectMap(): CanvasObjectMap {
 function saveCanvasObjectMap() {
     try {
         console.log('Saving canvasObjectMap')
-        writeFileSync(DATABASE, JSON.stringify(CANVAS_OBJECT_MAP))
+        writeFileSync(canvasObjectMapFile, JSON.stringify(CANVAS_OBJECT_MAP))
     } catch (error) {
         console.error(error)
     }
+}
+
+interface ClientSocketMap {
+    [id: string]: WebSocket
+}
+
+interface CanvasSocketMap {
+    [id: string]: ClientSocketMap
+}
+
+interface CanvasObjectMap {
+    [id: string]: CanvasObject
 }
 
 export const CLIENT_SOCKET_MAP: ClientSocketMap = {}

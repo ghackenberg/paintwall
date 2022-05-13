@@ -1,15 +1,20 @@
-// CLASSES
+import { div, footer, header, main } from '../functions/html'
 
-class BaseScreen {      //gilt als Mutterklasse zum erben
+export class BaseScreen {
     // Static
     
-    static ACTIVE       //
+    static ACTIVE: BaseScreen
     
     // Non-static
 
-    constructor(id, className) {        //Aufbau Construktor   
+    headerNode: HTMLElement
+    mainNode: HTMLElement
+    footerNode: HTMLElement
+    rootNode: HTMLDivElement
+
+    constructor(id: string, className?: string) {
         // Header
-        this.headerNode = header()      //Konstruktor erzeugt Inhalt aus header
+        this.headerNode = header()
         
         // Main
         this.mainNode = main()

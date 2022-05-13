@@ -5,7 +5,6 @@
 Install the [backend executable](../../packages/backend/) dependencies.
 
 ```
-cd packages/backend
 npm install
 ```
 
@@ -14,6 +13,5 @@ npm install
 Start the [backend executable](../../packages/backend/) in **development mode**.
 
 ```
-cd packages/backend
-npm run dev
+npm run watch
 ```

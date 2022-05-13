@@ -10,10 +10,15 @@
     "workspaces": [
         "packages/common",
         "packages/backend",
-        "packages/frontend"
+        "packages/frontend",
+        "packages/worker"
     ],
     "scripts": {
-        "start": "cd packages/backend && npm start",
-        "dev": "cd packages/backend && npm run dev"
+        "start": "workspaces-run --only='paintwall-backend' -- npm start",
+        "build": "workspaces-run --only='paintwall-{frontend,worker}' -- npm run build",
+        "watch": "workspaces-run --only='paintwall-{backend,frontend,worker}' --parallel -- npm run watch"
+    },
+    "dependencies": {
+        "workspaces-run": "^1.0.1"
     }
 }

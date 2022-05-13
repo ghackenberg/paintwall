@@ -1,6 +1,18 @@
-// CLASSES
+import * as qrcode from 'qrcode'
+import { BASE, PointObject } from 'paintwall-common'
+import { CLIENT_ID } from '../constants/client'
+import { unprojectX, unprojectY } from '../functions/draw'
+import { append, canvas, div, img, input, span } from '../functions/html'
+import { CanvasModel } from '../models/canvas'
+import { ClientModel } from '../models/client'
+import { LineModel } from '../models/line'
+import { BaseScreen } from './base'
 
-class PaintScreen extends BaseScreen {
+interface NodeMap {
+    [id: string]: HTMLSpanElement
+}
+
+export class PaintScreen extends BaseScreen {
     // Static
 
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
@@ -12,21 +24,36 @@ class PaintScreen extends BaseScreen {
 
     // Models
     
-    clientModel = undefined
-    canvasModel = undefined
-    lineModel = undefined
+    clientModel: ClientModel = undefined
+    canvasModel: CanvasModel = undefined
+    lineModel: LineModel = undefined
 
     // Nodes
 
-    colorNodes = {}
-    reactionNodes = {}
-    reactionCountNodes = {}
+    loadNode: HTMLImageElement
+    canvasNode: HTMLCanvasElement
+    backNode: HTMLImageElement
+
+    colorNode: HTMLDivElement
+
+    shareNode: HTMLImageElement
+    sharePopupImageNode: HTMLImageElement
+    sharePopupInputNode: HTMLInputElement
+    sharePopupCanvasNode: HTMLCanvasElement
+    sharePopupNode: HTMLDivElement
+
+    activeNode: HTMLSpanElement
+    reactionNode: HTMLDivElement
+
+    colorNodes: NodeMap = {}
+    reactionNodes: NodeMap = {}
+    reactionCountNodes: NodeMap = {}
 
     // Coordinates
 
-    previousTouches = []
-    previousTouchCenter = undefined
-    previousTouchLength = undefined
+    previousTouches: PointObject[] = []
+    previousTouchCenter: PointObject = undefined
+    previousTouchLength: number = undefined
 
     // Constructor
 
@@ -34,20 +61,20 @@ class PaintScreen extends BaseScreen {
         super('paint')
         
         // Constants
-        const name = undefined
+        const name: string = undefined
         const color = PaintScreen.COLORS.includes(localStorage.getItem('color')) ? localStorage.getItem('color') : PaintScreen.COLORS[0]
         const width = PaintScreen.WIDTHS.includes(parseFloat(localStorage.getItem('width'))) ? parseFloat(localStorage.getItem('width')) : PaintScreen.WIDTHS[0]
         const alpha = PaintScreen.ALPHAS.includes(parseFloat(localStorage.getItem('alpha'))) ? parseFloat(localStorage.getItem('alpha')) : PaintScreen.ALPHAS[0]
-        const position = undefined
+        const position: PointObject = undefined
 
         // States
-        this.clientModel = new ClientModel(clientId, name, color, width, alpha, position)
+        this.clientModel = new ClientModel(CLIENT_ID, name, color, width, alpha, position)
 
         // Handlers
         this.handleResize = this.handleResize.bind(this)
 
         // Nodes (load)
-        this.loadNode = img({ className: 'load', src: base + '/images/load.png' })
+        this.loadNode = img({ className: 'load', src: BASE + '/images/load.png' })
 
         // Nodes (canvas)
         this.canvasNode = canvas({ id: 'canvas',
@@ -64,39 +91,37 @@ class PaintScreen extends BaseScreen {
         })
 
         // Nodes (back)
-        this.backNode = img({ id: 'back', className: 'back', src: base + '/images/back.png',
+        this.backNode = img({ id: 'back', className: 'back', src: BASE + '/images/back.png',
             onclick: () => history.back()
         })
 
-        // Nodes (shareButton)
-        this.shareNode = img({id: 'share', className: 'share', src: base + '/images/share.png',
-            onclick: () => this.popupNode.style.display = 'block'
+        // Nodes (share)
+        this.shareNode = img({id: 'share', className: 'share', src: BASE + '/images/share.png',
+            onclick: () => this.sharePopupNode.style.display = 'block'
         })
 
-        // Nodes (closePopupButton)
-        this.closePopupNode = img({ id: 'closePopup', className: 'closePopup', src: base + '/images/close.png', 
-            onclick: () => this.popupNode.style.display = 'none' 
+        // Nodes (share popup image)
+        this.sharePopupImageNode = img({ src: BASE + '/images/close.png', 
+            onclick: () => this.sharePopupNode.style.display = 'none' 
         })
 
-        // Nodes (qrcode)
-        this.qrcodeNode = div({ id: 'qrcode' })
+        // Nodes (share popup input)
+        this.sharePopupInputNode = input({ value: location.href })
 
-        // Node (urlNode)
-        this.urlNode = input({ id: 'url', value: location.href })
+        // Nodes (share popup canvas)
+        this.sharePopupCanvasNode = canvas()
 
-        // Nodes (popupNode)
-        this.popupNode = div({ id: 'popupNode', style: {display: 'none'}}, this.urlNode, this.closePopupNode, this.qrcodeNode)
+        // Nodes (share popup)
+        this.sharePopupNode = div({ id: 'share-popup' }, this.sharePopupInputNode, this.sharePopupImageNode, this.sharePopupCanvasNode)
 
         // Nodes (colors)
         for (const otherColor of PaintScreen.COLORS) {
-            // Prepare
-            const className = otherColor == color ? 'color active' : 'color'
-            const style = { backgroundColor: otherColor }
-            const value = otherColor
-            // Create
-            this.colorNodes[otherColor] = span({ className, style, value,
-                onclick: this.handleChange.bind(this)
+            this.colorNodes[otherColor] = span({ className: otherColor == color ? 'color active' : 'color',
+                onclick: () => {
+                    this.changeColor(otherColor)
+                }
             })
+            this.colorNodes[otherColor].style.backgroundColor = otherColor
         }
 
         // Nodes (color)
@@ -114,7 +139,7 @@ class PaintScreen extends BaseScreen {
                         this.canvasModel.reactions[reaction] = 1
                     }
                     // Update reaction count node
-                    this.reactionCountNodes[reaction].textContent = this.canvasModel.reactions[reaction]
+                    this.reactionCountNodes[reaction].textContent = `${this.canvasModel.reactions[reaction]}`
                     // Broadcast reaction
                     this.canvasModel.broadcast('client-react', reaction)
                 }
@@ -122,16 +147,13 @@ class PaintScreen extends BaseScreen {
         }
 
         // Nodes (reaction)
-        this.reactionNode  = div({id: 'reaction' }, Object.values(this.reactionNodes))
+        this.reactionNode = div({id: 'reaction' }, Object.values(this.reactionNodes))
         
         // Nodes (active user count)
-        this.activeUserCountNode = div({ id: 'active-user-count' })
+        this.activeNode = div({ id: 'active' })
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.colorNode, this.shareNode, this.popupNode, this.activeUserCountNode, this.reactionNode])
-
-        // Models
-        this.qrcodeModel = new QRCode(this.qrcodeNode, { text: location.href, width: 128, height: 128 })
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.colorNode, this.shareNode, this.sharePopupNode, this.activeNode, this.reactionNode])
     }
 
     // Screen
@@ -144,23 +166,22 @@ class PaintScreen extends BaseScreen {
         const canvasId = location.pathname.substring(location.pathname.lastIndexOf('/') + 1)
 
         // QR-Code model
-        this.qrcodeModel.clear()
-        this.qrcodeModel.makeCode(location.href)
+        qrcode.toCanvas(this.sharePopupCanvasNode, location.href)
 
         // Client name
-        this.clientModel.name = user ? user.nickname : 'Anonymous'
+        this.clientModel.name = 'Anonymous'
 
         // Canvas model
         this.canvasModel = new CanvasModel(this.canvasNode, canvasId)
         this.canvasModel.on('init-counts', (data) => {
-            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
+            this.activeNode.textContent = `${this.canvasModel.counts.clients}`
         })
         this.canvasModel.on('init-reactions', (data) => {
             for (const reaction of PaintScreen.REACTIONS){
                 if (reaction in this.canvasModel.reactions) {
-                    this.reactionCountNodes[reaction].textContent = data[reaction]
+                    this.reactionCountNodes[reaction].textContent = `${data[reaction]}`
                 } else {
-                    this.reactionCountNodes[reaction].textContent = 0
+                    this.reactionCountNodes[reaction].textContent = '0'
                 }
             }
         })
@@ -168,18 +189,14 @@ class PaintScreen extends BaseScreen {
             console.log('init-client')
         })
         this.canvasModel.on('client-enter', (clientId, data) => {
-            console.log(this.canvasModel.counts.clients)
-            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
-            console.log('client-enter')
+            this.activeNode.textContent = `${this.canvasModel.counts.clients}`
         })
-        this.canvasModel.on('client-leave', (clientId, data) => {
-            console.log(this.canvasModel.counts.clients)
-            this.activeUserCountNode.textContent = this.canvasModel.counts.clients
-            console.log('client-leave')
+        this.canvasModel.on('client-leave', (clientId) => {
+            this.activeNode.textContent = `${this.canvasModel.counts.clients}`
         })
         this.canvasModel.on('client-react', (clientId, data) => {
             if (data in this.reactionCountNodes) {
-                this.reactionCountNodes[data].textContent = this.canvasModel.reactions[data]
+                this.reactionCountNodes[data].textContent = `${this.canvasModel.reactions[data]}`
             }
         })
         this.canvasModel.connect(this.clientModel)
@@ -213,7 +230,7 @@ class PaintScreen extends BaseScreen {
 
     // Handlers (wheel)
 
-    handleWheel(event) {
+    handleWheel(event: WheelEvent) {
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
             // Mouse
@@ -244,7 +261,7 @@ class PaintScreen extends BaseScreen {
 
     // Handlers (mouse)
 
-    handleMouseDown(event) {
+    handleMouseDown(event: MouseEvent) {
         event.preventDefault()
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
@@ -262,7 +279,7 @@ class PaintScreen extends BaseScreen {
         }
     }
 
-    handleMouseUp(event) {
+    handleMouseUp(event: MouseEvent) {
         event.preventDefault()
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
@@ -280,7 +297,7 @@ class PaintScreen extends BaseScreen {
         }
     }
 
-    handleMouseMove(event) {
+    handleMouseMove(event: MouseEvent) {
         event.preventDefault()
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
@@ -298,7 +315,7 @@ class PaintScreen extends BaseScreen {
         }
     }
 
-    handleMouseOver(event) {
+    handleMouseOver(event: MouseEvent) {
         event.preventDefault()
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
@@ -316,7 +333,7 @@ class PaintScreen extends BaseScreen {
         }
     }
 
-    handleMouseOut(event) {
+    handleMouseOut(event: MouseEvent) {
         event.preventDefault()
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
@@ -336,7 +353,7 @@ class PaintScreen extends BaseScreen {
 
     // Handler (touch)
 
-    handleTouchStart(event) {
+    handleTouchStart(event: TouchEvent) {
         event.preventDefault()
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
@@ -374,7 +391,7 @@ class PaintScreen extends BaseScreen {
         }
     }
 
-    handleTouchMove(event) {
+    handleTouchMove(event: TouchEvent) {
         event.preventDefault()
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
@@ -422,7 +439,7 @@ class PaintScreen extends BaseScreen {
         }
     }
 
-    handleTouchEnd(event) {
+    handleTouchEnd(event: TouchEvent) {
         event.preventDefault()
         // Check
         if (this.canvasModel && this.canvasModel.center && this.canvasModel.zoom) {
@@ -450,11 +467,11 @@ class PaintScreen extends BaseScreen {
 
     // Handlers (change)
 
-    handleChange(event) {
+    changeColor(value: string) {
         // Deactivate
         this.colorNodes[this.clientModel.color].classList.remove('active')
         // Update
-        this.clientModel.color = event.target.value
+        this.clientModel.color = value
         // Activate
         this.colorNodes[this.clientModel.color].classList.add('active')
         // Remember
@@ -465,14 +482,14 @@ class PaintScreen extends BaseScreen {
 
     // Line
 
-    startLine(point) {
+    startLine(point: PointObject) {
         // Define
         const lineId = '' + Math.random().toString(16).substring(2)
         const color = this.clientModel.color
         const width = this.clientModel.width
         const alpha = this.clientModel.alpha
         // Create
-        this.lineModel = new LineModel(lineId, clientId, color, width, alpha, [point])
+        this.lineModel = new LineModel(lineId, CLIENT_ID, color, width, alpha, [point])
         // Update
         this.canvasModel.lines[lineId] = this.lineModel
         this.canvasModel.draw()
@@ -480,7 +497,7 @@ class PaintScreen extends BaseScreen {
         this.canvasModel.broadcast('client-line-start', { lineId: this.lineModel.lineId, point })
     }
 
-    continueLine(point) {
+    continueLine(point: PointObject) {
         if (this.lineModel) {
             // Update
             this.lineModel.points.push(point)
