@@ -1,0 +1,15 @@
+{
+    "name": "paintwall-common",
+    "version": "0.0.1",
+    "license": "UNLICENSED",
+    "private": true,
+    "type": "module",
+    "main": "scripts/main.ts",
+    "author": {
+        "name": "Georg Hackenberg",
+        "email": "georg.hackenberg@gmail.com"
+    },
+    "dependencies": {
+        "typescript": "^4.6.4"
+    }
+}

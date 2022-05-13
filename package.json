@@ -1,0 +1,19 @@
+{
+    "name": "paintwall",
+    "version": "0.0.1",
+    "license": "UNLICENSED",
+    "private": true,
+    "author": {
+        "name": "Georg Hackenberg",
+        "email": "georg.hackenberg@gmail.com"
+    },
+    "workspaces": [
+        "packages/common",
+        "packages/backend",
+        "packages/frontend"
+    ],
+    "scripts": {
+        "start": "cd packages/backend && npm start",
+        "dev": "cd packages/backend && npm run dev"
+    }
+}

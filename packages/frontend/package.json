@@ -1,0 +1,14 @@
+{
+    "name": "paintwall-frontend",
+    "version": "0.0.1",
+    "license": "UNLICENSED",
+    "private": true,
+    "main": "scripts/main.js",
+    "author": {
+        "name": "Georg Hackenberg",
+        "email": "georg.hackenberg@gmail.com"
+    },
+    "dependencies": {
+        "paintwall-common": "^0.0.1"
+    }
+}
