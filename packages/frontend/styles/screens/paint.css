@@ -154,7 +154,6 @@ body > #paint > main > #reaction > span {
     background-color: white;
     border-radius: 1.5em;
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
-    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.0));
     margin-left: 0.5em;
     margin-right: 0.5em;
     cursor: pointer;
@@ -173,7 +172,7 @@ body > #paint > main > #reaction > span > span {
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
     background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
     color: white;
-    background-color: red;
+    background-color: gray;
 }
 
 /* Footer */
