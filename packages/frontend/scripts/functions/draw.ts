@@ -5,9 +5,7 @@ export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: numbe
     const context = canvas.getContext('2d')
 
     // Clear
-    context.globalAlpha = 1
-    context.fillStyle = 'white'
-    context.fillRect(0, 0, canvas.width, canvas.height)
+    context.clearRect(0, 0, canvas.width, canvas.height)
 
     // Draw
     drawGrid(canvas, context, center, zoom)
@@ -47,7 +45,7 @@ function drawGrid(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, 
 
         // Style
         context.globalAlpha = (sx + stepX * delta) % (delta * 5) ? 0.1 : 0.2
-        context.strokeStyle = 'black'
+        context.strokeStyle = 'gray'
         context.lineWidth = 1
 
         // Stroke
@@ -66,7 +64,7 @@ function drawGrid(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, 
 
         // Style
         context.globalAlpha = (sy + stepY * delta) % (delta * 5) ? 0.1 : 0.2
-        context.strokeStyle = 'black'
+        context.strokeStyle = 'gray'
         context.lineWidth = 1
 
         // Stroke
@@ -88,7 +86,17 @@ function drawLine(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, 
     const alpha = line.alpha
 
     // Check
-    if (points.length > 1) {
+    if (points.length == 1) {
+        // Path
+        context.beginPath()
+        const first = points[0]
+        context.arc(projectX(canvas, center, zoom, first.x), projectY(canvas, center, zoom, first.y), Math.max(width * zoom, 1) / 2, 0, Math.PI * 2)
+
+        // Style
+        context.globalAlpha = alpha
+        context.fillStyle = color
+        context.fill()
+    } else if (points.length > 1) {
         // Path
         context.beginPath()
         const first = points[0]
@@ -101,7 +109,7 @@ function drawLine(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, 
         // Style
         context.globalAlpha = alpha
         context.strokeStyle = color
-        context.lineWidth = width
+        context.lineWidth = Math.max(width * zoom, 1)
         context.lineCap = 'round'
 
         // Stroke
