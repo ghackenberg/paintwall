@@ -18,7 +18,7 @@ export class PaintScreen extends BaseScreen {
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
     static WIDTHS = [5.0]
     static ALPHAS = [0.5]
-    static REACTIONS = ['❤', '🤣', '👍', '😂', '✌']
+    static REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']
 
     // Non-static
 
@@ -129,7 +129,9 @@ export class PaintScreen extends BaseScreen {
 
         // Nodes (reactions)
         for (const reaction of PaintScreen.REACTIONS){
-            this.reactionCountNodes[reaction] = span("0")
+            this.reactionCountNodes[reaction] = span()
+            this.reactionCountNodes[reaction].style.display = 'none'
+
             this.reactionNodes[reaction] = span({
                 onclick: () => {
                     // Update reaction count
@@ -140,6 +142,7 @@ export class PaintScreen extends BaseScreen {
                     }
                     // Update reaction count node
                     this.reactionCountNodes[reaction].textContent = `${this.canvasModel.reactions[reaction]}`
+                    this.reactionCountNodes[reaction].style.display = 'block'
                     // Broadcast reaction
                     this.canvasModel.broadcast('client-react', reaction)
                 }
@@ -180,8 +183,10 @@ export class PaintScreen extends BaseScreen {
             for (const reaction of PaintScreen.REACTIONS){
                 if (reaction in this.canvasModel.reactions) {
                     this.reactionCountNodes[reaction].textContent = `${data[reaction]}`
+                    this.reactionCountNodes[reaction].style.display = 'block'
                 } else {
                     this.reactionCountNodes[reaction].textContent = '0'
+                    this.reactionCountNodes[reaction].style.display = 'none'
                 }
             }
         })
@@ -197,6 +202,7 @@ export class PaintScreen extends BaseScreen {
         this.canvasModel.on('client-react', (clientId, data) => {
             if (data in this.reactionCountNodes) {
                 this.reactionCountNodes[data].textContent = `${this.canvasModel.reactions[data]}`
+                this.reactionCountNodes[data].style.display = 'block'
             }
         })
         this.canvasModel.connect(this.clientModel)
