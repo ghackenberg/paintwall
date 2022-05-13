@@ -39,6 +39,7 @@ export class PaintScreen extends BaseScreen {
     shareNode: HTMLImageElement
     sharePopupImageNode: HTMLImageElement
     sharePopupInputNode: HTMLInputElement
+    sharePopupDivNode: HTMLDivElement
     sharePopupCanvasNode: HTMLCanvasElement
     sharePopupNode: HTMLDivElement
 
@@ -97,22 +98,29 @@ export class PaintScreen extends BaseScreen {
 
         // Nodes (share)
         this.shareNode = img({id: 'share', className: 'share', src: BASE + '/images/share.png',
-            onclick: () => this.sharePopupNode.style.display = 'block'
+            onclick: () => {
+                this.sharePopupNode.style.display = 'block'
+                navigator.clipboard.writeText(location.href)
+            }
         })
 
         // Nodes (share popup image)
         this.sharePopupImageNode = img({ src: BASE + '/images/close.png', 
-            onclick: () => this.sharePopupNode.style.display = 'none' 
+            onclick: () => {
+                this.sharePopupNode.style.display = 'none' 
+            }
         })
 
         // Nodes (share popup input)
         this.sharePopupInputNode = input({ value: location.href })
 
+        this.sharePopupDivNode = div('Copied to clipboard 📋')
+
         // Nodes (share popup canvas)
         this.sharePopupCanvasNode = canvas()
 
         // Nodes (share popup)
-        this.sharePopupNode = div({ id: 'share-popup' }, this.sharePopupInputNode, this.sharePopupImageNode, this.sharePopupCanvasNode)
+        this.sharePopupNode = div({ id: 'share-popup' }, this.sharePopupInputNode, this.sharePopupImageNode, this.sharePopupDivNode, this.sharePopupCanvasNode)
 
         // Nodes (colors)
         for (const otherColor of PaintScreen.COLORS) {
