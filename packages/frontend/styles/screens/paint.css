@@ -62,7 +62,7 @@ body > #paint > main > #color > .active {
     height: 3em;
 }
 
-body > #paint > main > img.share {
+body > #paint > main > #share {
     display: block;
     
     position: absolute;
@@ -84,36 +84,17 @@ body > #paint > main > img.share {
     cursor: pointer;
 }
 
-body > #paint > main > #qrcode {
-    position: absolute;
-
-    top: 1em;
-    right: 1em;
-
-    width: 1em;
-    height: 1em;
-
-    padding: 1em;
-
-    border-radius: 1.5em;
-
-    background-color: white;
-
-    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
-
-    cursor: pointer;
-}
-
-body > #paint > main > #popupNode {
+body > #paint > main > #share-popup {
     position: absolute;
     top: 1em;
     right: 1em;
     border-radius: 1.5em;
     background-color: white;
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    display: none;
 }
 
-body > #paint > main > #popupNode > img {
+body > #paint > main > #share-popup > img {
     position: absolute;
     top: 0;
     right: 0;
@@ -124,7 +105,7 @@ body > #paint > main > #popupNode > img {
     cursor: pointer;
 }
 
-body > #paint > main > #popupNode > input {
+body > #paint > main > #share-popup > input {
     display: block;
     font-size: inherit;
     line-height: 100%;
@@ -138,15 +119,15 @@ body > #paint > main > #popupNode > input {
     margin: 0;
 }
 
-body > #paint > main > #popupNode > #qrcode > img {
+body > #paint > main > #share-popup > canvas {
     display: block;
-    width: 15em;
-    height: 15em;
-    margin: 1em;
     margin-top: 0;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1em;
 }
 
-body > #paint > main > #active-user-count {
+body > #paint > main > #active {
     z-index: 10;
     position: absolute;
     top: 96.5vh;
@@ -154,7 +135,7 @@ body > #paint > main > #active-user-count {
     color: gray;
 }
 
-body > #paint > main > #active-user-count::before {
+body > #paint > main > #active::before {
     content: "Active Users: ";
 }
 
@@ -179,7 +160,7 @@ body > #paint > main > #reaction > span {
     cursor: pointer;
 }
 
-body > #paint > main > #reaction > span > span{
+body > #paint > main > #reaction > span > span {
     position: absolute;
     display: block;
     width: 1rem;

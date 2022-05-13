@@ -1,0 +1,1 @@
+export const CLIENT_ID = Math.random().toString(16).substring(2)

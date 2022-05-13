@@ -1,0 +1,23 @@
+{
+    "name": "paintwall-worker",
+    "version": "0.0.1",
+    "license": "UNLICENSED",
+    "private": true,
+    "main": "scripts/main.ts",
+    "author": {
+        "name": "Georg Hackenberg",
+        "email": "georg.hackenberg@gmail.com"
+    },
+    "dependencies": {
+        "paintwall-common": "^0.0.1"
+    },
+    "devDependencies": {
+        "ts-loader": "^9.3.0",
+        "webpack": "^5.72.1",
+        "webpack-cli": "^4.9.2"
+    },
+    "scripts": {
+        "build": "webpack build --mode production",
+        "watch": "webpack watch --mode development --devtool inline-source-map"
+    }
+}
