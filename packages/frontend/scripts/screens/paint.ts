@@ -114,6 +114,7 @@ export class PaintScreen extends BaseScreen {
         // Nodes (share popup input)
         this.sharePopupInputNode = input({ value: location.href })
 
+        // Nodes (share popup div)
         this.sharePopupDivNode = div('Copied to clipboard 📋')
 
         // Nodes (share popup canvas)
@@ -176,7 +177,10 @@ export class PaintScreen extends BaseScreen {
         // Canvas id
         const canvasId = location.pathname.substring(location.pathname.lastIndexOf('/') + 1)
 
-        // QR-Code model
+        // Share popup
+        this.sharePopupNode.style.display = 'none'
+
+        // Share popup code
         qrcode.toCanvas(this.sharePopupCanvasNode, location.href)
 
         // Client name
