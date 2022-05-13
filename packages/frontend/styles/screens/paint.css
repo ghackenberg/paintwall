@@ -23,6 +23,25 @@ body > #paint > main {
 
     z-index: 1;
 }
+
+body > #paint > main > #active {
+    position: absolute;
+
+    top: 1em;
+    left: 1em;
+    right: 1em;
+
+    line-height: 3em;
+
+    text-align: center;
+
+    color: gray;
+}
+
+body > #paint > main > #active::before {
+    content: "Clients: ";
+}
+
 body > #paint > main > #canvas {
     position: absolute;
 
@@ -155,18 +174,6 @@ body > #paint > main > #share-popup > canvas {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 1em;
-}
-
-body > #paint > main > #active {
-    z-index: 10;
-    position: absolute;
-    top: 96.5vh;
-    left: 10px;
-    color: gray;
-}
-
-body > #paint > main > #active::before {
-    content: "Active Users: ";
 }
 
 body > #paint > main > #reaction {

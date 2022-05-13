@@ -31,10 +31,12 @@ export class PaintScreen extends BaseScreen {
     // Nodes
 
     loadNode: HTMLImageElement
+    activeNode: HTMLSpanElement
     canvasNode: HTMLCanvasElement
     backNode: HTMLImageElement
 
     colorNode: HTMLDivElement
+    colorNodes: NodeMap = {}
 
     shareNode: HTMLImageElement
     sharePopupImageNode: HTMLImageElement
@@ -43,10 +45,7 @@ export class PaintScreen extends BaseScreen {
     sharePopupCanvasNode: HTMLCanvasElement
     sharePopupNode: HTMLDivElement
 
-    activeNode: HTMLSpanElement
     reactionNode: HTMLDivElement
-
-    colorNodes: NodeMap = {}
     reactionNodes: NodeMap = {}
     reactionCountNodes: NodeMap = {}
 
@@ -76,6 +75,9 @@ export class PaintScreen extends BaseScreen {
 
         // Nodes (load)
         this.loadNode = img({ className: 'load', src: BASE + '/images/load.png' })
+        
+        // Nodes (active user count)
+        this.activeNode = div({ id: 'active' })
 
         // Nodes (canvas)
         this.canvasNode = canvas({ id: 'canvas',
@@ -112,7 +114,7 @@ export class PaintScreen extends BaseScreen {
         })
 
         // Nodes (share popup input)
-        this.sharePopupInputNode = input({ value: location.href })
+        this.sharePopupInputNode = input()
 
         // Nodes (share popup div)
         this.sharePopupDivNode = div('Copied to clipboard 📋')
@@ -160,12 +162,9 @@ export class PaintScreen extends BaseScreen {
 
         // Nodes (reaction)
         this.reactionNode = div({id: 'reaction' }, Object.values(this.reactionNodes))
-        
-        // Nodes (active user count)
-        this.activeNode = div({ id: 'active' })
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.colorNode, this.shareNode, this.sharePopupNode, this.activeNode, this.reactionNode])
+        append(this.mainNode, [ this.loadNode, this.activeNode, this.canvasNode, this.backNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode])
     }
 
     // Screen
@@ -176,6 +175,9 @@ export class PaintScreen extends BaseScreen {
 
         // Canvas id
         const canvasId = location.pathname.substring(location.pathname.lastIndexOf('/') + 1)
+
+        // Load
+        this.loadNode.style.display = 'block'
 
         // Share popup
         this.sharePopupNode.style.display = 'none'
@@ -201,6 +203,9 @@ export class PaintScreen extends BaseScreen {
                     this.reactionCountNodes[reaction].style.display = 'none'
                 }
             }
+        })
+        this.canvasModel.on('init-coordinates', (data) => {
+            this.loadNode.style.display = 'none'
         })
         this.canvasModel.on('init-client', (data) => {
             console.log('init-client')
