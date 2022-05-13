@@ -52,7 +52,7 @@ export class PaintScreen extends BaseScreen {
     // Coordinates
 
     previousTouches: PointObject[] = []
-    previousTouchCenter: PointObject = undefined
+    targetTouchCenter: PointObject = undefined
     previousTouchLength: number = undefined
 
     // Constructor
@@ -406,8 +406,12 @@ export class PaintScreen extends BaseScreen {
                     const y1 = event.touches.length == 2 ? event.touches[1].clientY : 0
                     const dx = x1 - x0
                     const dy = y1 - y0
-                    // Remember
-                    this.previousTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
+                    // Target
+                    this.targetTouchCenter = {
+                        x: unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, (x0 + x1) / 2),
+                        y: unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, (y0 + y1) / 2)
+                    }
+                    // Previous
                     this.previousTouchLength = Math.sqrt(dx * dx + dy * dy)
                 }
             }
@@ -447,16 +451,19 @@ export class PaintScreen extends BaseScreen {
                 const y1 = event.touches.length == 2 ? event.touches[1].clientY : 0
                 const dx = x1 - x0
                 const dy = y1 - y0
-                // Define
-                const currentTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
+                // Update zoom
                 const currentTouchLength = Math.sqrt(dx * dx + dy * dy)
-                // Update
                 this.canvasModel.zoom *= currentTouchLength / this.previousTouchLength
-                this.canvasModel.center.x -= (currentTouchCenter.x - this.previousTouchCenter.x) / this.canvasModel.zoom
-                this.canvasModel.center.y -= (currentTouchCenter.y - this.previousTouchCenter.y) / this.canvasModel.zoom
+                // Update center
+                const currentTouchCenter = {
+                    x: unprojectX(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, (x0 + x1) / 2),
+                    y: unprojectY(this.canvasNode, this.canvasModel.center, this.canvasModel.zoom, (y0 + y1) / 2)
+                }
+                this.canvasModel.center.x -= (currentTouchCenter.x - this.targetTouchCenter.x)
+                this.canvasModel.center.y -= (currentTouchCenter.y - this.targetTouchCenter.y)
+                // Redraw
                 this.canvasModel.draw()
-                // Remember
-                this.previousTouchCenter = currentTouchCenter
+                // Remember current touch length
                 this.previousTouchLength = currentTouchLength
             }
         }
@@ -482,7 +489,7 @@ export class PaintScreen extends BaseScreen {
                 const dx = x1 - x0
                 const dy = y1 - y0
                 // Remember
-                this.previousTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
+                this.targetTouchCenter = { x: (x0 + x1) / 2, y: (y0 + y1) / 2 }
                 this.previousTouchLength = Math.sqrt(dx * dx + dy * dy)
             }
         }
