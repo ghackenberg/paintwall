@@ -50,6 +50,42 @@ body > #paint > main > #canvas {
     right: 0;
     bottom: 0;
 }
+
+
+body > #paint > main > #tool {
+    position: absolute;
+
+    top: 1em;
+    left: 4.5em;
+}
+
+body > #paint > main > #tool > img {
+    display: block;
+    float: left;
+
+    margin: 0.5em;
+    padding: 0.5em;
+
+    width: 1em;
+    height: 1em;
+
+    border-radius: 1em;
+    background-color: white;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+}
+
+body > #paint > main > #tool > .active {
+
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 1em;
+    border-radius: 1.5em;
+
+}
+
 body > #paint > main > #color {
     position: absolute;
 

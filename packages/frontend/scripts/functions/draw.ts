@@ -1,6 +1,6 @@
-import { ClientObject, ClientObjectMap, LineObject, LineObjectMap, PointObject } from 'paintwall-common'
+import { CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, LineObject, LineObjectMap, PointObject, SquareObject, SquareObjectMap } from 'paintwall-common'
 
-export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: number, lines: LineObjectMap, clients: ClientObjectMap) {
+export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: number, lines: LineObjectMap, circles: CircleObjectMap, squares: SquareObjectMap, clients: ClientObjectMap) {
     // Context
     const context = canvas.getContext('2d')
 
@@ -10,6 +10,8 @@ export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: numbe
     // Draw
     drawGrid(canvas, context, center, zoom)
     drawLines(canvas, context, center, zoom, lines)
+    drawCircles(canvas, context, center, zoom, circles)
+    drawSquares(canvas, context, center, zoom, squares)
     drawClients(canvas, context, center, zoom, clients)
 }
 
@@ -115,6 +117,66 @@ function drawLine(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, 
         // Stroke
         context.stroke()
     }
+}
+
+function drawCircles(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, circles: CircleObjectMap) {
+    for (const circle of Object.values(circles)) {
+        drawCircle(canvas, context, center, zoom, circle)
+    }
+}
+
+function drawCircle(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, circle: CircleObject) {
+    // Extract
+    const start = circle.start
+    const end = circle.end
+    const color = circle.color
+    const width = circle.width
+    const alpha = circle.alpha
+
+    const x = projectX(canvas, center, zoom, (start.x + end.x) / 2)
+    const y = projectY(canvas, center, zoom, (start.y + end.y) / 2)
+    const rX = Math.abs((end.x - start.x) * zoom / 2)
+    const rY = Math.abs((end.y - start.y) * zoom / 2)
+
+    // Style
+    context.globalAlpha = alpha
+    context.strokeStyle = color
+    context.lineWidth = Math.max(width * zoom, 1)
+    context.lineCap = 'round'
+
+    // Stroke
+    context.beginPath()
+    context.ellipse(x, y, rX, rY, 0, 0, 2 * Math.PI)
+    context.stroke()
+}
+
+function drawSquares(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, squares: SquareObjectMap) {
+    for (const square of Object.values(squares)) {
+        drawSquare(canvas, context, center, zoom, square)
+    }
+}
+
+function drawSquare(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, square: SquareObject) {
+    // Extract
+    const start = square.start
+    const end = square.end
+    const color = square.color
+    const width = square.width
+    const alpha = square.alpha
+
+    const x = projectX(canvas, center, zoom, start.x)
+    const y = projectY(canvas, center, zoom, start.y)
+    const w = (end.x - start.x) * zoom
+    const h = (end.y - start.y) * zoom
+
+    // Style
+    context.globalAlpha = alpha
+    context.strokeStyle = color
+    context.lineWidth = Math.max(width * zoom, 1)
+    context.lineCap = 'round'
+
+    // Stroke
+    context.strokeRect(x, y, w, h)
 }
 
 function drawClients(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, clients: ClientObjectMap) {

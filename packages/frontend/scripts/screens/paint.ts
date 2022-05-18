@@ -7,6 +7,8 @@ import { CanvasModel } from '../models/canvas'
 import { ClientModel } from '../models/client'
 import { LineModel } from '../models/line'
 import { BaseScreen } from './base'
+import { SquareModel } from '../models/square'
+import { CircleModel } from '../models/circle'
 
 interface NodeMap {
     [id: string]: HTMLSpanElement
@@ -15,6 +17,7 @@ interface NodeMap {
 export class PaintScreen extends BaseScreen {
     // Static
 
+    static TOOLS = [ 'line', 'circle', 'square']
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
     static WIDTHS = [5.0]
     static ALPHAS = [0.5]
@@ -27,6 +30,8 @@ export class PaintScreen extends BaseScreen {
     clientModel: ClientModel = undefined
     canvasModel: CanvasModel = undefined
     lineModel: LineModel = undefined
+    circleModel: CircleModel = undefined
+    squareModel: SquareModel = undefined
 
     // Nodes
 
@@ -34,6 +39,9 @@ export class PaintScreen extends BaseScreen {
     activeNode: HTMLSpanElement
     canvasNode: HTMLCanvasElement
     backNode: HTMLImageElement
+
+    toolNode: HTMLDivElement
+    toolNodes: NodeMap = {}
 
     colorNode: HTMLDivElement
     colorNodes: NodeMap = {}
@@ -62,13 +70,14 @@ export class PaintScreen extends BaseScreen {
         
         // Constants
         const name: string = undefined
+        const tool = PaintScreen.TOOLS.includes(localStorage.getItem('tool')) ? localStorage.getItem('tool') : PaintScreen.TOOLS[0]
         const color = PaintScreen.COLORS.includes(localStorage.getItem('color')) ? localStorage.getItem('color') : PaintScreen.COLORS[0]
         const width = PaintScreen.WIDTHS.includes(parseFloat(localStorage.getItem('width'))) ? parseFloat(localStorage.getItem('width')) : PaintScreen.WIDTHS[0]
         const alpha = PaintScreen.ALPHAS.includes(parseFloat(localStorage.getItem('alpha'))) ? parseFloat(localStorage.getItem('alpha')) : PaintScreen.ALPHAS[0]
         const position: PointObject = undefined
 
         // States
-        this.clientModel = new ClientModel(CLIENT_ID, name, color, width, alpha, position)
+        this.clientModel = new ClientModel(CLIENT_ID, name, tool, color, width, alpha, position)
 
         // Handlers
         this.handleResize = this.handleResize.bind(this)
@@ -97,6 +106,17 @@ export class PaintScreen extends BaseScreen {
         this.backNode = img({ id: 'back', className: 'back', src: BASE + '/images/back.png',
             onclick: () => history.back()
         })
+
+        for (const othertool of PaintScreen.TOOLS) {
+            this.toolNodes[othertool] = img({ className: othertool == tool ? 'tool active' : 'tool', src: BASE + '/images/' + othertool + '.png',
+                onclick: () => {
+                    this.changeTool(othertool)
+                }
+            })
+
+        }
+
+        this.toolNode = div({id: 'tool'}, Object.values(this.toolNodes))
 
         // Nodes (share)
         this.shareNode = img({id: 'share', className: 'share', src: BASE + '/images/share.png',
@@ -164,7 +184,7 @@ export class PaintScreen extends BaseScreen {
         this.reactionNode = div({id: 'reaction' }, Object.values(this.reactionNodes))
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.activeNode, this.canvasNode, this.backNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode])
+        append(this.mainNode, [ this.loadNode, this.activeNode, this.canvasNode, this.backNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode])
     }
 
     // Screen
@@ -295,7 +315,13 @@ export class PaintScreen extends BaseScreen {
             const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.startLine(point)
+                if (this.clientModel.tool == 'line') {
+                    this.startLine(point)
+                } else if (this.clientModel.tool == 'circle') {
+                    this.startCircle(point)
+                } else if (this.clientModel.tool == 'square') {
+                    this.startSquare(point)
+                }
             }
             // Broadcast
             this.canvasModel.broadcast('client-pointer-move', point)
@@ -313,7 +339,7 @@ export class PaintScreen extends BaseScreen {
             const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.startLine(point)
+                //this.continueLine(point)
             }
             // Broadcast
             this.canvasModel.broadcast('client-pointer-move', point)
@@ -331,7 +357,13 @@ export class PaintScreen extends BaseScreen {
             const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.continueLine(point)
+                if (this.clientModel.tool == 'line') {
+                    this.continueLine(point)
+                } else if (this.clientModel.tool == 'circle') {
+                    this.continueCircle(point)
+                } else if (this.clientModel.tool == 'square') {
+                    this.continueSquare(point)
+                }          
             }
             // Broadcast
             this.canvasModel.broadcast('client-pointer-move', point)
@@ -349,7 +381,13 @@ export class PaintScreen extends BaseScreen {
             const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.startLine(point)
+                if (this.clientModel.tool == 'line') {
+                    this.startLine(point)
+                } else if (this.clientModel.tool == 'circle') {
+                    this.startCircle(point)
+                } else if (this.clientModel.tool == 'square') {
+                    this.startSquare(point)
+                }              
             }
             // Broadcast
             this.canvasModel.broadcast('client-pointer-over', point)
@@ -367,7 +405,7 @@ export class PaintScreen extends BaseScreen {
             const point = { x, y }
             // Check
             if (event.buttons == 1) {
-                this.continueLine(point)
+                //this.continueLine(point)
             }
             // Broadcast
             this.canvasModel.broadcast('client-pointer-out')
@@ -433,13 +471,31 @@ export class PaintScreen extends BaseScreen {
                 if (this.previousTouches.length > 0) {
                     this.previousTouches.push(point)
                     if (this.previousTouches.length > 10) {
-                        this.startLine(this.previousTouches.shift())
-                        while (this.previousTouches.length > 0) {
-                            this.continueLine(this.previousTouches.shift())
-                        }
+                        if (this.clientModel.tool == 'line') {
+                            this.startLine(this.previousTouches.shift())
+                            while (this.previousTouches.length > 0) {
+                                this.continueLine(this.previousTouches.shift())
+                            }
+                        } else if (this.clientModel.tool == 'circle') {
+                            this.startCircle(this.previousTouches.shift())
+                            while (this.previousTouches.length > 0) {
+                                this.continueCircle(this.previousTouches.shift())
+                            }
+                        } else if (this.clientModel.tool == 'square') {
+                            this.startSquare(this.previousTouches.shift())
+                            while (this.previousTouches.length > 0) {
+                                this.continueSquare(this.previousTouches.shift())
+                            }
+                        }                     
                     }
                 } else {
-                    this.continueLine(point)
+                    if (this.clientModel.tool == 'line') {
+                        this.continueLine(point)
+                    } else if (this.clientModel.tool == 'circle') {
+                        this.continueCircle(point)
+                    } else if (this.clientModel.tool == 'square') {
+                        this.continueSquare(point)
+                    }
                 }
                 // Broadcast
                 this.canvasModel.broadcast('client-pointer-move', point)
@@ -510,6 +566,19 @@ export class PaintScreen extends BaseScreen {
         this.canvasModel.broadcast('client-color', this.clientModel.color)
     }
 
+    changeTool(value: string) {
+        // Deactivate
+        this.toolNodes[this.clientModel.tool].classList.remove('active')
+        // Update
+        this.clientModel.tool = value
+        // Activate
+        this.toolNodes[this.clientModel.tool].classList.add('active')
+        // Remember
+        localStorage.setItem('tool', this.clientModel.tool)
+        // Broadcast
+        this.canvasModel.broadcast('client-tool', this.clientModel.tool)
+    }
+
     // Line
 
     startLine(point: PointObject) {
@@ -537,4 +606,62 @@ export class PaintScreen extends BaseScreen {
             this.canvasModel.broadcast('client-line-continue', { lineId: this.lineModel.lineId, point })    
         }
     }
+
+    // Circle
+
+    startCircle(point: PointObject) {
+        // Define
+        const circleId = '' + Math.random().toString(16).substring(2)
+        const color = this.clientModel.color
+        const width = this.clientModel.width
+        const alpha = this.clientModel.alpha
+        // Create
+        this.circleModel = new CircleModel(circleId, CLIENT_ID, color, width, alpha, point, point)
+        // Update
+        this.canvasModel.circles[circleId] = this.circleModel
+        this.canvasModel.draw()
+        // Broadcast
+        this.canvasModel.broadcast('client-circle-start', { circleId: this.circleModel.circleId, point })
+    }
+
+    continueCircle(point: PointObject) {
+        if (this.circleModel) {
+            // Update
+            this.circleModel.end = point
+            // Draw
+            this.canvasModel.draw()
+            // Broadcast
+            this.canvasModel.broadcast('client-circle-continue', { circleId: this.circleModel.circleId, point })    
+        }
+    }
+
+    // Square
+
+    startSquare(point: PointObject) {
+        // Define
+        const squareId = '' + Math.random().toString(16).substring(2)
+        const color = this.clientModel.color
+        const width = this.clientModel.width
+        const alpha = this.clientModel.alpha
+        // Create
+        this.squareModel = new SquareModel(squareId, CLIENT_ID, color, width, alpha, point, point)
+        // Update
+        this.canvasModel.squares[squareId] = this.squareModel
+        this.canvasModel.draw()
+        // Broadcast
+        this.canvasModel.broadcast('client-square-start', { squareId: this.squareModel.squareId, point })
+    }
+
+    continueSquare(point: PointObject) {
+        if (this.squareModel) {
+            // Update
+            this.squareModel.end = point
+            // Draw
+            this.canvasModel.draw()
+            // Broadcast
+            this.canvasModel.broadcast('client-square-continue', { squareId: this.squareModel.squareId, point })    
+        }
+    }
+
+
 }

@@ -1,8 +1,10 @@
-import { BASE, CanvasObject, ClientObject, ClientObjectMap, CoordinateData, CountData, LineObject, LineObjectMap, PointObject, ReactionData, TimestampData } from 'paintwall-common'
+import { BASE, CanvasObject, CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, CoordinateData, CountData, LineObject, LineObjectMap, PointObject, ReactionData, SquareObject, SquareObjectMap, TimestampData } from 'paintwall-common'
 import { draw } from '../functions/draw'
 import { makeSocketURL } from '../functions/socket'
+import { CircleModel } from './circle'
 import { ClientModel } from './client'
 import { LineModel } from './line'
+import { SquareModel } from './square'
 
 interface Handler {
     (...args: any[]): void
@@ -30,8 +32,10 @@ export class CanvasModel implements CanvasObject {
     reactions: ReactionData
     clients: ClientObjectMap
     lines: LineObjectMap
+    circles: CircleObjectMap
+    squares: SquareObjectMap
 
-    constructor(canvasNode: HTMLCanvasElement, canvasId: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap) {
+    constructor(canvasNode: HTMLCanvasElement, canvasId: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap, circles?: CircleObjectMap, squares?: SquareObjectMap) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
         this.timestamps = timestamps
@@ -40,6 +44,8 @@ export class CanvasModel implements CanvasObject {
         this.reactions = reactions || {}
         this.clients = clients || {}
         this.lines = lines || {}
+        this.circles = circles || {}
+        this.squares = squares || {}
         this.updateCenter()
         this.updateZoom()
     }
@@ -86,8 +92,11 @@ export class CanvasModel implements CanvasObject {
     on(event: 'init-reactions', handle: (data: ReactionData) => void): void
     on(event: 'init-client', handle: (data: ClientObject) => void): void
     on(event: 'init-line', handle: (data: LineObject) => void): void
+    on(event: 'init-circle', handle: (data: CircleObject) => void): void
+    on(event: 'init-square', handle: (data: SquareObject) => void): void
     on(event: 'client-enter', handler: (clientId: string, data: ClientObject) => void): void
     on(event: 'client-leave', handler: (clientId: string) => void): void
+    on(event: 'client-tool', handler: (clientId: string, data: string) => void): void
     on(event: 'client-color', handler: (clientId: string, data: string) => void): void
     on(event: 'client-width', handler: (clientId: string, data: number) => void): void
     on(event: 'client-alpha', handler: (clientId: string, data: number) => void): void
@@ -96,6 +105,10 @@ export class CanvasModel implements CanvasObject {
     on(event: 'client-pointer-out', handler: (clientId: string) => void): void
     on(event: 'client-line-start', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
     on(event: 'client-line-continue', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
+    on(event: 'client-circle-start', handler: (clientId: string, data: { circleId: string, point: PointObject }) => void): void
+    on(event: 'client-circle-continue', handler: (clientId: string, data: { circleId: string, point: PointObject }) => void): void
+    on(event: 'client-square-start', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
+    on(event: 'client-square-continue', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     on(event: 'client-react', handler: (clientId: string, data: string) => void): void
     on(event: string, handler: Handler) {
         if (!(event in this.handlers)) {
@@ -111,8 +124,11 @@ export class CanvasModel implements CanvasObject {
     off(event: 'init-reactions', handle: (data: ReactionData) => void): void
     off(event: 'init-client', handle: (data: ClientObject) => void): void
     off(event: 'init-line', handle: (data: LineObject) => void): void
+    off(event: 'init-circle', handle: (data: CircleObject) => void): void
+    off(event: 'init-square', handle: (data: SquareObject) => void): void
     off(event: 'client-enter', handler: (clientId: string, data: ClientObject) => void): void
     off(event: 'client-leave', handler: (clientId: string) => void): void
+    off(event: 'client-tool', handler: (clientId: string, data: string) => void): void
     off(event: 'client-color', handler: (clientId: string, data: string) => void): void
     off(event: 'client-width', handler: (clientId: string, data: number) => void): void
     off(event: 'client-alpha', handler: (clientId: string, data: number) => void): void
@@ -121,6 +137,10 @@ export class CanvasModel implements CanvasObject {
     off(event: 'client-pointer-out', handler: (clientId: string) => void): void
     off(event: 'client-line-start', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
     off(event: 'client-line-continue', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
+    off(event: 'client-circle-start', handler: (clientId: string, data: { circleId: string, point: PointObject }) => void): void
+    off(event: 'client-circle-continue', handler: (clientId: string, data: { circleId: string, point: PointObject }) => void): void
+    off(event: 'client-square-start', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
+    off(event: 'client-square-continue', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     off(event: 'client-react', handler: (clientId: string, data: string) => void): void
     off(event: string, handler: Handler) {
         if (event in this.handlers) {
@@ -157,12 +177,13 @@ export class CanvasModel implements CanvasObject {
                 case 'client-enter': {
                     const clientId = message.clientId
                     const name = message.data.name
+                    const tool = message.data.tool
                     const color = message.data.color
                     const width = message.data.width
                     const alpha = message.data.alpha
                     const position = message.data.position
 
-                    this.clients[clientId] = new ClientModel(clientId, name, color, width, alpha, position)
+                    this.clients[clientId] = new ClientModel(clientId, name, tool, color, width, alpha, position)
 
                     this.counts.views++
                     this.counts.clients++
@@ -207,6 +228,16 @@ export class CanvasModel implements CanvasObject {
                         this.clients[clientId].position = position
                     }
 
+                    break
+                }
+                case 'client-tool': {
+                    const clientId = message.clientId
+                    const tool = message.data
+                    
+                    if (clientId in this.clients) {
+                        this.clients[clientId].tool = tool
+                    }
+                    
                     break
                 }
                 case 'client-color': {
@@ -274,6 +305,76 @@ export class CanvasModel implements CanvasObject {
 
                     break
                 }
+                case 'client-circle-start': {
+                    const clientId = message.clientId
+                    const circleId = message.data.circleId
+                    const point = message.data.point
+                    
+                    const color = this.clients[clientId].color
+                    const width = this.clients[clientId].width
+                    const alpha = this.clients[clientId].alpha
+
+                    this.circles[circleId] = new CircleModel(circleId, clientId, color, width, alpha, point, point)
+
+                    this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                    this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+
+                    this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                    this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
+
+                    break
+                }
+                case 'client-circle-continue': {
+                    const circleId = message.data.circleId
+                    const point = message.data.point
+
+                    if (circleId in this.circles) {
+                        this.circles[circleId].end = point
+
+                        this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                        this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+    
+                        this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                        this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
+                    }
+
+                    break
+                }
+                case 'client-square-start': {
+                    const clientId = message.clientId
+                    const squareId = message.data.squareId
+                    const point = message.data.point
+                    
+                    const color = this.clients[clientId].color
+                    const width = this.clients[clientId].width
+                    const alpha = this.clients[clientId].alpha
+
+                    this.squares[squareId] = new SquareModel(squareId, clientId, color, width, alpha, point, point)
+
+                    this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                    this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+
+                    this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                    this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
+
+                    break
+                }
+                case 'client-square-continue': {
+                    const squareId = message.data.squareId
+                    const point = message.data.point
+
+                    if (squareId in this.squares) {
+                        this.squares[squareId].end = point
+
+                        this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                        this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+    
+                        this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                        this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
+                    }
+
+                    break
+                }
                 case 'client-react': {
                     const reaction = message.data
 
@@ -313,12 +414,13 @@ export class CanvasModel implements CanvasObject {
                 case 'init-client': {
                     const clientId = message.data.clientId
                     const name = message.data.name
+                    const tool = message.data.tool
                     const color = message.data.color
                     const width = message.data.width
                     const alpha = message.data.alpha
                     const position = message.data.position
 
-                    this.clients[clientId] = new ClientModel(clientId, name, color, width, alpha, position)
+                    this.clients[clientId] = new ClientModel(clientId, name, tool, color, width, alpha, position)
 
                     break
                 }
@@ -331,6 +433,32 @@ export class CanvasModel implements CanvasObject {
                     const points = message.data.points
 
                     this.lines[lineId] = new LineModel(lineId, clientId, color, width, alpha, points)
+
+                    break
+                }
+                case 'init-circle': {
+                    const circleId = message.data.circleId
+                    const clientId = message.data.clientId
+                    const color = message.data.color
+                    const width = message.data.width
+                    const alpha = message.data.alpha
+                    const start = message.data.start
+                    const end = message.data.end
+
+                    this.circles[circleId] = new CircleModel(circleId, clientId, color, width, alpha, start, end)
+
+                    break
+                }
+                case 'init-square': {
+                    const squareId = message.data.squareId
+                    const clientId = message.data.clientId
+                    const color = message.data.color
+                    const width = message.data.width
+                    const alpha = message.data.alpha
+                    const start = message.data.start
+                    const end = message.data.end
+
+                    this.squares[squareId] = new SquareModel(squareId, clientId, color, width, alpha, start, end)
 
                     break
                 }
@@ -375,6 +503,7 @@ export class CanvasModel implements CanvasObject {
 
     broadcast(type: 'client-enter', data: ClientObject): void
     broadcast(type: 'client-leave'): void
+    broadcast(type: 'client-tool', data: string): void
     broadcast(type: 'client-color', data: string): void
     broadcast(type: 'client-width', data: number): void
     broadcast(type: 'client-alpha', data: number): void
@@ -383,6 +512,10 @@ export class CanvasModel implements CanvasObject {
     broadcast(type: 'client-pointer-out'): void
     broadcast(type: 'client-line-start', data: { lineId: string, point: PointObject }): void
     broadcast(type: 'client-line-continue', data: { lineId: string, point: PointObject }): void
+    broadcast(type: 'client-circle-start', data: { circleId: string, point: PointObject }): void
+    broadcast(type: 'client-circle-continue', data: { circleId: string, point: PointObject }): void
+    broadcast(type: 'client-square-start', data: { squareId: string, point: PointObject }): void
+    broadcast(type: 'client-square-continue', data: { squareId: string, point: PointObject }): void
     broadcast(type: 'client-react', data: string): void
     broadcast(type: string, data?: any) {
         if (this.socket && this.socket.readyState == WebSocket.OPEN) {
@@ -392,7 +525,7 @@ export class CanvasModel implements CanvasObject {
 
     draw() {
         if (this.center && this.zoom) {
-            draw(this.canvasNode, this.center, this.zoom, this.lines, this.clients)
+            draw(this.canvasNode, this.center, this.zoom, this.lines, this.circles, this.squares, this.clients)
         }
     }
 }

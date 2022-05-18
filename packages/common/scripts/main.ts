@@ -18,9 +18,38 @@ export interface LineObjectMap {
     [id: string]: LineObject
 }
 
+export interface CircleObject {
+    circleId: string
+    clientId: string
+    color: string
+    width: number
+    alpha: number
+    start: PointObject
+    end: PointObject
+}
+
+export interface CircleObjectMap {
+    [id: string]: CircleObject
+}
+
+export interface SquareObject {
+    squareId: string
+    clientId: string
+    color: string
+    width: number
+    alpha: number
+    start: PointObject
+    end: PointObject
+}
+
+export interface SquareObjectMap {
+    [id: string]: SquareObject
+}
+
 export interface ClientObject {
     clientId: string
     name: string
+    tool: string
     color: string
     width: number
     alpha: number
@@ -65,4 +94,6 @@ export interface CanvasObject {
     reactions: ReactionData
     clients: ClientObjectMap
     lines: LineObjectMap
+    circles: CircleObjectMap
+    squares: SquareObjectMap
 }

@@ -63,9 +63,11 @@ export function ws() {
             const reactions = {}
             const clients = {}
             const lines = {}
+            const circles = {}
+            const squares = {}
 
             // Create canvas object
-            CANVAS_OBJECT_MAP[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines }
+            CANVAS_OBJECT_MAP[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares }
 
             // Message
             const message = { type: 'canvas-count', data: Object.entries(CANVAS_OBJECT_MAP).length }
@@ -83,6 +85,8 @@ export function ws() {
         const reactions = canvasObject.reactions
         const clients = canvasObject.clients
         const lines = canvasObject.lines
+        const circles = canvasObject.circles
+        const squares = canvasObject.squares
 
         // Retrieve canvas object data
         const x = coordinates.x
@@ -93,7 +97,7 @@ export function ws() {
         counts.clients++
 
         // Remember client
-        clients[clientId] = { clientId, name: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
+        clients[clientId] = { clientId, name: undefined, tool: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
 
         // Synchronize timestamp and coordinate data
         socket.send(JSON.stringify({ type: 'init-timestamps', data: timestamps}))
@@ -107,6 +111,12 @@ export function ws() {
         }
         for (const line of Object.values(lines)) {
             socket.send(JSON.stringify({ type: 'init-line', data: line }))
+        }
+        for (const circle of Object.values(circles)) {
+            socket.send(JSON.stringify({ type: 'init-circle', data: circle }))
+        }
+        for (const square of Object.values(squares)) {
+            socket.send(JSON.stringify({ type: 'init-square', data: square }))
         }
 
         // Broadcast
@@ -124,6 +134,7 @@ export function ws() {
                 case 'client-enter': {
                     if (clientId in clients) {
                         clients[clientId].name = message.data.name
+                        clients[clientId].tool = message.data.tool
                         clients[clientId].color = message.data.color
                         clients[clientId].width = message.data.width
                         clients[clientId].alpha = message.data.alpha
@@ -146,6 +157,12 @@ export function ws() {
                 case 'client-pointer-over': {
                     if (clientId in clients) {
                         canvasObject.clients[clientId].position = message.data
+                    }
+                    break
+                }
+                case 'client-tool': {
+                    if (clientId in clients) {
+                        clients[clientId].tool = message.data
                     }
                     break
                 }

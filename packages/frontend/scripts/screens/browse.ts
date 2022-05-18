@@ -214,6 +214,8 @@ export class BrowseScreen extends BaseScreen {
                     const reactions = canvasObject.reactions
                     const clients = canvasObject.clients
                     const lines = canvasObject.lines
+                    const circles = canvasObject.circles
+                    const squares = canvasObject.squares
 
                     // Calculate informaton
                     const viewCount = counts.views
@@ -251,7 +253,7 @@ export class BrowseScreen extends BaseScreen {
                     append(this.canvasNode, [ containerNode ])
                     
                     // Canvas model
-                    const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, counts, coordinates, reactions, clients, lines)
+                    const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares)
                     canvasModel.draw()
                     
                     // Update models
