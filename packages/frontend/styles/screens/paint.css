@@ -28,7 +28,7 @@ body > #paint > main > #active {
     position: absolute;
 
     top: 1em;
-    left: 17em;
+    right: 5em;
 
     padding-left: 1em;
     padding-right: 1em;
