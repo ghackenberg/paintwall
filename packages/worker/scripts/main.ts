@@ -23,6 +23,7 @@ const files = [
     '/images/line.png',
     '/images/share.png',
     '/images/close.png',
+    '/images/live.png',
     '/styles/main.css',
     '/styles/screens/base.css',
     '/styles/screens/load.css',

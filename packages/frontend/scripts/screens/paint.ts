@@ -37,8 +37,13 @@ export class PaintScreen extends BaseScreen {
 
     loadNode: HTMLImageElement
     canvasNode: HTMLCanvasElement
-    activeNode: HTMLSpanElement
     backNode: HTMLDivElement
+
+    countNode: HTMLDivElement
+    viewCountNode: HTMLSpanElement
+    shapeCountNode: HTMLSpanElement
+    clientCountNode: HTMLSpanElement
+    reactionCountNode: HTMLSpanElement
 
     toolNode: HTMLDivElement
     toolNodes: NodeMap = {}
@@ -98,18 +103,35 @@ export class PaintScreen extends BaseScreen {
             ontouchmove: this.handleTouchMove.bind(this),
             ontouchend: this.handleTouchEnd.bind(this)
         })
-        
-        // Nodes (active user count)
-        this.activeNode = div({ id: 'active' })
 
         // Nodes (back)
         this.backNode = div({ id: 'back', className: 'icon active',
             onclick: () => history.back()
         }, img({ src:  BASE + '/images/back.png' }))
 
+
+        // Nodes (view count)
+        this.viewCountNode = span()
+
+        // Nodes (shape count)
+        this.shapeCountNode = span()
+
+        // Nodes (client count)
+        this.clientCountNode = span()
+
+        // Nodes (reaction count)
+        this.reactionCountNode = span()
+        
+        // Nodes (count)
+        this.countNode = div({ id: 'count' }, 
+            span({ className: 'count view' }, this.viewCountNode),
+            span({ className: 'count shape' }, this.shapeCountNode),
+            span({ className: 'count client' }, this.clientCountNode, img({ src: BASE + '/images/live.png' })),
+            span({ className: 'count reaction' }, this.reactionCountNode))
+
         // Nodes (tools)
         for (const othertool of PaintScreen.TOOLS) {
-            this.toolNodes[othertool] = span({ className: othertool == tool ? 'icon active' : 'icon',
+            this.toolNodes[othertool] = span({ className: othertool == tool ? 'tool icon active' : 'tool icon',
                 onclick: () => {
                     this.changeTool(othertool)
                 }
@@ -185,7 +207,7 @@ export class PaintScreen extends BaseScreen {
         this.reactionNode = div({id: 'reaction' }, Object.values(this.reactionNodes))
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.activeNode, this.backNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode])
     }
 
     // Screen
@@ -215,7 +237,7 @@ export class PaintScreen extends BaseScreen {
         // Canvas model
         this.canvasModel = new CanvasModel(this.canvasNode, canvasId)
         this.canvasModel.on('init-counts', (data) => {
-            this.activeNode.textContent = `${this.canvasModel.counts.clients}`
+            this.clientCountNode.textContent = `${this.canvasModel.counts.clients}`
         })
         this.canvasModel.on('init-reactions', (data) => {
             for (const reaction of PaintScreen.REACTIONS){
@@ -235,10 +257,10 @@ export class PaintScreen extends BaseScreen {
             console.log('init-client')
         })
         this.canvasModel.on('client-enter', (clientId, data) => {
-            this.activeNode.textContent = `${this.canvasModel.counts.clients}`
+            this.clientCountNode.textContent = `${this.canvasModel.counts.clients}`
         })
         this.canvasModel.on('client-leave', (clientId) => {
-            this.activeNode.textContent = `${this.canvasModel.counts.clients}`
+            this.clientCountNode.textContent = `${this.canvasModel.counts.clients}`
         })
         this.canvasModel.on('client-react', (clientId, data) => {
             if (data in this.reactionCountNodes) {

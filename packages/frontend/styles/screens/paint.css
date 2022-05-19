@@ -24,20 +24,20 @@ body > #paint > main {
     z-index: 1;
 }
 
-body > #paint > main > #active {
+body > #paint > main > #count {
     position: absolute;
 
     top: 1em;
     right: 5em;
+}
+
+body > #paint > main > #count > span.count {
+    display: none;
 
     padding-left: 1em;
     padding-right: 1em;
 
     white-space: nowrap;
-
-    min-width: 1em;
-
-    text-align: center;
 
     line-height: 3em;
 
@@ -50,8 +50,25 @@ body > #paint > main > #active {
     border-radius: 1.5em;
 }
 
-body > #paint > main > #active::before {
-    content: "Clients: ";
+body > #paint > main > #count > span.count.client {
+    display: inline-block;
+}
+
+body > #paint > main > #count > span.count.client > span::after {
+    content: " clients";
+}
+
+body > #paint > main > #count > span.count.client > img {
+    display: inline-block;
+
+    width: 1em;
+    height: 1em;
+
+    padding: 1em;
+    padding-left: 0.5em;
+    padding-right: 0;
+
+    vertical-align: top;
 }
 
 @media screen and (max-width: 29em) {
