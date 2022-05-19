@@ -29,7 +29,15 @@ body > #paint > main > #active {
 
     top: 1em;
     left: 17em;
-    right: 5em;
+
+    padding-left: 1em;
+    padding-right: 1em;
+
+    white-space: nowrap;
+
+    min-width: 1em;
+
+    text-align: center;
 
     line-height: 3em;
 
@@ -44,6 +52,12 @@ body > #paint > main > #active {
 
 body > #paint > main > #active::before {
     content: "Clients: ";
+}
+
+@media screen and (max-width: 29em) {
+    body > #paint > main > #active {
+        display: none;
+    }
 }
 
 body > #paint > main > #canvas {
