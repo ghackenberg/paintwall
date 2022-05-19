@@ -71,8 +71,8 @@ body > #paint > main > #count > span.count.client > img {
     vertical-align: top;
 }
 
-@media screen and (max-width: 30em) {
-    body > #paint > main > #active {
+@media screen and (max-width: 40em) {
+    body > #paint > main > #count {
         display: none;
     }
 }
@@ -130,6 +130,39 @@ body > #paint > main > #color > .active {
 
     width: 3em;
     height: 3em;
+}
+
+body > #paint > main > #width {
+    position: absolute;
+    top: 1em;
+    left: 17em;
+}
+
+body > #paint > main > #width > .width {
+    display: block;
+    float: left;
+    color : white;
+    width: 2em;
+    line-height: 2em;
+    margin: 0.5em;
+    border-radius: 1.3em;
+    text-align: center;
+
+    background-color: black;
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+}
+
+body > #paint > main > #width > .active {
+    margin: 0;
+    margin-top: 1em;
+    width: 3em;
+    line-height: 3em;
+    border-radius: 1.5em;
+    margin-top: 0em;
 }
 
 body > #paint > main > #share {
