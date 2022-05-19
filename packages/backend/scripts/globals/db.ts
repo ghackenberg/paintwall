@@ -54,6 +54,12 @@ for (const canvasObject of Object.values(CANVAS_OBJECT_MAP)) {
         const squares = Object.values(canvasObject.squares).length
         canvasObject.counts.shapes = lines + circles + squares
     }
+    if (!('comments' in canvasObject)) {
+        canvasObject.comments = {}
+    }
+    if (!('comments' in canvasObject.counts)) {
+        canvasObject.counts.comments = 0
+    }
     // Reset counts
     canvasObject.counts.clients = 0
     // Reset clients

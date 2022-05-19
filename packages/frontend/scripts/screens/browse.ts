@@ -32,6 +32,7 @@ export class BrowseScreen extends BaseScreen {
     shapeCountNodes: CountNodeMap = {}
     clientCountNodes: CountNodeMap = {}
     reactionCountNodes: CountNodeMap = {}
+    commentCountNodes: CountNodeMap = {}
 
     imprintNode: HTMLAnchorElement
     dataNode: HTMLAnchorElement
@@ -180,6 +181,14 @@ export class BrowseScreen extends BaseScreen {
                     }
                     break
                 }
+                case 'canvas-comment-count': {
+                    const canvasId = message.data.canvasId
+                    const count = message.data.count
+                    if (canvasId in this.commentCountNodes) {
+                        this.commentCountNodes[canvasId].textContent = count
+                    }
+                    break
+                }
             }
         }
         this.socket.onerror = (event) => {
@@ -230,12 +239,14 @@ export class BrowseScreen extends BaseScreen {
                     const lines = canvasObject.lines
                     const circles = canvasObject.circles
                     const squares = canvasObject.squares
+                    const comments = canvasObject.comments
 
                     // Calculate informaton
                     const viewCount = counts.views
                     const shapeCount = counts.shapes
                     const clientCount = counts.clients
                     const reactionCount = counts.reactions
+                    const commentCount = counts.comments
 
                     // Canvas node
                     const canvasNode = canvas()
@@ -248,24 +259,28 @@ export class BrowseScreen extends BaseScreen {
                     const clientCountNode = span(clientCount)
                     // Reaction count node
                     const reactionCountNode = span(reactionCount)
+                    // Comment count node
+                    const commentCountNode = span(commentCount)
 
                     // View count container node
-                    const viewCountContainerNode = div({ className:  'count view' }, viewCountNode)
+                    const viewCountContainerNode = div({ className: 'count view' }, viewCountNode)
                     // View count container node
-                    const shapeCountContainerNode = div({ className:  'count shape' }, shapeCountNode)
+                    const shapeCountContainerNode = div({ className: 'count shape' }, shapeCountNode)
                     // Client count container node
-                    const clientCountContainerNode = div({ className:  'count client' }, clientCountNode, img({ src: BASE + '/images/live.png'}))
+                    const clientCountContainerNode = div({ className: 'count client' }, clientCountNode, img({ src: BASE + '/images/live.png'}))
                     if (clientCount > 0) {
                         clientCountContainerNode.style.display = 'inline-block'
                     }
                     // Reaction count container node
                     const reactionCountContainerNode = div({ className: 'count reaction' }, reactionCountNode)
+                    // Comment count container node
+                    const commentCountContainerNode = div({ className: 'count comment' }, commentCountNode)
                     
                     // Live node
                     const liveNode = div({ className: 'live' }, clientCountContainerNode)
 
                     // Info node
-                    const infoNode = div({ className: 'info' }, viewCountContainerNode, shapeCountContainerNode, reactionCountContainerNode)
+                    const infoNode = div({ className: 'info' }, viewCountContainerNode, shapeCountContainerNode, reactionCountContainerNode, commentCountContainerNode)
                     
                     // Container node
                     const containerNode = div({
@@ -278,7 +293,7 @@ export class BrowseScreen extends BaseScreen {
                     append(this.canvasNode, [ containerNode ])
                     
                     // Canvas model
-                    const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares)
+                    const canvasModel = new CanvasModel(canvasNode, canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares, comments)
                     canvasModel.draw()
                     
                     // Update models
@@ -289,6 +304,7 @@ export class BrowseScreen extends BaseScreen {
                     this.shapeCountNodes[canvasId] = shapeCountNode
                     this.clientCountNodes[canvasId] = clientCountNode
                     this.reactionCountNodes[canvasId] = reactionCountNode
+                    this.commentCountNodes[canvasId] = commentCountNode
                 }
                 // Count
                 this.updateCanvasCount(Math.max(this.canvasCount, this.canvasModels.length))
@@ -310,8 +326,11 @@ export class BrowseScreen extends BaseScreen {
         // Reset models
         this.canvasModels = []
         // Reset nodes
+        this.viewCountNodes = {}
+        this.shapeCountNodes = {}
         this.clientCountNodes = {}
         this.reactionCountNodes = {}
+        this.commentCountNodes = {}
         // Update
         this.updateCanvasCount(this.canvasCount)
     }

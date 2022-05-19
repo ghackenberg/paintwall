@@ -1,3 +1,5 @@
+import { StringLiteralType } from "typescript"
+
 export const BASE = '/paintwall'
 
 export interface PointObject {
@@ -41,6 +43,17 @@ export interface SquareObjectMap {
     [id: string]: SquareObject
 }
 
+export interface CommentObject {
+    commentId: string
+    parentId: string | undefined
+    clientId: string
+    content: string
+}
+
+export interface CommentObjectMap {
+    [id: string]: CommentObject
+}
+
 export interface ClientObject extends ShapeObject {
     name: string
     tool: string
@@ -61,6 +74,7 @@ export interface CountData {
     shapes: number
     clients: number
     reactions: number
+    comments: number
 }
 
 export interface CoordinateData {
@@ -88,4 +102,5 @@ export interface CanvasObject {
     lines: LineObjectMap
     circles: CircleObjectMap
     squares: SquareObjectMap
+    comments: CommentObjectMap
 }

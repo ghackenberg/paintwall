@@ -25,6 +25,10 @@ classDiagram
     class SquareObject {
         squareId: string
     }
+    class CommentObject {
+        commentId: string
+        content: string
+    }
     class TimestampObject {
         created: number
         updated: number
@@ -46,6 +50,7 @@ classDiagram
     }
     
     CanvasObject "1" *-- "*" ClientObject: clients
+    CanvasObject "1" *-- "*" CommentObject: comments
     CanvasObject "1" *-- "*" ShapeObject: shapes
     CanvasObject "*" *-- "1" CoordinateObject: coordinates
 
@@ -55,6 +60,9 @@ classDiagram
 
     CoordinateObject "*" *-- "1" PointObject: min
     CoordinateObject "*" *-- "1" PointObject: max
+
+    CommentObject "*" --> "1" ClientObject: references
+    CommentObject "1" *-- "*" CommentObject: contains
 
     ShapeObject <|-- LineObject: inherits
     ShapeObject <|-- CircleObject: inherits

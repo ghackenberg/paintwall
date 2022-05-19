@@ -202,6 +202,10 @@ body > #browse > main > div > div > div.info > div.count {
     display: inline-block;
 }
 
+body > #browse > main > div > div > div.info > div.count.shape {
+    display: none;
+}
+
 body > #browse > main > div > div > div.info > div.count > span {
     display: inline-block;
 
@@ -236,6 +240,10 @@ body > #browse > main > div > div > div.info > div.count.reaction > span {
     background-color: gray;
 }
 
+body > #browse > main > div > div > div.info > div.count.comment > span {
+    background-color: gray;
+}
+
 body > #browse > main > div > div > div.info > div.count::after {
     display: inline-block;
 
@@ -263,6 +271,12 @@ body > #browse > main > div > div > div.info > div.count.client::after {
 
 body > #browse > main > div > div > div.info > div.count.reaction::after {
     content: 'reactions';
+
+    color: gray;
+}
+
+body > #browse > main > div > div > div.info > div.count.comment::after {
+    content: 'comments';
 
     color: gray;
 }

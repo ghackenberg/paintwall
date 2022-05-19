@@ -58,16 +58,17 @@ export function ws() {
 
             // Create canvas object information
             const timestamps = { created, updated }
-            const counts = { views: 0, shapes: 0, clients: 0, reactions: 0 }
+            const counts = { views: 0, shapes: 0, clients: 0, reactions: 0, comments: 0 }
             const coordinates = { x, y }
             const reactions = {}
             const clients = {}
             const lines = {}
             const circles = {}
             const squares = {}
+            const comments = {}
 
             // Create canvas object
-            CANVAS_OBJECT_MAP[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares }
+            CANVAS_OBJECT_MAP[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares, comments }
 
             // Message
             const message = { type: 'canvas-count', data: Object.entries(CANVAS_OBJECT_MAP).length }
@@ -87,6 +88,7 @@ export function ws() {
         const lines = canvasObject.lines
         const circles = canvasObject.circles
         const squares = canvasObject.squares
+        const comments = canvasObject.comments
 
         // Retrieve canvas object data
         const x = coordinates.x
@@ -117,6 +119,9 @@ export function ws() {
         }
         for (const square of Object.values(squares)) {
             socket.send(JSON.stringify({ type: 'init-square', data: square }))
+        }
+        for (const comment of Object.values(comments)) {
+            socket.send(JSON.stringify({ type: 'init-comment', data: comment }))
         }
 
         // Broadcast
@@ -314,6 +319,19 @@ export function ws() {
                     counts.reactions++
 
                     broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-reaction-count', data: { canvasId, count: counts.reactions } })
+
+                    break
+                }
+                case 'client-comment': {
+                    const commentId = message.data.commentId
+                    const parentId = message.data.parentId
+                    const content = message.data.content
+
+                    comments[commentId] = { commentId, parentId, clientId, content }
+
+                    counts.comments++
+
+                    broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-comment-count', data: { canvasId, count: counts.comments } })
 
                     break
                 }

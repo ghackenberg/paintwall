@@ -1,8 +1,9 @@
-import { BASE, CanvasObject, CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, CoordinateData, CountData, LineObject, LineObjectMap, PointObject, ReactionData, SquareObject, SquareObjectMap, TimestampData } from 'paintwall-common'
+import { BASE, CanvasObject, CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, CommentObject, CommentObjectMap, CoordinateData, CountData, LineObject, LineObjectMap, PointObject, ReactionData, SquareObject, SquareObjectMap, TimestampData } from 'paintwall-common'
 import { draw } from '../functions/draw'
 import { makeSocketURL } from '../functions/socket'
 import { CircleModel } from './circle'
 import { ClientModel } from './client'
+import { CommentModel } from './comment'
 import { LineModel } from './line'
 import { SquareModel } from './square'
 
@@ -34,8 +35,9 @@ export class CanvasModel implements CanvasObject {
     lines: LineObjectMap
     circles: CircleObjectMap
     squares: SquareObjectMap
+    comments: CommentObjectMap
 
-    constructor(canvasNode: HTMLCanvasElement, canvasId: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap, circles?: CircleObjectMap, squares?: SquareObjectMap) {
+    constructor(canvasNode: HTMLCanvasElement, canvasId: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap, circles?: CircleObjectMap, squares?: SquareObjectMap, comments?: CommentObjectMap) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
         this.timestamps = timestamps
@@ -46,6 +48,7 @@ export class CanvasModel implements CanvasObject {
         this.lines = lines || {}
         this.circles = circles || {}
         this.squares = squares || {}
+        this.comments = comments || {}
         this.updateCenter()
         this.updateZoom()
     }
@@ -94,6 +97,7 @@ export class CanvasModel implements CanvasObject {
     on(event: 'init-line', handle: (data: LineObject) => void): void
     on(event: 'init-circle', handle: (data: CircleObject) => void): void
     on(event: 'init-square', handle: (data: SquareObject) => void): void
+    on(event: 'init-comment', handle: (data: CommentObject) => void): void
     on(event: 'client-enter', handler: (clientId: string, data: ClientObject) => void): void
     on(event: 'client-leave', handler: (clientId: string) => void): void
     on(event: 'client-tool', handler: (clientId: string, data: string) => void): void
@@ -110,6 +114,7 @@ export class CanvasModel implements CanvasObject {
     on(event: 'client-square-start', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     on(event: 'client-square-continue', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     on(event: 'client-react', handler: (clientId: string, data: string) => void): void
+    on(event: 'client-comment', handler: (clientId: string, data: { commentId: string, parentId: string | undefined, content: string }) => void): void
     on(event: string, handler: Handler) {
         if (!(event in this.handlers)) {
             this.handlers[event] = []
@@ -126,6 +131,7 @@ export class CanvasModel implements CanvasObject {
     off(event: 'init-line', handle: (data: LineObject) => void): void
     off(event: 'init-circle', handle: (data: CircleObject) => void): void
     off(event: 'init-square', handle: (data: SquareObject) => void): void
+    off(event: 'init-comment', handle: (data: CommentObject) => void): void
     off(event: 'client-enter', handler: (clientId: string, data: ClientObject) => void): void
     off(event: 'client-leave', handler: (clientId: string) => void): void
     off(event: 'client-tool', handler: (clientId: string, data: string) => void): void
@@ -142,6 +148,7 @@ export class CanvasModel implements CanvasObject {
     off(event: 'client-square-start', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     off(event: 'client-square-continue', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     off(event: 'client-react', handler: (clientId: string, data: string) => void): void
+    off(event: 'client-comment', handler: (clientId: string, data: { commentId: string, parentId: string | undefined, content: string }) => void): void
     off(event: string, handler: Handler) {
         if (event in this.handlers) {
             const index = this.handlers[event].indexOf(handler)
@@ -388,6 +395,18 @@ export class CanvasModel implements CanvasObject {
 
                     break
                 }
+                case 'client-comment': {
+                    const clientId = message.clientId
+                    const commentId = message.data.commentId
+                    const parentId = message.data.parentId
+                    const content = message.data.content
+
+                    this.comments[commentId] = new CommentModel(commentId, parentId, clientId, content)
+
+                    this.counts.comments++
+
+                    break
+                }
                 case 'init-timestamps': {
                     this.timestamps = message.data
 
@@ -462,6 +481,16 @@ export class CanvasModel implements CanvasObject {
 
                     break
                 }
+                case 'init-comment': {
+                    const clientId = message.data.clientId
+                    const commentId = message.data.commentId
+                    const parentId = message.data.parentId
+                    const content = message.data.content
+
+                    this.comments[commentId] = new CommentModel(commentId, parentId, clientId, content)
+
+                    break
+                }
             }
             // Dispatch
             if ('clientId' in message && 'data' in message) {
@@ -517,6 +546,7 @@ export class CanvasModel implements CanvasObject {
     broadcast(type: 'client-square-start', data: { squareId: string, point: PointObject }): void
     broadcast(type: 'client-square-continue', data: { squareId: string, point: PointObject }): void
     broadcast(type: 'client-react', data: string): void
+    broadcast(type: 'client-comment', data: { parentId: string | undefined, content: string }): void
     broadcast(type: string, data?: any) {
         if (this.socket && this.socket.readyState == WebSocket.OPEN) {
             this.socket.send(JSON.stringify({ type, data }))
