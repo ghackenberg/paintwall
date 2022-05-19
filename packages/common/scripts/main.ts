@@ -5,12 +5,15 @@ export interface PointObject {
     y: number
 }
 
-export interface LineObject {
-    lineId: string
+export interface ShapeObject {
     clientId: string
     color: string
     width: number
     alpha: number
+}
+
+export interface LineObject extends ShapeObject {
+    lineId: string
     points: PointObject[]
 }
 
@@ -18,12 +21,8 @@ export interface LineObjectMap {
     [id: string]: LineObject
 }
 
-export interface CircleObject {
+export interface CircleObject extends ShapeObject {
     circleId: string
-    clientId: string
-    color: string
-    width: number
-    alpha: number
     start: PointObject
     end: PointObject
 }
@@ -32,12 +31,8 @@ export interface CircleObjectMap {
     [id: string]: CircleObject
 }
 
-export interface SquareObject {
+export interface SquareObject extends ShapeObject {
     squareId: string
-    clientId: string
-    color: string
-    width: number
-    alpha: number
     start: PointObject
     end: PointObject
 }
@@ -46,13 +41,9 @@ export interface SquareObjectMap {
     [id: string]: SquareObject
 }
 
-export interface ClientObject {
-    clientId: string
+export interface ClientObject extends ShapeObject {
     name: string
     tool: string
-    color: string
-    width: number
-    alpha: number
     position: PointObject
 }
 
