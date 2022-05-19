@@ -21,6 +21,16 @@ export interface LineObjectMap {
     [id: string]: LineObject
 }
 
+export interface StraightLineObject extends ShapeObject {
+    straightLineId: string
+    start: PointObject
+    end: PointObject
+}
+
+export interface StraightLineObjectMap {
+    [id: string]: StraightLineObject
+}
+
 export interface CircleObject extends ShapeObject {
     circleId: string
     start: PointObject
@@ -39,6 +49,16 @@ export interface SquareObject extends ShapeObject {
 
 export interface SquareObjectMap {
     [id: string]: SquareObject
+}
+
+export interface TriangleObject extends ShapeObject {
+    triangleId: string
+    start: PointObject
+    end: PointObject
+}
+
+export interface TriangleObjectMap {
+    [id: string]: TriangleObject
 }
 
 export interface ClientObject extends ShapeObject {
@@ -88,4 +108,6 @@ export interface CanvasObject {
     lines: LineObjectMap
     circles: CircleObjectMap
     squares: SquareObjectMap
+    straightLines: StraightLineObjectMap
+    triangles: TriangleObjectMap
 }

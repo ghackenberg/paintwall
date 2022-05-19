@@ -1,10 +1,12 @@
-import { BASE, CanvasObject, CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, CoordinateData, CountData, LineObject, LineObjectMap, PointObject, ReactionData, SquareObject, SquareObjectMap, TimestampData } from 'paintwall-common'
+import { BASE, CanvasObject, CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, CoordinateData, CountData, LineObject, LineObjectMap, PointObject, ReactionData, SquareObject, SquareObjectMap, StraightLineObject, StraightLineObjectMap, TimestampData, TriangleObject, TriangleObjectMap } from 'paintwall-common'
 import { draw } from '../functions/draw'
 import { makeSocketURL } from '../functions/socket'
 import { CircleModel } from './circle'
 import { ClientModel } from './client'
 import { LineModel } from './line'
+import { StraightLineModel } from './straightLine'
 import { SquareModel } from './square'
+import { TriangleModel } from './triangle'
 
 interface Handler {
     (...args: any[]): void
@@ -32,10 +34,12 @@ export class CanvasModel implements CanvasObject {
     reactions: ReactionData
     clients: ClientObjectMap
     lines: LineObjectMap
+    straightLines: StraightLineObjectMap
     circles: CircleObjectMap
     squares: SquareObjectMap
+    triangles: TriangleObjectMap
 
-    constructor(canvasNode: HTMLCanvasElement, canvasId: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap, circles?: CircleObjectMap, squares?: SquareObjectMap) {
+    constructor(canvasNode: HTMLCanvasElement, canvasId: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap, straightLines?: StraightLineObjectMap, circles?: CircleObjectMap, squares?: SquareObjectMap, triangles?: TriangleObjectMap) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
         this.timestamps = timestamps
@@ -44,8 +48,10 @@ export class CanvasModel implements CanvasObject {
         this.reactions = reactions || {}
         this.clients = clients || {}
         this.lines = lines || {}
+        this.straightLines = straightLines || {}
         this.circles = circles || {}
         this.squares = squares || {}
+        this.triangles = triangles || {}
         this.updateCenter()
         this.updateZoom()
     }
@@ -92,8 +98,10 @@ export class CanvasModel implements CanvasObject {
     on(event: 'init-reactions', handle: (data: ReactionData) => void): void
     on(event: 'init-client', handle: (data: ClientObject) => void): void
     on(event: 'init-line', handle: (data: LineObject) => void): void
+    on(event: 'init-straigthLine', handle: (data: StraightLineObject) => void): void
     on(event: 'init-circle', handle: (data: CircleObject) => void): void
     on(event: 'init-square', handle: (data: SquareObject) => void): void
+    on(event: 'init-triangle', handle: (data: TriangleObject) => void): void
     on(event: 'client-enter', handler: (clientId: string, data: ClientObject) => void): void
     on(event: 'client-leave', handler: (clientId: string) => void): void
     on(event: 'client-tool', handler: (clientId: string, data: string) => void): void
@@ -105,10 +113,15 @@ export class CanvasModel implements CanvasObject {
     on(event: 'client-pointer-out', handler: (clientId: string) => void): void
     on(event: 'client-line-start', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
     on(event: 'client-line-continue', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
+    on(event: 'client-straightLine-start', handler: (clientId: string, data: { straightLineId: string, point: PointObject }) => void): void
+    on(event: 'client-straightLine-continue', handler: (clientId: string, data: { straightLineId: string, point: PointObject }) => void): void
     on(event: 'client-circle-start', handler: (clientId: string, data: { circleId: string, point: PointObject }) => void): void
     on(event: 'client-circle-continue', handler: (clientId: string, data: { circleId: string, point: PointObject }) => void): void
     on(event: 'client-square-start', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     on(event: 'client-square-continue', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
+    on(event: 'client-triangle-start', handler: (clientId: string, data: { triangleId: string, point: PointObject }) => void): void
+    on(event: 'client-triangle-continue', handler: (clientId: string, data: { triangleId: string, point: PointObject }) => void): void
+
     on(event: 'client-react', handler: (clientId: string, data: string) => void): void
     on(event: string, handler: Handler) {
         if (!(event in this.handlers)) {
@@ -124,8 +137,10 @@ export class CanvasModel implements CanvasObject {
     off(event: 'init-reactions', handle: (data: ReactionData) => void): void
     off(event: 'init-client', handle: (data: ClientObject) => void): void
     off(event: 'init-line', handle: (data: LineObject) => void): void
+    off(event: 'init-straightLine', handle: (data: StraightLineObject) => void): void
     off(event: 'init-circle', handle: (data: CircleObject) => void): void
     off(event: 'init-square', handle: (data: SquareObject) => void): void
+    off(event: 'init-triangle', handle: (data: TriangleObject) => void): void
     off(event: 'client-enter', handler: (clientId: string, data: ClientObject) => void): void
     off(event: 'client-leave', handler: (clientId: string) => void): void
     off(event: 'client-tool', handler: (clientId: string, data: string) => void): void
@@ -137,10 +152,14 @@ export class CanvasModel implements CanvasObject {
     off(event: 'client-pointer-out', handler: (clientId: string) => void): void
     off(event: 'client-line-start', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
     off(event: 'client-line-continue', handler: (clientId: string, data: { lineId: string, point: PointObject }) => void): void
+    off(event: 'client-straightLine-start', handler: (clientId: string, data: { straightLineId: string, point: PointObject }) => void): void
+    off(event: 'client-straightLine-continue', handler: (clientId: string, data: { straightLineId: string, point: PointObject }) => void): void
     off(event: 'client-circle-start', handler: (clientId: string, data: { circleId: string, point: PointObject }) => void): void
     off(event: 'client-circle-continue', handler: (clientId: string, data: { circleId: string, point: PointObject }) => void): void
     off(event: 'client-square-start', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     off(event: 'client-square-continue', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
+    off(event: 'client-triangle-start', handler: (clientId: string, data: { triangleId: string, point: PointObject }) => void): void
+    off(event: 'client-triangle-continue', handler: (clientId: string, data: { triangleId: string, point: PointObject }) => void): void
     off(event: 'client-react', handler: (clientId: string, data: string) => void): void
     off(event: string, handler: Handler) {
         if (event in this.handlers) {
@@ -305,6 +324,41 @@ export class CanvasModel implements CanvasObject {
 
                     break
                 }
+                case 'client-straightLine-start': {
+                    const clientId = message.clientId
+                    const straightLineId = message.data.straightLineId
+                    const point = message.data.point
+                    
+                    const color = this.clients[clientId].color
+                    const width = this.clients[clientId].width
+                    const alpha = this.clients[clientId].alpha
+
+                    this.straightLines[straightLineId] = new StraightLineModel(straightLineId, clientId, color, width, alpha, point, point)
+
+                    this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                    this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+
+                    this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                    this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
+
+                    break
+                }
+                case 'client-straightLine-continue': {
+                    const straightLineId = message.data.straightLineId
+                    const point = message.data.point
+
+                    if (straightLineId in this.straightLines) {
+                        this.straightLines[straightLineId].end = point
+
+                        this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                        this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+    
+                        this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                        this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
+                    }
+
+                    break
+                }
                 case 'client-circle-start': {
                     const clientId = message.clientId
                     const circleId = message.data.circleId
@@ -365,6 +419,41 @@ export class CanvasModel implements CanvasObject {
 
                     if (squareId in this.squares) {
                         this.squares[squareId].end = point
+
+                        this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                        this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+    
+                        this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                        this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
+                    }
+
+                    break
+                }
+                case 'client-triangle-start': {
+                    const clientId = message.clientId
+                    const triangleId = message.data.triangleId
+                    const point = message.data.point
+                    
+                    const color = this.clients[clientId].color
+                    const width = this.clients[clientId].width
+                    const alpha = this.clients[clientId].alpha
+
+                    this.triangles[triangleId] = new TriangleModel(triangleId, clientId, color, width, alpha, point, point)
+
+                    this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
+                    this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
+
+                    this.coordinates.y.min = Math.min(this.coordinates.y.min, point.y)
+                    this.coordinates.y.max = Math.max(this.coordinates.y.max, point.y)
+
+                    break
+                }
+                case 'client-triangle-continue': {
+                    const triangleId = message.data.triangleId
+                    const point = message.data.point
+
+                    if (triangleId in this.squares) {
+                        this.squares[triangleId].end = point
 
                         this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
                         this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
@@ -436,6 +525,19 @@ export class CanvasModel implements CanvasObject {
 
                     break
                 }
+                case 'init-straightLine': {
+                    const straightLineId = message.data.straightLineId
+                    const clientId = message.data.clientId
+                    const color = message.data.color
+                    const width = message.data.width
+                    const alpha = message.data.alpha
+                    const start = message.data.start
+                    const end = message.data.end
+
+                    this.straightLines[straightLineId] = new StraightLineModel(straightLineId, clientId, color, width, alpha, start, end)
+
+                    break
+                }
                 case 'init-circle': {
                     const circleId = message.data.circleId
                     const clientId = message.data.clientId
@@ -459,6 +561,19 @@ export class CanvasModel implements CanvasObject {
                     const end = message.data.end
 
                     this.squares[squareId] = new SquareModel(squareId, clientId, color, width, alpha, start, end)
+
+                    break
+                }
+                case 'init-triangle': {
+                    const triangleId = message.data.triangleId
+                    const clientId = message.data.clientId
+                    const color = message.data.color
+                    const width = message.data.width
+                    const alpha = message.data.alpha
+                    const start = message.data.start
+                    const end = message.data.end
+
+                    this.triangles[triangleId] = new TriangleModel(triangleId, clientId, color, width, alpha, start, end)
 
                     break
                 }
@@ -512,10 +627,14 @@ export class CanvasModel implements CanvasObject {
     broadcast(type: 'client-pointer-out'): void
     broadcast(type: 'client-line-start', data: { lineId: string, point: PointObject }): void
     broadcast(type: 'client-line-continue', data: { lineId: string, point: PointObject }): void
+    broadcast(type: 'client-straightLine-start', data: { straightLineId: string, point: PointObject }): void
+    broadcast(type: 'client-straightLine-continue', data: { straightLineId: string, point: PointObject }): void
     broadcast(type: 'client-circle-start', data: { circleId: string, point: PointObject }): void
     broadcast(type: 'client-circle-continue', data: { circleId: string, point: PointObject }): void
     broadcast(type: 'client-square-start', data: { squareId: string, point: PointObject }): void
     broadcast(type: 'client-square-continue', data: { squareId: string, point: PointObject }): void
+    broadcast(type: 'client-triangle-start', data: { triangleId: string, point: PointObject }): void
+    broadcast(type: 'client-triangle-continue', data: { triangleId: string, point: PointObject }): void
     broadcast(type: 'client-react', data: string): void
     broadcast(type: string, data?: any) {
         if (this.socket && this.socket.readyState == WebSocket.OPEN) {
@@ -525,7 +644,7 @@ export class CanvasModel implements CanvasObject {
 
     draw() {
         if (this.center && this.zoom) {
-            draw(this.canvasNode, this.center, this.zoom, this.lines, this.circles, this.squares, this.clients)
+            draw(this.canvasNode, this.center, this.zoom, this)
         }
     }
 }

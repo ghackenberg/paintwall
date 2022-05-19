@@ -65,9 +65,11 @@ export function ws() {
             const lines = {}
             const circles = {}
             const squares = {}
+            const straightLines = {}
+            const triangles = {}
 
             // Create canvas object
-            CANVAS_OBJECT_MAP[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares }
+            CANVAS_OBJECT_MAP[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares, straightLines, triangles }
 
             // Message
             const message = { type: 'canvas-count', data: Object.entries(CANVAS_OBJECT_MAP).length }
@@ -87,6 +89,8 @@ export function ws() {
         const lines = canvasObject.lines
         const circles = canvasObject.circles
         const squares = canvasObject.squares
+        const straightLines = canvasObject.straightLines
+        const triangles = canvasObject.triangles
 
         // Retrieve canvas object data
         const x = coordinates.x
@@ -117,6 +121,12 @@ export function ws() {
         }
         for (const square of Object.values(squares)) {
             socket.send(JSON.stringify({ type: 'init-square', data: square }))
+        }
+        for (const straightLine of Object.values(straightLines)) {
+            socket.send(JSON.stringify({ type: 'init-straightLine', data: straightLine }))
+        }
+        for (const triangle of Object.values(triangles)) {
+            socket.send(JSON.stringify({ type: 'init-triangle', data: triangle }))
         }
 
         // Broadcast
@@ -292,6 +302,84 @@ export function ws() {
 
                     if (squareId in squares) {
                         squares[squareId].end = point
+
+                        x.min = Math.min(x.min, point.x)
+                        x.max = Math.max(x.max, point.x)
+        
+                        y.min = Math.min(y.min, point.y)
+                        y.max = Math.max(y.max, point.y)
+                    }
+                    
+                    break
+                }
+                case 'client-straightLine-start': {
+                    const clientId = message.clientId
+                    const straightLineId = message.data.straightLineId
+                    const point = message.data.point
+
+                    const color = clients[clientId].color
+                    const width = clients[clientId].width
+                    const alpha = clients[clientId].alpha
+
+                    straightLines[straightLineId] = { straightLineId, clientId, color, width, alpha, start: point, end: point }
+
+                    counts.shapes++
+
+                    broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+
+                    x.min = Math.min(x.min, point.x)
+                    x.max = Math.max(x.max, point.x)
+
+                    y.min = Math.min(y.min, point.y)
+                    y.max = Math.max(y.max, point.y)
+
+                    break
+                }
+                case 'client-straightLine-continue': {
+                    const straightLineId = message.data.straightLineId
+                    const point = message.data.point
+
+                    if (straightLineId in straightLines) {
+                        straightLines[straightLineId].end = point
+
+                        x.min = Math.min(x.min, point.x)
+                        x.max = Math.max(x.max, point.x)
+        
+                        y.min = Math.min(y.min, point.y)
+                        y.max = Math.max(y.max, point.y)
+                    }
+                    
+                    break
+                }
+                case 'client-triangle-start': {
+                    const clientId = message.clientId
+                    const triangleId = message.data.triangleId
+                    const point = message.data.point
+
+                    const color = clients[clientId].color
+                    const width = clients[clientId].width
+                    const alpha = clients[clientId].alpha
+
+                    triangles[triangleId] = { triangleId, clientId, color, width, alpha, start: point, end: point }
+
+                    counts.shapes++
+
+                    broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+
+                    x.min = Math.min(x.min, point.x)
+                    x.max = Math.max(x.max, point.x)
+
+                    y.min = Math.min(y.min, point.y)
+                    y.max = Math.max(y.max, point.y)
+
+                    break
+                }
+                case 'client-triangle-continue': {
+                    const triangleId = message.data.triangleId
+                    const point = message.data.point
+
+                    if (triangleId in triangles) {
+                        triangles[triangleId].end = point
 
                         x.min = Math.min(x.min, point.x)
                         x.max = Math.max(x.max, point.x)

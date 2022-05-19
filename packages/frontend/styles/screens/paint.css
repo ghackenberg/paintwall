@@ -135,7 +135,7 @@ body > #paint > main > #color > .active {
 body > #paint > main > #width {
     position: absolute;
     top: 1em;
-    left: 17em;
+    left: 25em;
 }
 
 body > #paint > main > #width > .width {
