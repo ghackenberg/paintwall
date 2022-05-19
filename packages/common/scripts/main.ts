@@ -58,6 +58,7 @@ export interface TimestampData {
 
 export interface CountData {
     views: number
+    shapes: number
     clients: number
     reactions: number
 }

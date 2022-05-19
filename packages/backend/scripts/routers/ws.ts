@@ -58,7 +58,7 @@ export function ws() {
 
             // Create canvas object information
             const timestamps = { created, updated }
-            const counts = { views: 0, clients: 0, reactions: 0 }
+            const counts = { views: 0, shapes: 0, clients: 0, reactions: 0 }
             const coordinates = { x, y }
             const reactions = {}
             const clients = {}
@@ -195,6 +195,10 @@ export function ws() {
                     const alpha = clients[clientId].alpha
 
                     lines[lineId] = { lineId, clientId, color, width, alpha, points }
+
+                    counts.shapes++
+
+                    broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
 
                     x.min = Math.min(x.min, point.x)
                     x.max = Math.max(x.max, point.x)

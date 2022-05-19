@@ -29,6 +29,7 @@ export class BrowseScreen extends BaseScreen {
     canvasCountNode: HTMLSpanElement
 
     viewCountNodes: CountNodeMap = {}
+    shapeCountNodes: CountNodeMap = {}
     clientCountNodes: CountNodeMap = {}
     reactionCountNodes: CountNodeMap = {}
 
@@ -150,6 +151,14 @@ export class BrowseScreen extends BaseScreen {
                     }
                     break
                 }
+                case 'canvas-shape-count': {
+                    const canvasId = message.data.canvasId
+                    const count = message.data.count
+                    if (canvasId in this.shapeCountNodes) {
+                        this.shapeCountNodes[canvasId].textContent = count
+                    }
+                    break
+                }
                 case 'canvas-client-count': {
                     const canvasId = message.data.canvasId
                     const count = message.data.count
@@ -219,6 +228,7 @@ export class BrowseScreen extends BaseScreen {
 
                     // Calculate informaton
                     const viewCount = counts.views
+                    const shapeCount = counts.shapes
                     const clientCount = counts.clients
                     const reactionCount = counts.reactions
 
@@ -227,6 +237,8 @@ export class BrowseScreen extends BaseScreen {
                     
                     // View count node
                     const viewCountNode = span(viewCount)
+                    // Shape count node
+                    const shapeCountNode = span(shapeCount)
                     // Client count node
                     const clientCountNode = span(clientCount)
                     // Reaction count node
@@ -234,13 +246,15 @@ export class BrowseScreen extends BaseScreen {
 
                     // View count container node
                     const viewCountContainerNode = div({ className:  'count view' }, viewCountNode)
+                    // View count container node
+                    const shapeCountContainerNode = div({ className:  'count shape' }, shapeCountNode)
                     // Client count container node
                     const clientCountContainerNode = div({ className:  'count client' }, clientCountNode)
                     // Reaction count container node
                     const reactionCountContainerNode = div({ className: 'count reaction' }, reactionCountNode)
                     
                     // Info node
-                    const infoNode = div(viewCountContainerNode, clientCountContainerNode, reactionCountContainerNode)
+                    const infoNode = div(viewCountContainerNode, shapeCountContainerNode, clientCountContainerNode, reactionCountContainerNode)
                     
                     // Container node
                     const containerNode = div({
@@ -261,6 +275,7 @@ export class BrowseScreen extends BaseScreen {
 
                     // Update nodes
                     this.viewCountNodes[canvasId] = viewCountNode
+                    this.shapeCountNodes[canvasId] = shapeCountNode
                     this.clientCountNodes[canvasId] = clientCountNode
                     this.reactionCountNodes[canvasId] = reactionCountNode
                 }

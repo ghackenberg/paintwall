@@ -48,6 +48,12 @@ for (const canvasObject of Object.values(CANVAS_OBJECT_MAP)) {
     if (!('squares' in canvasObject)) {
         canvasObject.squares = {}
     }
+    if (!('shapes' in canvasObject.counts)) {
+        const lines = Object.values(canvasObject.lines).length
+        const circles = Object.values(canvasObject.circles).length
+        const squares = Object.values(canvasObject.squares).length
+        canvasObject.counts.shapes = lines + circles + squares
+    }
     // Reset counts
     canvasObject.counts.clients = 0
     // Reset clients
