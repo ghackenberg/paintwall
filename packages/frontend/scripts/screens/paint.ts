@@ -36,9 +36,9 @@ export class PaintScreen extends BaseScreen {
     // Nodes
 
     loadNode: HTMLImageElement
-    activeNode: HTMLSpanElement
     canvasNode: HTMLCanvasElement
-    backNode: HTMLImageElement
+    activeNode: HTMLSpanElement
+    backNode: HTMLDivElement
 
     toolNode: HTMLDivElement
     toolNodes: NodeMap = {}
@@ -46,7 +46,7 @@ export class PaintScreen extends BaseScreen {
     colorNode: HTMLDivElement
     colorNodes: NodeMap = {}
 
-    shareNode: HTMLImageElement
+    shareNode: HTMLDivElement
     sharePopupImageNode: HTMLImageElement
     sharePopupInputNode: HTMLInputElement
     sharePopupDivNode: HTMLDivElement
@@ -84,9 +84,6 @@ export class PaintScreen extends BaseScreen {
 
         // Nodes (load)
         this.loadNode = img({ className: 'load', src: BASE + '/images/load.png' })
-        
-        // Nodes (active user count)
-        this.activeNode = div({ id: 'active' })
 
         // Nodes (canvas)
         this.canvasNode = canvas({ id: 'canvas',
@@ -101,30 +98,34 @@ export class PaintScreen extends BaseScreen {
             ontouchmove: this.handleTouchMove.bind(this),
             ontouchend: this.handleTouchEnd.bind(this)
         })
+        
+        // Nodes (active user count)
+        this.activeNode = div({ id: 'active' })
 
         // Nodes (back)
-        this.backNode = img({ id: 'back', className: 'back', src: BASE + '/images/back.png',
+        this.backNode = div({ id: 'back', className: 'icon active',
             onclick: () => history.back()
-        })
+        }, img({ src:  BASE + '/images/back.png' }))
 
+        // Nodes (tools)
         for (const othertool of PaintScreen.TOOLS) {
-            this.toolNodes[othertool] = img({ className: othertool == tool ? 'tool active' : 'tool', src: BASE + '/images/' + othertool + '.png',
+            this.toolNodes[othertool] = span({ className: othertool == tool ? 'icon active' : 'icon',
                 onclick: () => {
                     this.changeTool(othertool)
                 }
-            })
-
+            }, img({ src: BASE + '/images/' + othertool + '.png' }))
         }
 
+        // Nodes (tool)
         this.toolNode = div({id: 'tool'}, Object.values(this.toolNodes))
 
         // Nodes (share)
-        this.shareNode = img({id: 'share', className: 'share', src: BASE + '/images/share.png',
+        this.shareNode = div({ id: 'share', className: 'icon active',
             onclick: () => {
                 this.sharePopupNode.style.display = 'block'
                 navigator.clipboard.writeText(location.href)
             }
-        })
+        }, img({ src: BASE + '/images/share.png' }))
 
         // Nodes (share popup image)
         this.sharePopupImageNode = img({ src: BASE + '/images/close.png', 
@@ -177,14 +178,14 @@ export class PaintScreen extends BaseScreen {
                     // Broadcast reaction
                     this.canvasModel.broadcast('client-react', reaction)
                 }
-            }, reaction, this.reactionCountNodes[reaction])
+            }, span(reaction), this.reactionCountNodes[reaction])
         }
 
         // Nodes (reaction)
         this.reactionNode = div({id: 'reaction' }, Object.values(this.reactionNodes))
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.activeNode, this.canvasNode, this.backNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.activeNode, this.backNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode])
     }
 
     // Screen
@@ -201,6 +202,9 @@ export class PaintScreen extends BaseScreen {
 
         // Share popup
         this.sharePopupNode.style.display = 'none'
+
+        // Share popup input
+        this.sharePopupInputNode.value = location.href
 
         // Share popup code
         qrcode.toCanvas(this.sharePopupCanvasNode, location.href)

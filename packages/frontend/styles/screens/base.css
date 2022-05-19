@@ -63,7 +63,7 @@ body > div.screen.document > main > h1 {
     width: 60rem;
 }
 
-body > div.screen.document > main > div {
+body > div.screen.document > main > div:last-child {
     box-sizing: border-box;
 
     max-width: 100%;
