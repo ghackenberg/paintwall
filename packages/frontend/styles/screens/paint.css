@@ -71,7 +71,7 @@ body > #paint > main > #count > span.count.client > img {
     vertical-align: top;
 }
 
-@media screen and (max-width: 29em) {
+@media screen and (max-width: 30em) {
     body > #paint > main > #active {
         display: none;
     }
