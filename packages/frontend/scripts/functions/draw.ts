@@ -1,6 +1,6 @@
-import { CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, LineObject, LineObjectMap, PointObject, SquareObject, SquareObjectMap } from 'paintwall-common'
+import { CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, LineObject, LineObjectMap, StraightLineObject, PointObject, SquareObject, SquareObjectMap, StraightLineObjectMap, TriangleObjectMap, CanvasObject, TriangleObject } from 'paintwall-common'
 
-export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: number, lines: LineObjectMap, circles: CircleObjectMap, squares: SquareObjectMap, clients: ClientObjectMap) {
+export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: number, model: CanvasObject) {
     // Context
     const context = canvas.getContext('2d')
 
@@ -9,10 +9,12 @@ export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: numbe
 
     // Draw
     drawGrid(canvas, context, center, zoom)
-    drawLines(canvas, context, center, zoom, lines)
-    drawCircles(canvas, context, center, zoom, circles)
-    drawSquares(canvas, context, center, zoom, squares)
-    drawClients(canvas, context, center, zoom, clients)
+    drawLines(canvas, context, center, zoom, model.lines)
+    drawStraightLines(canvas, context, center, zoom, model.straightLines)
+    drawCircles(canvas, context, center, zoom, model.circles)
+    drawSquares(canvas, context, center, zoom, model.squares)
+    drawTriangles(canvas, context, center, zoom, model.triangles)
+    drawClients(canvas, context, center, zoom, model.clients)
 }
 
 function drawGrid(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number) {
@@ -119,6 +121,39 @@ function drawLine(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, 
     }
 }
 
+function drawStraightLines(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, straightLines: StraightLineObjectMap) {
+    for (const straightLine of Object.values(straightLines)) {
+        drawStraightLine(canvas, context, center, zoom, straightLine)
+    }
+}
+
+function drawStraightLine(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, straightLine: StraightLineObject) {
+    // Extract
+    const start = straightLine.start
+    const end = straightLine.end
+    const color = straightLine.color
+    const width = straightLine.width
+    const alpha = straightLine.alpha
+
+    const x = projectX(canvas, center, zoom, start.x)
+    const y = projectY(canvas, center, zoom, start.y)
+    const xEnd = projectX(canvas, center, zoom, end.x)
+    const yEnd = projectY(canvas, center, zoom, end.y)
+
+    // Style
+    context.globalAlpha = alpha
+    context.strokeStyle = color
+    context.lineWidth = Math.max(width * zoom, 1)
+    context.lineCap = 'round'
+
+    // Stroke
+    context.beginPath()
+    context.moveTo(x, y)
+    context.lineTo(xEnd, yEnd)
+    context.stroke()
+    
+}
+
 function drawCircles(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, circles: CircleObjectMap) {
     for (const circle of Object.values(circles)) {
         drawCircle(canvas, context, center, zoom, circle)
@@ -179,6 +214,43 @@ function drawSquare(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
     context.strokeRect(x, y, w, h)
 }
 
+function drawTriangles(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, triangles: TriangleObjectMap) {
+    for (const triangle of Object.values(triangles)) {
+        drawTriangle(canvas, context, center, zoom, triangle)
+    }
+}
+
+function drawTriangle(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, triangle: TriangleObject) {
+    // Extract
+    const start = triangle.start
+    const end = triangle.end
+    const color = triangle.color
+    const width = triangle.width
+    const alpha = triangle.alpha
+
+    const x = projectX(canvas, center, zoom, start.x)
+    const y = projectY(canvas, center, zoom, start.y)
+    const xEnd = projectX(canvas, center, zoom, end.x)
+    const yEnd = projectY(canvas, center, zoom, end.y)
+
+    // Style
+    context.globalAlpha = alpha
+    context.strokeStyle = color
+    context.lineWidth = Math.max(width * zoom, 1)
+    context.lineCap = 'round'
+
+    // Stroke
+    context.beginPath();
+    context.moveTo(x, y)
+    context.lineTo(xEnd, y)
+    context.moveTo(xEnd, y)
+    context.lineTo(x+(xEnd-x)/2, yEnd)
+    context.moveTo(x+(xEnd-x)/2, yEnd)
+    context.lineTo(x, y)
+    context.stroke()
+    
+}
+
 function drawClients(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, clients: ClientObjectMap) {
     for (const client of Object.values(clients)) {
         drawClient(canvas, context, center, zoom, client)
@@ -205,7 +277,20 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
             context.globalAlpha = alpha
             context.fillStyle = color
             context.fill()
-        } else if (tool == 'circle') {
+        } else if (tool == 'straightLine') {
+            // Path
+            context.beginPath()
+            context.rect(projectX(canvas, center, zoom, position.x) - 10, projectY(canvas, center, zoom, position.y) - 10, 20, 20)
+            // Fill
+            context.globalAlpha = alpha / 2
+            context.fillStyle = color
+            context.fill()
+            // Stroke
+            context.lineWidth = width * zoom * 2
+            context.globalAlpha = Math.min(alpha * 2, 1)
+            context.strokeStyle = color
+            context.stroke()
+        }else if (tool == 'circle') {
             // Path
             context.beginPath()
             context.arc(projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y), 10, 0, Math.PI * 2)
@@ -219,6 +304,19 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
             context.strokeStyle = color
             context.stroke()
         } else if (tool == 'square') {
+            // Path
+            context.beginPath()
+            context.rect(projectX(canvas, center, zoom, position.x) - 10, projectY(canvas, center, zoom, position.y) - 10, 20, 20)
+            // Fill
+            context.globalAlpha = alpha / 2
+            context.fillStyle = color
+            context.fill()
+            // Stroke
+            context.lineWidth = width * zoom * 2
+            context.globalAlpha = Math.min(alpha * 2, 1)
+            context.strokeStyle = color
+            context.stroke()
+        } else if (tool == 'triangle') {
             // Path
             context.beginPath()
             context.rect(projectX(canvas, center, zoom, position.x) - 10, projectY(canvas, center, zoom, position.y) - 10, 20, 20)

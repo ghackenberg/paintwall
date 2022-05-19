@@ -1,14 +1,16 @@
 import * as qrcode from 'qrcode'
-import { BASE, PointObject } from 'paintwall-common'
+import { BASE, PointObject, StraightLineObject } from 'paintwall-common'
 import { CLIENT_ID } from '../constants/client'
 import { unprojectX, unprojectY } from '../functions/draw'
 import { append, canvas, div, img, input, span } from '../functions/html'
 import { CanvasModel } from '../models/canvas'
 import { ClientModel } from '../models/client'
 import { LineModel } from '../models/line'
+import { StraightLineModel } from '../models/straightLine'
 import { BaseScreen } from './base'
 import { SquareModel } from '../models/square'
 import { CircleModel } from '../models/circle'
+import { TriangleModel } from '../models/triangle'
 
 interface NodeMap<T extends HTMLElement> {
     [id: string]: T
@@ -17,10 +19,10 @@ interface NodeMap<T extends HTMLElement> {
 export class PaintScreen extends BaseScreen {
     // Static
 
+    static TOOLS = [ 'line', 'straightLine', 'circle', 'square', 'triangle']
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
     static WIDTHS = [1, 5, 10, 25, 50]
     static ALPHAS = [1, 0.75, 0.5, 0.25]
-    static TOOLS = ['line', 'circle', 'square']
     static REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']
 
     // Non-static
@@ -30,8 +32,10 @@ export class PaintScreen extends BaseScreen {
     clientModel: ClientModel = undefined
     canvasModel: CanvasModel = undefined
     lineModel: LineModel = undefined
+    straightLineModel: StraightLineModel = undefined
     circleModel: CircleModel = undefined
     squareModel: SquareModel = undefined
+    triangleModel: TriangleModel = undefined
 
     // Nodes
 
@@ -538,10 +542,14 @@ export class PaintScreen extends BaseScreen {
                 this.hidePopups()
                 if (this.clientModel.tool == 'line') {
                     this.startLine(point)
+                } else if (this.clientModel.tool == 'straightLine') {
+                    this.startStraightLine(point)
                 } else if (this.clientModel.tool == 'circle') {
                     this.startCircle(point)
                 } else if (this.clientModel.tool == 'square') {
                     this.startSquare(point)
+                } else if (this.clientModel.tool == 'triangle') {
+                    this.startTriangle(point)
                 }
             }
             // Broadcast
@@ -580,11 +588,15 @@ export class PaintScreen extends BaseScreen {
             if (event.buttons == 1) {
                 if (this.clientModel.tool == 'line') {
                     this.continueLine(point)
+                } else if (this.clientModel.tool == 'straightLine') {
+                    this.continueStraightLine(point)
                 } else if (this.clientModel.tool == 'circle') {
                     this.continueCircle(point)
                 } else if (this.clientModel.tool == 'square') {
                     this.continueSquare(point)
-                }          
+                } else if (this.clientModel.tool == 'triangle') {
+                    this.continueTriangle(point)
+                }
             }
             // Broadcast
             this.canvasModel.broadcast('client-pointer-move', point)
@@ -605,11 +617,15 @@ export class PaintScreen extends BaseScreen {
                 this.hidePopups()
                 if (this.clientModel.tool == 'line') {
                     this.startLine(point)
+                } else if (this.clientModel.tool == 'straightLine') {
+                    this.startStraightLine(point)
                 } else if (this.clientModel.tool == 'circle') {
                     this.startCircle(point)
                 } else if (this.clientModel.tool == 'square') {
                     this.startSquare(point)
-                }              
+                } else if (this.clientModel.tool == 'triangle') {
+                    this.startTriangle(point)
+                }             
             }
             // Broadcast
             this.canvasModel.broadcast('client-pointer-over', point)
@@ -699,7 +715,14 @@ export class PaintScreen extends BaseScreen {
                             while (this.previousTouches.length > 0) {
                                 this.continueLine(this.previousTouches.shift())
                             }
-                        } else if (this.clientModel.tool == 'circle') {
+                        }  
+                        else if (this.clientModel.tool == 'straightLine') {
+                            this.startStraightLine(this.previousTouches.shift())
+                            while (this.previousTouches.length > 0) {
+                                this.continueStraightLine(this.previousTouches.shift())
+                            }
+                        }
+                        else if (this.clientModel.tool == 'circle') {
                             this.startCircle(this.previousTouches.shift())
                             while (this.previousTouches.length > 0) {
                                 this.continueCircle(this.previousTouches.shift())
@@ -709,15 +732,24 @@ export class PaintScreen extends BaseScreen {
                             while (this.previousTouches.length > 0) {
                                 this.continueSquare(this.previousTouches.shift())
                             }
-                        }                     
+                        } else if (this.clientModel.tool == 'triangle') {
+                            this.startTriangle(this.previousTouches.shift())
+                            while (this.previousTouches.length > 0) {
+                                this.continueTriangle(this.previousTouches.shift())
+                            }
+                        }                    
                     }
                 } else {
                     if (this.clientModel.tool == 'line') {
                         this.continueLine(point)
+                    } else if (this.clientModel.tool == 'straightLine') {
+                        this.continueStraightLine(point)
                     } else if (this.clientModel.tool == 'circle') {
                         this.continueCircle(point)
                     } else if (this.clientModel.tool == 'square') {
                         this.continueSquare(point)
+                    }  else if (this.clientModel.tool == 'triangle') {
+                        this.continueTriangle(point)
                     }
                 }
                 // Broadcast
@@ -865,6 +897,34 @@ export class PaintScreen extends BaseScreen {
         }
     }
 
+    // StraightLine
+
+    startStraightLine(point: PointObject) {
+        // Define
+        const straightLineId = '' + Math.random().toString(16).substring(2)
+        const color = this.clientModel.color
+        const width = this.clientModel.width
+        const alpha = this.clientModel.alpha
+        // Create
+        this.straightLineModel = new StraightLineModel(straightLineId, CLIENT_ID, color, width, alpha, point, point)
+        // Update
+        this.canvasModel.straightLines[straightLineId] = this.straightLineModel
+        this.canvasModel.draw()
+        // Broadcast
+        this.canvasModel.broadcast('client-straightLine-start', { straightLineId: this.straightLineModel.straightLineId, point })
+    }
+
+    continueStraightLine(point: PointObject) {
+        if (this.straightLineModel) {
+            // Update
+            this.straightLineModel.end = point
+            // Draw
+            this.canvasModel.draw()
+            // Broadcast
+            this.canvasModel.broadcast('client-straightLine-continue', { straightLineId: this.straightLineModel.straightLineId, point })    
+        }
+    }
+
     // Circle
 
     startCircle(point: PointObject) {
@@ -921,5 +981,32 @@ export class PaintScreen extends BaseScreen {
         }
     }
 
+    // Triangle
+
+    startTriangle(point: PointObject) {
+        // Define
+        const triangleId = '' + Math.random().toString(16).substring(2)
+        const color = this.clientModel.color
+        const width = this.clientModel.width
+        const alpha = this.clientModel.alpha
+        // Create
+        this.triangleModel = new TriangleModel(triangleId, CLIENT_ID, color, width, alpha, point, point)
+        // Update
+        this.canvasModel.triangles[triangleId] = this.triangleModel
+        this.canvasModel.draw()
+        // Broadcast
+        this.canvasModel.broadcast('client-triangle-start', { triangleId: this.triangleModel.triangleId, point })
+    }
+
+    continueTriangle(point: PointObject) {
+        if (this.triangleModel) {
+            // Update
+            this.triangleModel.end = point
+            // Draw
+            this.canvasModel.draw()
+            // Broadcast
+            this.canvasModel.broadcast('client-triangle-continue', { triangleId: this.triangleModel.triangleId, point })    
+        }
+    }
 
 }
