@@ -58,14 +58,16 @@ export function ws() {
 
             // Create canvas object information
             const timestamps = { created, updated }
-            const counts = { views: 0, clients: 0, reactions: 0 }
+            const counts = { views: 0, shapes: 0, clients: 0, reactions: 0 }
             const coordinates = { x, y }
             const reactions = {}
             const clients = {}
             const lines = {}
+            const circles = {}
+            const squares = {}
 
             // Create canvas object
-            CANVAS_OBJECT_MAP[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines }
+            CANVAS_OBJECT_MAP[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares }
 
             // Message
             const message = { type: 'canvas-count', data: Object.entries(CANVAS_OBJECT_MAP).length }
@@ -83,6 +85,8 @@ export function ws() {
         const reactions = canvasObject.reactions
         const clients = canvasObject.clients
         const lines = canvasObject.lines
+        const circles = canvasObject.circles
+        const squares = canvasObject.squares
 
         // Retrieve canvas object data
         const x = coordinates.x
@@ -93,7 +97,7 @@ export function ws() {
         counts.clients++
 
         // Remember client
-        clients[clientId] = { clientId, name: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
+        clients[clientId] = { clientId, name: undefined, tool: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
 
         // Synchronize timestamp and coordinate data
         socket.send(JSON.stringify({ type: 'init-timestamps', data: timestamps}))
@@ -107,6 +111,12 @@ export function ws() {
         }
         for (const line of Object.values(lines)) {
             socket.send(JSON.stringify({ type: 'init-line', data: line }))
+        }
+        for (const circle of Object.values(circles)) {
+            socket.send(JSON.stringify({ type: 'init-circle', data: circle }))
+        }
+        for (const square of Object.values(squares)) {
+            socket.send(JSON.stringify({ type: 'init-square', data: square }))
         }
 
         // Broadcast
@@ -124,6 +134,7 @@ export function ws() {
                 case 'client-enter': {
                     if (clientId in clients) {
                         clients[clientId].name = message.data.name
+                        clients[clientId].tool = message.data.tool
                         clients[clientId].color = message.data.color
                         clients[clientId].width = message.data.width
                         clients[clientId].alpha = message.data.alpha
@@ -146,6 +157,12 @@ export function ws() {
                 case 'client-pointer-over': {
                     if (clientId in clients) {
                         canvasObject.clients[clientId].position = message.data
+                    }
+                    break
+                }
+                case 'client-tool': {
+                    if (clientId in clients) {
+                        clients[clientId].tool = message.data
                     }
                     break
                 }
@@ -179,6 +196,10 @@ export function ws() {
 
                     lines[lineId] = { lineId, clientId, color, width, alpha, points }
 
+                    counts.shapes++
+
+                    broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+
                     x.min = Math.min(x.min, point.x)
                     x.max = Math.max(x.max, point.x)
 
@@ -193,6 +214,84 @@ export function ws() {
 
                     if (lineId in lines) {
                         lines[lineId].points.push(point)
+
+                        x.min = Math.min(x.min, point.x)
+                        x.max = Math.max(x.max, point.x)
+        
+                        y.min = Math.min(y.min, point.y)
+                        y.max = Math.max(y.max, point.y)
+                    }
+                    
+                    break
+                }
+                case 'client-circle-start': {
+                    const clientId = message.clientId
+                    const circleId = message.data.circleId
+                    const point = message.data.point
+
+                    const color = clients[clientId].color
+                    const width = clients[clientId].width
+                    const alpha = clients[clientId].alpha
+
+                    circles[circleId] = { circleId, clientId, color, width, alpha, start: point, end: point }
+
+                    counts.shapes++
+
+                    broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+
+                    x.min = Math.min(x.min, point.x)
+                    x.max = Math.max(x.max, point.x)
+
+                    y.min = Math.min(y.min, point.y)
+                    y.max = Math.max(y.max, point.y)
+
+                    break
+                }
+                case 'client-circle-continue': {
+                    const circleId = message.data.circleId
+                    const point = message.data.point
+
+                    if (circleId in circles) {
+                        circles[circleId].end = point
+
+                        x.min = Math.min(x.min, point.x)
+                        x.max = Math.max(x.max, point.x)
+        
+                        y.min = Math.min(y.min, point.y)
+                        y.max = Math.max(y.max, point.y)
+                    }
+                    
+                    break
+                }
+                case 'client-square-start': {
+                    const clientId = message.clientId
+                    const squareId = message.data.squareId
+                    const point = message.data.point
+
+                    const color = clients[clientId].color
+                    const width = clients[clientId].width
+                    const alpha = clients[clientId].alpha
+
+                    squares[squareId] = { squareId, clientId, color, width, alpha, start: point, end: point }
+
+                    counts.shapes++
+
+                    broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+
+                    x.min = Math.min(x.min, point.x)
+                    x.max = Math.max(x.max, point.x)
+
+                    y.min = Math.min(y.min, point.y)
+                    y.max = Math.max(y.max, point.y)
+
+                    break
+                }
+                case 'client-square-continue': {
+                    const squareId = message.data.squareId
+                    const point = message.data.point
+
+                    if (squareId in squares) {
+                        squares[squareId].end = point
 
                         x.min = Math.min(x.min, point.x)
                         x.max = Math.max(x.max, point.x)

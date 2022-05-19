@@ -150,6 +150,10 @@ body > #browse > main > div > div > div > div.count {
     display: inline-block;
 }
 
+body > #browse > main > div > div > div > div.count.client {
+    display: none;
+}
+
 body > #browse > main > div > div > div > div.count > span {
     display: inline-block;
 
@@ -172,6 +176,10 @@ body > #browse > main > div > div > div > div.count.view > span {
     background-color: gray;
 }
 
+body > #browse > main > div > div > div > div.count.shape > span {
+    background-color: gray;
+}
+
 body > #browse > main > div > div > div > div.count.client > span {
     background-color: gray;
 }
@@ -189,6 +197,12 @@ body > #browse > main > div > div > div > div.count::after {
 
 body > #browse > main > div > div > div > div.count.view::after {
     content: 'views';
+
+    color: gray;
+}
+
+body > #browse > main > div > div > div > div.count.shape::after {
+    content: 'shapes';
 
     color: gray;
 }

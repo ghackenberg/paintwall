@@ -79,26 +79,44 @@ img.load {
     height: 3em;
 }
 
-img.back {
+#back {
     display: block;
 
     position: absolute;
 
     top: 1em;
     left: 1em;
+}
+
+*.icon {
+    display: block;
 
     width: 1em;
     height: 1em;
 
     padding: 1em;
 
-    border-radius: 1.5em;
-
     background-color: white;
+
+    border-radius: 1.5em;
 
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
 
     cursor: pointer;
+}
+*.icon > img {
+    display: block;
+
+    width: 1em;
+    height: 1em;
+
+    opacity: 0.25;
+}
+*.icon:hover > img {
+    opacity: 0.5;
+}
+*.icon.active > img {
+    opacity: 1;
 }
 
 *.button {
@@ -128,7 +146,7 @@ img.back {
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
 }
 
-.button img.load {
+*.button img.load {
     position: initial;
 
     display: inline-block;

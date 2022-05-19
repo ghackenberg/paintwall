@@ -28,14 +28,18 @@ body > #paint > main > #active {
     position: absolute;
 
     top: 1em;
-    left: 1em;
-    right: 1em;
+    left: 17em;
+    right: 5em;
 
     line-height: 3em;
 
     text-align: center;
 
-    color: gray;
+    background-color: white;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    border-radius: 1.5em;
 }
 
 body > #paint > main > #active::before {
@@ -50,6 +54,22 @@ body > #paint > main > #canvas {
     right: 0;
     bottom: 0;
 }
+
+body > #paint > main > #tool {
+    position: absolute;
+
+    top: 1em;
+    left: 4.5em;
+}
+
+body > #paint > main > #tool > span {
+    float: left;
+
+    margin: 0.5em;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 body > #paint > main > #color {
     position: absolute;
 
@@ -97,6 +117,9 @@ body > #paint > main > #share {
     border-radius: 1.5em;
     
     background-color: white;
+    background-size: 1em 1em;
+    background-position: center center;
+    background-repeat: no-repeat;
     
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
     
@@ -186,17 +209,38 @@ body > #paint > main > #reaction {
 
 body > #paint > main > #reaction > span {
     position: relative;
+
     display: inline-block;
+
+    width: 1em;
+    height: 1em;
+
     padding: 1em;
+
     background-color: white;
+
     border-radius: 1.5em;
+
     box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
     margin-left: 0.5em;
     margin-right: 0.5em;
+
     cursor: pointer;
 }
 
-body > #paint > main > #reaction > span > span {
+body > #paint > main > #reaction > span > span:first-child {
+    position: absolute;
+    
+    display: block;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+}
+
+body > #paint > main > #reaction > span > span:last-child {
     position: absolute;
     display: block;
     width: 1rem;

@@ -41,6 +41,19 @@ export const CANVAS_OBJECT_MAP: CanvasObjectMap = loadCanvasObjectMap()
 
 // Reset database
 for (const canvasObject of Object.values(CANVAS_OBJECT_MAP)) {
+    // Initial circles and squares for existing canvasObjects
+    if (!('circles' in canvasObject)) {
+        canvasObject.circles = {}
+    }
+    if (!('squares' in canvasObject)) {
+        canvasObject.squares = {}
+    }
+    if (!('shapes' in canvasObject.counts)) {
+        const lines = Object.values(canvasObject.lines).length
+        const circles = Object.values(canvasObject.circles).length
+        const squares = Object.values(canvasObject.squares).length
+        canvasObject.counts.shapes = lines + circles + squares
+    }
     // Reset counts
     canvasObject.counts.clients = 0
     // Reset clients

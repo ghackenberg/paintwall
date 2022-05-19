@@ -3,13 +3,17 @@ import { a, append, div, em, h1, h2, h3, img, li, p, ul } from '../functions/htm
 import { BaseScreen } from './base'
 
 export class DataScreen extends BaseScreen {
+    backNode: HTMLDivElement
+
     constructor() {
         super('data', 'document')
 
+        this.backNode = div({ id: 'back', className: 'icon active',
+            onclick: () => history.back(),
+        }, img({ src:  BASE + '/images/back.png' }))
+
         append(this.mainNode, [
-            img({ id: 'back', className: 'back', src: BASE + '/images/back.png',
-                onclick: () => history.back(),
-            }),
+            this.backNode,
             h1('PaintWall - Data protection'),
             div(
                 p(em('Last updated: May 12, 2022')),

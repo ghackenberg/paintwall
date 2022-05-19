@@ -3,13 +3,17 @@ import { append, div, em, h1, h2, h3, img, li, p, ul } from '../functions/html'
 import { BaseScreen } from './base'
 
 export class TermsScreen extends BaseScreen {
+    backNode: HTMLDivElement
+
     constructor() { 
         super('terms', 'document')
 
+        this.backNode = div({ id: 'back', className: 'icon active',
+            onclick: () => history.back(),
+        }, img({ src:  BASE + '/images/back.png' }))
+
         append(this.mainNode, [
-            img({ id: 'back', className: 'back', src: BASE + '/images/back.png',
-                onclick: () => history.back()
-            }),
+            this.backNode,
             h1('PaintWall - Terms of use'),
             div(
                 p(em("Last updated: Mai 12, 2022")),
