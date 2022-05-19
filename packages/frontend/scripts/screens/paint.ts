@@ -19,7 +19,7 @@ export class PaintScreen extends BaseScreen {
 
     static TOOLS = [ 'line', 'circle', 'square']
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
-    static WIDTHS = [5.0]
+    static WIDTHS = [5.0, 10.0, 50.0]
     static ALPHAS = [0.5]
     static REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']
 
@@ -50,6 +50,9 @@ export class PaintScreen extends BaseScreen {
 
     colorNode: HTMLDivElement
     colorNodes: NodeMap = {}
+
+    widthNode: HTMLDivElement
+    widthNodes: NodeMap = {}
 
     shareNode: HTMLDivElement
     sharePopupImageNode: HTMLImageElement
@@ -180,6 +183,18 @@ export class PaintScreen extends BaseScreen {
 
         // Nodes (color)
         this.colorNode = div({ id: 'color' }, Object.values(this.colorNodes))
+        
+        // Nodes (widths)
+        for (const otherWidth of PaintScreen.WIDTHS) {
+            this.widthNodes[otherWidth] = span({ className: otherWidth == width ? 'width active': 'width',
+                onclick: () => {
+                    this.handleChangeWidth(otherWidth)
+                }
+            }, otherWidth)
+        }
+
+        // Nodes (width)
+        this.widthNode = div({ id: 'width' }, Object.values(this.widthNodes))
 
         // Nodes (reactions)
         for (const reaction of PaintScreen.REACTIONS){
@@ -207,7 +222,7 @@ export class PaintScreen extends BaseScreen {
         this.reactionNode = div({id: 'reaction' }, Object.values(this.reactionNodes))
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.toolNode, this.colorNode, this.widthNode, this.shareNode, this.sharePopupNode, this.reactionNode])
     }
 
     // Screen
@@ -592,6 +607,20 @@ export class PaintScreen extends BaseScreen {
         this.canvasModel.broadcast('client-color', this.clientModel.color)
     }
 
+
+    handleChangeWidth(value: number) {
+        // Deactivate
+        this.widthNodes[this.clientModel.width].classList.remove('active')
+        // Update
+        this.clientModel.width = value
+        // Activate
+        this.widthNodes[this.clientModel.width].classList.add('active')
+        // Remember
+        localStorage.setItem('width', '' + this.clientModel.width)
+        // Broadcast
+        this.canvasModel.broadcast('client-width', this.clientModel.width)
+    }
+    
     changeTool(value: string) {
         // Deactivate
         this.toolNodes[this.clientModel.tool].classList.remove('active')
