@@ -1,5 +1,5 @@
 import { BASE, CanvasObject } from 'paintwall-common'
-import { a, append, button, canvas, clear, div, img, prepend, remove, span } from '../functions/html'
+import { a, append, button, canvas, clear, div, img, option, prepend, remove, select, span } from '../functions/html'
 import { makeSocketURL } from '../functions/socket'
 import { CanvasModel } from '../models/canvas'
 import { BaseScreen } from './base'
@@ -9,6 +9,7 @@ interface CountNodeMap {
 }
 
 export class BrowseScreen extends BaseScreen {
+
     // Counts
 
     canvasCount = 0
@@ -21,6 +22,7 @@ export class BrowseScreen extends BaseScreen {
 
     logoNode: HTMLSpanElement
     createNode: HTMLButtonElement
+    sortNode: HTMLSelectElement
 
     loadNode: HTMLImageElement
     canvasNode: HTMLDivElement
@@ -57,11 +59,19 @@ export class BrowseScreen extends BaseScreen {
         this.createNode = button({ id: 'canvas-create', className: 'button',
             onclick: () => {
                 history.pushState(null, undefined, BASE + '/canvas/' + Math.random().toString(16).substring(2))
+                console.log('test')
             }
         }, 'New canvas')
 
+        // Dropdown
+        this.sortNode = select({ id: 'sort-canvas', className: 'select',
+            onclick: () => {
+                console.log('test')
+            }
+        }, option('sort by: latest'), option('sort by: most viewed'), option('sort by: most reactions'))
+
         // Header
-        append(this.headerNode, [ this.logoNode, this.clientCountNode, this.createNode ])
+        append(this.headerNode, [ this.logoNode, this.clientCountNode, this.createNode, this.sortNode ])
 
         // Load
         this.loadNode = img({ className: 'load', src: BASE + '/images/load.png' })
@@ -218,8 +228,18 @@ export class BrowseScreen extends BaseScreen {
                 const canvasObjects: CanvasObject[] = JSON.parse(this.request.responseText)
                 // Reset
                 this.request = null
+                
+                if ( this.sortNode.value == 'sort by: latest' ) {
+                    canvasObjects.sort((a, b) => a.timestamps.created - b.timestamps.created)
+                } else if ( this.sortNode.value == 'sort by: most viewed'  ) {
+                    canvasObjects.sort((a, b) => a.counts.views - b.counts.views)
+                } else if ( this.sortNode.value == 'sort by: most reactions'  ) {
+                    canvasObjects.sort((a, b) => a.counts.reactions - b.counts.reactions)
+                }
+                console.log(this.sortNode.value)
+
                 // Loop
-                for (const canvasObject of canvasObjects.reverse()) {
+                for (const canvasObject of canvasObjects) { // reverse()
                     // Extract information
                     const canvasId = canvasObject.canvasId
                     const timestamps = canvasObject.timestamps
@@ -230,7 +250,7 @@ export class BrowseScreen extends BaseScreen {
                     const lines = canvasObject.lines
                     const circles = canvasObject.circles
                     const squares = canvasObject.squares
-
+                    console.log(this.sortNode.value)
                     // Calculate informaton
                     const viewCount = counts.views
                     const shapeCount = counts.shapes
