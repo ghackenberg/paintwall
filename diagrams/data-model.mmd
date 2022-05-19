@@ -1,0 +1,72 @@
+classDiagram
+    class PointObject {
+        x: number
+        y: number
+    }
+    class ClientObject {
+        clientId: string
+        name: string
+        tool: string
+        color: string
+        width: number
+        alpha: number
+    }
+    class ShapeObject {
+        color: string
+        width: number
+        alpha: number
+    }
+    class LineObject {
+        lineId: string
+    }
+    class CircleObject {
+        circleId: string
+    }
+    class SquareObject {
+        squareId: string
+    }
+    class TimestampObject {
+        created: number
+        updated: number
+    }
+    class CountObject {
+        views: number
+        shapes: number
+        clients: number
+        reactions: number
+    }
+    class CoordinateObject {
+
+    }
+    class ReactionObject {
+        [emoji: string]: number
+    }
+    class CanvasObject {
+        canvasId: string
+    }
+    
+    CanvasObject "1" *-- "*" ClientObject: clients
+    CanvasObject "1" *-- "*" ShapeObject: shapes
+    CanvasObject "*" *-- "1" CoordinateObject: coordinates
+
+    CountObject "1" --* "1" CanvasObject: counts
+    ReactionObject "1" --* "1" CanvasObject: reactions
+    TimestampObject "1" --* "1" CanvasObject: timestamps
+
+    CoordinateObject "*" *-- "1" PointObject: min
+    CoordinateObject "*" *-- "1" PointObject: max
+
+    ShapeObject <|-- LineObject: inherits
+    ShapeObject <|-- CircleObject: inherits
+    ShapeObject <|-- SquareObject: inherits
+    ShapeObject "*" --> "1" ClientObject: references
+
+    ClientObject "1" *-- "1" PointObject: position
+
+    LineObject "1" *-- "*" PointObject: points
+
+    CircleObject "1" *-- "1" PointObject: start
+    CircleObject "1" *-- "1" PointObject: end
+
+    SquareObject "1" *-- "1" PointObject: start
+    SquareObject "1" *-- "1" PointObject: end

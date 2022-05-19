@@ -13,6 +13,12 @@ This project contains a collaborative paint application. The application is impl
 * [Screenshots](./screenshots/)
 * [Packages](./packages/)
 
+## Diagrams
+
+### Data model
+
+![Data model](./diagrams/data-model.png)
+
 ## Screenshots
 
 ### Phone
