@@ -164,6 +164,11 @@ export class BrowseScreen extends BaseScreen {
                     const count = message.data.count
                     if (canvasId in this.clientCountNodes) {
                         this.clientCountNodes[canvasId].textContent = count
+                        if (count > 0) {
+                            this.clientCountNodes[canvasId].parentElement.style.display = 'inline-block'
+                        } else {
+                            this.clientCountNodes[canvasId].parentElement.style.display = 'none'
+                        }
                     }
                     break
                 }
@@ -249,19 +254,25 @@ export class BrowseScreen extends BaseScreen {
                     // View count container node
                     const shapeCountContainerNode = div({ className:  'count shape' }, shapeCountNode)
                     // Client count container node
-                    const clientCountContainerNode = div({ className:  'count client' }, clientCountNode)
+                    const clientCountContainerNode = div({ className:  'count client' }, clientCountNode, img({ src: BASE + '/images/live.png'}))
+                    if (clientCount > 0) {
+                        clientCountContainerNode.style.display = 'inline-block'
+                    }
                     // Reaction count container node
                     const reactionCountContainerNode = div({ className: 'count reaction' }, reactionCountNode)
                     
+                    // Live node
+                    const liveNode = div({ className: 'live' }, clientCountContainerNode)
+
                     // Info node
-                    const infoNode = div(viewCountContainerNode, shapeCountContainerNode, clientCountContainerNode, reactionCountContainerNode)
+                    const infoNode = div({ className: 'info' }, viewCountContainerNode, shapeCountContainerNode, reactionCountContainerNode)
                     
                     // Container node
                     const containerNode = div({
                         onclick: () => {
                             history.pushState(null, undefined, BASE + '/canvas/' + canvasObject.canvasId)
                         }
-                    }, canvasNode, infoNode)
+                    }, canvasNode, liveNode, infoNode)
                     
                     // Main node
                     append(this.canvasNode, [ containerNode ])

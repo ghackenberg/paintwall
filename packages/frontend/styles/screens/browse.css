@@ -117,6 +117,8 @@ body > #browse > main > span::after {
 }
 
 body > #browse > main > div > div {
+    position: relative;
+
     margin: 1em;
 
     border-radius: 0.5em;
@@ -132,7 +134,57 @@ body > #browse > main > div > div > canvas {
     display: block;
 }
 
-body > #browse > main > div > div > div {
+body > #browse > main > div > div > div.live {
+    position: absolute;
+
+    top: 0.5rem;
+    right: 0.5rem;
+
+    font-size: 75%;
+}
+
+body > #browse > main > div > div > div.live > div.count {
+    display: inline-block;
+
+    padding-left: 0.5em;
+    padding-right: 0.25em;
+
+    line-height: 1.5em;
+
+    text-align: center;
+
+    background-color: lightgray;
+    background-image: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.2));
+
+    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
+
+    color: white;
+
+    border-radius: 0.75em;
+}
+
+body > #browse > main > div > div > div.live > div.count.client {
+    display: none;
+}
+
+body > #browse > main > div > div > div.live > div.count.client > span::after {
+    content: ' clients';
+}
+
+body > #browse > main > div > div > div.live > div.count.client > img {
+    display: inline-block;
+
+    width: 1em;
+    height: 1em;
+
+    padding: 0.25em;
+
+    vertical-align: top;
+
+    filter: invert(1);
+}
+
+body > #browse > main > div > div > div.info {
     font-size: 75%;
 
     padding: 0.5rem;
@@ -146,15 +198,11 @@ body > #browse > main > div > div > div {
     text-align: center;
 }
 
-body > #browse > main > div > div > div > div.count {
+body > #browse > main > div > div > div.info > div.count {
     display: inline-block;
 }
 
-body > #browse > main > div > div > div > div.count.client {
-    display: none;
-}
-
-body > #browse > main > div > div > div > div.count > span {
+body > #browse > main > div > div > div.info > div.count > span {
     display: inline-block;
 
     margin-left: calc(1em / 3);
@@ -172,48 +220,48 @@ body > #browse > main > div > div > div > div.count > span {
     color: white;
 }
 
-body > #browse > main > div > div > div > div.count.view > span {
+body > #browse > main > div > div > div.info > div.count.view > span {
     background-color: gray;
 }
 
-body > #browse > main > div > div > div > div.count.shape > span {
+body > #browse > main > div > div > div.info > div.count.shape > span {
     background-color: gray;
 }
 
-body > #browse > main > div > div > div > div.count.client > span {
+body > #browse > main > div > div > div.info > div.count.client > span {
     background-color: gray;
 }
 
-body > #browse > main > div > div > div > div.count.reaction > span {
+body > #browse > main > div > div > div.info > div.count.reaction > span {
     background-color: gray;
 }
 
-body > #browse > main > div > div > div > div.count::after {
+body > #browse > main > div > div > div.info > div.count::after {
     display: inline-block;
 
     margin-left: calc(1em / 3);
     margin-right: calc(1em / 3);
 }
 
-body > #browse > main > div > div > div > div.count.view::after {
+body > #browse > main > div > div > div.info > div.count.view::after {
     content: 'views';
 
     color: gray;
 }
 
-body > #browse > main > div > div > div > div.count.shape::after {
+body > #browse > main > div > div > div.info > div.count.shape::after {
     content: 'shapes';
 
     color: gray;
 }
 
-body > #browse > main > div > div > div > div.count.client::after {
+body > #browse > main > div > div > div.info > div.count.client::after {
     content: 'clients';
 
     color: gray;
 }
 
-body > #browse > main > div > div > div > div.count.reaction::after {
+body > #browse > main > div > div > div.info > div.count.reaction::after {
     content: 'reactions';
 
     color: gray;
