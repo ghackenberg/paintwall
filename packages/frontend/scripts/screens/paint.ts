@@ -2,13 +2,14 @@ import * as qrcode from 'qrcode'
 import { BASE, PointObject } from 'paintwall-common'
 import { CLIENT_ID } from '../constants/client'
 import { unprojectX, unprojectY } from '../functions/draw'
-import { append, canvas, div, img, input, span } from '../functions/html'
+import { append, canvas, div, img, input, span, button, textarea } from '../functions/html'
 import { CanvasModel } from '../models/canvas'
 import { ClientModel } from '../models/client'
 import { LineModel } from '../models/line'
 import { BaseScreen } from './base'
 import { SquareModel } from '../models/square'
 import { CircleModel } from '../models/circle'
+import { CommentModel } from '../models/comment'
 
 interface NodeMap {
     [id: string]: HTMLSpanElement
@@ -24,7 +25,7 @@ export class PaintScreen extends BaseScreen {
     static REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']
 
     // Non-static
-
+    isTextBoxActive = false
     // Models
     
     clientModel: ClientModel = undefined
@@ -61,6 +62,12 @@ export class PaintScreen extends BaseScreen {
     reactionNode: HTMLDivElement
     reactionNodes: NodeMap = {}
     reactionCountNodes: NodeMap = {}
+
+    commentNode: HTMLSpanElement
+    commentCountNode: HTMLSpanElement
+    commentPopupTextareaNode: HTMLTextAreaElement
+    commentPopupButtonNode: HTMLButtonElement
+    commentPopupNode: HTMLDivElement
 
     // Coordinates
 
@@ -204,10 +211,56 @@ export class PaintScreen extends BaseScreen {
         }
 
         // Nodes (reaction)
-        this.reactionNode = div({id: 'reaction' }, Object.values(this.reactionNodes))
+        this.reactionNode = div({ id: 'reaction' }, Object.values(this.reactionNodes))
+
+        // Nodes (comment)
+        this.commentNode = span({ 
+            id: "commentmain",
+            onclick: () => {
+                if (this.isTextBoxActive) {
+                    this.commentPopupNode.style.top = "calc(100vh + 100px)"
+                    this.commentPopupNode.style.animationName = "movedown" 
+                    this.commentPopupNode.style.animationDuration = "1s"
+                } else {
+                    this.commentPopupNode.style.top = "calc(100vh - 250px)"
+                    this.commentPopupNode.style.animationName = "moveup" 
+                    this.commentPopupNode.style.animationDuration = "1s"
+                }
+                this.isTextBoxActive = !this.isTextBoxActive
+            }
+        }, '💬')
+
+        //
+        this.commentPopupTextareaNode = textarea({ id: 'commentinput' })
+
+        //
+        this.commentPopupButtonNode = button(
+            { 
+                id: 'commentbutton',
+                onclick: () => {
+                    const content = this.commentPopupTextareaNode.value.trim()
+
+                    if (content != "") {
+                        // Submit comment
+                        const commentId = '' + Math.random().toString(16).substring(2)
+
+                        this.canvasModel.comments[commentId] = new CommentModel(commentId, undefined, CLIENT_ID, content)
+                        this.canvasModel.counts.comments++
+                        
+                        this.canvasModel.broadcast('client-comment', { commentId, content })
+                        
+                        this.commentPopupTextareaNode.value = ""
+                    }
+                },
+            }, 
+            "Comment"
+        )
+
+        //
+        this.commentPopupNode = div({ id: 'textbox' }, this.commentPopupTextareaNode, this.commentPopupButtonNode)
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode, this.commentNode, this.commentPopupNode])
     }
 
     // Screen
@@ -267,6 +320,9 @@ export class PaintScreen extends BaseScreen {
                 this.reactionCountNodes[data].textContent = `${this.canvasModel.reactions[data]}`
                 this.reactionCountNodes[data].style.display = 'block'
             }
+        })
+        this.canvasModel.on('client-comment', (clientId, data) => {
+            console.log(data)
         })
         this.canvasModel.connect(this.clientModel)
 

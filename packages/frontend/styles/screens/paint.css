@@ -287,6 +287,85 @@ body > #paint > main > #reaction > span > span:last-child {
     background-color: gray;
 }
 
+@keyframes moveup {
+    from {
+        top: calc(100vh + 500px);
+    } to {
+        top: calc(100vh - 250px)
+    }
+}
+
+@keyframes movedown {
+    from {
+        top: calc(100vh - 250px)
+    } to {
+        top: calc(100vh + 500px);
+    }
+}
+
+body > #paint > main > #commentmain {
+    position: absolute;
+
+    bottom: 20px;
+    right: 20px;
+
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+
+    border-radius: 50%;
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    background-color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+body > #paint > main > #textbox {
+    position: absolute;
+    max-width: 500px;
+    width: 100%;
+    margin-inline: calc((100vw - 500px) / 2);
+    top: calc(100vh + 500px);
+}
+
+@media only screen and (max-width: 500px) {
+    body > #paint > main > #textbox {
+        margin-inline: 2.5%;
+    }
+}
+
+
+body > #paint > main > #textbox > #commentinput {
+    height: 70px;
+    width: 90%;
+
+    padding: 10px;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    border-radius: 1.5em;
+    border: 0px solid #4CAF50;
+
+    resize: none;
+}
+
+body > #paint > main > #textbox > #commentbutton {
+    background-color: white;
+    
+    margin-top: 5px;
+    padding-inline: 1.5em;
+
+    line-height: 3.25em;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    border-radius: 1.5em;
+    border: 0px solid #4CAF50;
+}
+
 /* Footer */
 
 body > #paint > footer {

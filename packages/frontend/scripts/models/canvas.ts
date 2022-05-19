@@ -114,7 +114,7 @@ export class CanvasModel implements CanvasObject {
     on(event: 'client-square-start', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     on(event: 'client-square-continue', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     on(event: 'client-react', handler: (clientId: string, data: string) => void): void
-    on(event: 'client-comment', handler: (clientId: string, data: { commentId: string, parentId: string | undefined, content: string }) => void): void
+    on(event: 'client-comment', handler: (clientId: string, data: { commentId: string, parentId?: string, content: string }) => void): void
     on(event: string, handler: Handler) {
         if (!(event in this.handlers)) {
             this.handlers[event] = []
@@ -148,7 +148,7 @@ export class CanvasModel implements CanvasObject {
     off(event: 'client-square-start', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     off(event: 'client-square-continue', handler: (clientId: string, data: { squareId: string, point: PointObject }) => void): void
     off(event: 'client-react', handler: (clientId: string, data: string) => void): void
-    off(event: 'client-comment', handler: (clientId: string, data: { commentId: string, parentId: string | undefined, content: string }) => void): void
+    off(event: 'client-comment', handler: (clientId: string, data: { commentId: string, parentId?: string, content: string }) => void): void
     off(event: string, handler: Handler) {
         if (event in this.handlers) {
             const index = this.handlers[event].indexOf(handler)
@@ -546,7 +546,7 @@ export class CanvasModel implements CanvasObject {
     broadcast(type: 'client-square-start', data: { squareId: string, point: PointObject }): void
     broadcast(type: 'client-square-continue', data: { squareId: string, point: PointObject }): void
     broadcast(type: 'client-react', data: string): void
-    broadcast(type: 'client-comment', data: { parentId: string | undefined, content: string }): void
+    broadcast(type: 'client-comment', data: { commentId: string, parentId?: string, content: string }): void
     broadcast(type: string, data?: any) {
         if (this.socket && this.socket.readyState == WebSocket.OPEN) {
             this.socket.send(JSON.stringify({ type, data }))

@@ -45,7 +45,7 @@ export interface SquareObjectMap {
 
 export interface CommentObject {
     commentId: string
-    parentId: string | undefined
+    parentId?: string
     clientId: string
     content: string
 }
