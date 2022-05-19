@@ -224,6 +224,84 @@ export function ws() {
                     
                     break
                 }
+                case 'client-circle-start': {
+                    const clientId = message.clientId
+                    const circleId = message.data.circleId
+                    const point = message.data.point
+
+                    const color = clients[clientId].color
+                    const width = clients[clientId].width
+                    const alpha = clients[clientId].alpha
+
+                    circles[circleId] = { circleId, clientId, color, width, alpha, start: point, end: point }
+
+                    counts.shapes++
+
+                    broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+
+                    x.min = Math.min(x.min, point.x)
+                    x.max = Math.max(x.max, point.x)
+
+                    y.min = Math.min(y.min, point.y)
+                    y.max = Math.max(y.max, point.y)
+
+                    break
+                }
+                case 'client-circle-continue': {
+                    const circleId = message.data.circleId
+                    const point = message.data.point
+
+                    if (circleId in circles) {
+                        circles[circleId].end = point
+
+                        x.min = Math.min(x.min, point.x)
+                        x.max = Math.max(x.max, point.x)
+        
+                        y.min = Math.min(y.min, point.y)
+                        y.max = Math.max(y.max, point.y)
+                    }
+                    
+                    break
+                }
+                case 'client-square-start': {
+                    const clientId = message.clientId
+                    const squareId = message.data.squareId
+                    const point = message.data.point
+
+                    const color = clients[clientId].color
+                    const width = clients[clientId].width
+                    const alpha = clients[clientId].alpha
+
+                    squares[squareId] = { squareId, clientId, color, width, alpha, start: point, end: point }
+
+                    counts.shapes++
+
+                    broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+
+                    x.min = Math.min(x.min, point.x)
+                    x.max = Math.max(x.max, point.x)
+
+                    y.min = Math.min(y.min, point.y)
+                    y.max = Math.max(y.max, point.y)
+
+                    break
+                }
+                case 'client-square-continue': {
+                    const squareId = message.data.squareId
+                    const point = message.data.point
+
+                    if (squareId in squares) {
+                        squares[squareId].end = point
+
+                        x.min = Math.min(x.min, point.x)
+                        x.max = Math.max(x.max, point.x)
+        
+                        y.min = Math.min(y.min, point.y)
+                        y.max = Math.max(y.max, point.y)
+                    }
+                    
+                    break
+                }
                 case 'client-react': {
                     const reaction = message.data
 
