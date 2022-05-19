@@ -59,14 +59,13 @@ export class BrowseScreen extends BaseScreen {
         this.createNode = button({ id: 'canvas-create', className: 'button',
             onclick: () => {
                 history.pushState(null, undefined, BASE + '/canvas/' + Math.random().toString(16).substring(2))
-                console.log('test')
             }
         }, 'New canvas')
 
         // Dropdown
         this.sortNode = select({ id: 'sort-canvas', className: 'select',
-            onclick: () => {
-                console.log('test')
+            onchange: () => {
+                this.show()
             }
         }, option('sort by: latest'), option('sort by: most viewed'), option('sort by: most reactions'))
 
@@ -236,10 +235,9 @@ export class BrowseScreen extends BaseScreen {
                 } else if ( this.sortNode.value == 'sort by: most reactions'  ) {
                     canvasObjects.sort((a, b) => a.counts.reactions - b.counts.reactions)
                 }
-                console.log(this.sortNode.value)
 
                 // Loop
-                for (const canvasObject of canvasObjects) { // reverse()
+                for (const canvasObject of canvasObjects.reverse()) {
                     // Extract information
                     const canvasId = canvasObject.canvasId
                     const timestamps = canvasObject.timestamps
@@ -250,7 +248,7 @@ export class BrowseScreen extends BaseScreen {
                     const lines = canvasObject.lines
                     const circles = canvasObject.circles
                     const squares = canvasObject.squares
-                    console.log(this.sortNode.value)
+
                     // Calculate informaton
                     const viewCount = counts.views
                     const shapeCount = counts.shapes
