@@ -188,23 +188,54 @@ function drawClients(canvas: HTMLCanvasElement, context: CanvasRenderingContext2
 function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, client: ClientObject) {
     // Extract
     const name = client.name
+    const tool = client.tool
     const color = client.color
     const width = client.width
     const alpha = client.alpha
     const position = client.position
 
     // Check
-    if (position) {
-        // Circle
-        context.beginPath()
-        context.arc(projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y), 10 * zoom, 0, Math.PI * 2)
-        context.globalAlpha = 0.25
-        context.fillStyle = color
-        context.fill()
-
+    if (tool && position) {
+        // Tool
+        if (tool == 'line') {
+            // Path
+            context.beginPath()
+            context.arc(projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y), 10, 0, Math.PI * 2)
+            // Fill
+            context.globalAlpha = alpha
+            context.fillStyle = color
+            context.fill()
+        } else if (tool == 'circle') {
+            // Path
+            context.beginPath()
+            context.arc(projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y), 10, 0, Math.PI * 2)
+            // Fill
+            context.globalAlpha = alpha / 2
+            context.fillStyle = color
+            context.fill()
+            // Stroke
+            context.lineWidth = width * zoom * 2
+            context.globalAlpha = Math.min(alpha * 2, 1)
+            context.strokeStyle = color
+            context.stroke()
+        } else if (tool == 'square') {
+            // Path
+            context.beginPath()
+            context.rect(projectX(canvas, center, zoom, position.x) - 10, projectY(canvas, center, zoom, position.y) - 10, 20, 20)
+            // Fill
+            context.globalAlpha = alpha / 2
+            context.fillStyle = color
+            context.fill()
+            // Stroke
+            context.lineWidth = width * zoom * 2
+            context.globalAlpha = Math.min(alpha * 2, 1)
+            context.strokeStyle = color
+            context.stroke()
+        }
         // Text
         context.textAlign = 'center'
         context.textBaseline = 'middle'
+        // Fill
         context.globalAlpha = 0.75
         context.fillStyle = 'black'
         context.fillText(name, projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y))
