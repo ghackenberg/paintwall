@@ -5,10 +5,7 @@ body > #paint {
 /* Header */
 
 body > #paint > header {
-    z-index: 0;
-
-    padding-left: 5em;
-    padding-right: 5em;
+    display: none;
 }
 
 /* Main */
@@ -347,5 +344,5 @@ body > #paint > main > #reaction > span > span:last-child {
 /* Footer */
 
 body > #paint > footer {
-    z-index: 0;
+    display: none;
 }

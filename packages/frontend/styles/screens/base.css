@@ -32,6 +32,10 @@ body > div.screen > header {
     font-weight: bold;
 }
 
+body > div.screen.document > header {
+    display: none;
+}
+
 body > div.screen > header > #logo {
     display: inline-block;
 
@@ -119,4 +123,8 @@ body > div.screen > footer {
     overflow: hidden;
 
     text-align: center;
+}
+
+body > div.screen.document > footer {
+    display: none;
 }
