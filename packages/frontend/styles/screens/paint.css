@@ -320,7 +320,8 @@ body > #paint > main > #commentmain {
     display: flex;
     align-items: center;
     justify-content: center;
-    
+
+    cursor: pointer;
 }
 
 body > #paint > main > #textbox {
@@ -364,7 +365,47 @@ body > #paint > main > #textbox > #commentbutton {
 
     border-radius: 1.5em;
     border: 0px solid #4CAF50;
+
+    cursor: pointer;
 }
+
+@keyframes commentitemMoveup {
+    from {
+        top: 130vh;
+    } to {
+        top: -20vh;
+    }
+}
+
+@keyframes fade {
+    from {
+        opacity: 100%;
+    } to {
+        opacity: 0%;
+    }
+}
+
+body > #paint > main > #commentlist > #commentlistitem {
+    position: absolute;
+    z-index: 100;
+    left: calc(100vw - 210px);
+    top: 120vh;
+    max-width: 180px;
+    width: 100%;
+
+    padding: 10px;
+    background-color: white;
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    border-radius: 5%;
+
+    word-wrap: break-word;
+    
+    animation-name: commentitemMoveup, fade;
+    animation-duration: 15s, 2.5s;
+    animation-iteration-count: 1, 1;
+    animation-delay: 0s, 12s;
+}
+
 
 /* Footer */
 

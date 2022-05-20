@@ -2,7 +2,7 @@ import * as qrcode from 'qrcode'
 import { BASE, PointObject } from 'paintwall-common'
 import { CLIENT_ID } from '../constants/client'
 import { unprojectX, unprojectY } from '../functions/draw'
-import { append, canvas, div, img, input, span, button, textarea } from '../functions/html'
+import { append, canvas, div, img, input, span, button, textarea, p } from '../functions/html'
 import { CanvasModel } from '../models/canvas'
 import { ClientModel } from '../models/client'
 import { LineModel } from '../models/line'
@@ -69,6 +69,9 @@ export class PaintScreen extends BaseScreen {
     commentPopupButtonNode: HTMLButtonElement
     commentPopupNode: HTMLDivElement
 
+    commentsListNode: HTMLDivElement
+    commentsListItemNode: HTMLParagraphElement
+
     // Coordinates
 
     previousTouches: PointObject[] = []
@@ -113,7 +116,10 @@ export class PaintScreen extends BaseScreen {
 
         // Nodes (back)
         this.backNode = div({ id: 'back', className: 'icon active',
-            onclick: () => history.back()
+            onclick: () => {
+                this.commentsListNode.childNodes.forEach(c => c.remove())
+                history.back()
+            }
         }, img({ src:  BASE + '/images/back.png' }))
 
 
@@ -216,18 +222,7 @@ export class PaintScreen extends BaseScreen {
         // Nodes (comment)
         this.commentNode = span({ 
             id: "commentmain",
-            onclick: () => {
-                if (this.isTextBoxActive) {
-                    this.commentPopupNode.style.top = "calc(100vh + 100px)"
-                    this.commentPopupNode.style.animationName = "movedown" 
-                    this.commentPopupNode.style.animationDuration = "1s"
-                } else {
-                    this.commentPopupNode.style.top = "calc(100vh - 250px)"
-                    this.commentPopupNode.style.animationName = "moveup" 
-                    this.commentPopupNode.style.animationDuration = "1s"
-                }
-                this.isTextBoxActive = !this.isTextBoxActive
-            }
+            onclick: () => this.handleToggleCommentBox()
         }, '💬')
 
         //
@@ -249,18 +244,24 @@ export class PaintScreen extends BaseScreen {
                         
                         this.canvasModel.broadcast('client-comment', { commentId, content })
                         
+                        this.handleToggleCommentBox()
+                        this.handleAddNewComment(content)
                         this.commentPopupTextareaNode.value = ""
+                        
                     }
                 },
             }, 
             "Comment"
         )
 
+        // Nodes (comments List)
+        this.commentsListNode = div({ id: 'commentlist' })
+
         //
         this.commentPopupNode = div({ id: 'textbox' }, this.commentPopupTextareaNode, this.commentPopupButtonNode)
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode, this.commentNode, this.commentPopupNode])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.toolNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode, this.commentNode, this.commentPopupNode, this.commentsListNode])
     }
 
     // Screen
@@ -322,7 +323,7 @@ export class PaintScreen extends BaseScreen {
             }
         })
         this.canvasModel.on('client-comment', (clientId, data) => {
-            console.log(data)
+            this.handleAddNewComment(data.content)
         })
         this.canvasModel.connect(this.clientModel)
 
@@ -745,5 +746,32 @@ export class PaintScreen extends BaseScreen {
         }
     }
 
+    // comment
+    handleToggleCommentBox() {
+        if (this.isTextBoxActive) {
+            this.commentPopupNode.style.top = "calc(100vh + 100px)"
+            this.commentPopupNode.style.animationName = "movedown" 
+            this.commentPopupNode.style.animationDuration = "1s"
+        } else {
+            this.commentPopupNode.style.top = "calc(100vh - 250px)"
+            this.commentPopupNode.style.animationName = "moveup" 
+            this.commentPopupNode.style.animationDuration = "1s"
+        }
+        this.isTextBoxActive = !this.isTextBoxActive
+    }
+
+    handleAddNewComment(comment: string) {
+        this.commentsListItemNode = p(
+            { 
+                id: "commentlistitem",
+            }, 
+            comment
+        )
+        this.commentsListNode.appendChild(this.commentsListItemNode)
+
+        setTimeout(() => {
+            this.commentsListNode.childNodes[0].remove()
+        }, 15000)
+    }
 
 }
