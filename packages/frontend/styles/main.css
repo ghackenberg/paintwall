@@ -9,10 +9,17 @@
 
 body {
     margin: 0;
-    user-select: none;
-    font-family: sans-serif;
+
+    min-width: 100%;
+    min-height: 100vh;
+
     line-height: 100%;
+
+    font-family: sans-serif;
+    
     background-color: white;
+
+    user-select: none;
 }
 
 h1 {
