@@ -12,6 +12,8 @@ body > div.screen {
 body > div.screen > header {
     position: fixed;
 
+    z-index: 1;
+
     top: 0;
     left: 0;
     right: 0;
@@ -47,6 +49,8 @@ body > div.screen.document > main {
     min-height: 100%;
 
     width: 100%;
+
+    z-index: 0;
 }
 
 body > div.screen.document > main > h1 {
@@ -98,6 +102,8 @@ body > div.screen.document > main > div:last-child {
 
 body > div.screen > footer {
     position: fixed;
+
+    z-index: 1;
 
     left: 0;
     right: 0;

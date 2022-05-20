@@ -24,6 +24,19 @@ body > #paint > main {
     z-index: 1;
 }
 
+/* Main canvas */
+
+body > #paint > main > #canvas {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+/* Main count */
+
 body > #paint > main > #count {
     position: absolute;
 
@@ -77,14 +90,7 @@ body > #paint > main > #count > span.count.client > img {
     }
 }
 
-body > #paint > main > #canvas {
-    position: absolute;
-
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
+/* Main tool */
 
 body > #paint > main > #tool {
     position: absolute;
@@ -100,6 +106,8 @@ body > #paint > main > #tool > span {
     margin-top: 0;
     margin-bottom: 0;
 }
+
+/* Main color */
 
 body > #paint > main > #color {
     position: absolute;
@@ -132,10 +140,22 @@ body > #paint > main > #color > .active {
     height: 3em;
 }
 
+/* Main width */
+
 body > #paint > main > #width {
     position: absolute;
     top: 1em;
     left: 17em;
+}
+
+@media screen and (max-width: 30em) {
+    body > #paint > main > #width {
+        top: 5em;
+        left: auto;
+        right: 1em;
+        
+        width: 3em;
+    }
 }
 
 body > #paint > main > #width > .width {
@@ -164,6 +184,8 @@ body > #paint > main > #width > .active {
     border-radius: 1.5em;
     margin-top: 0em;
 }
+
+/* Main share */
 
 body > #paint > main > #share {
     display: block;
@@ -262,6 +284,8 @@ body > #paint > main > #share-popup > canvas {
     margin-right: auto;
     margin-bottom: 1em;
 }
+
+/* Main reaction */
 
 body > #paint > main > #reaction {
     position: absolute;
