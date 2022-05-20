@@ -12,6 +12,9 @@ export class BaseScreen {
     footerNode: HTMLElement
     rootNode: HTMLDivElement
 
+    scrollTop: number = 0
+    scrollLeft: number = 0
+
     constructor(id: string, className?: string) {
         // Header
         this.headerNode = header()
@@ -38,9 +41,15 @@ export class BaseScreen {
         BaseScreen.ACTIVE = this
         // Show own screen
         this.rootNode.style.display = 'block'
+        // Set scroll
+        document.scrollingElement.scrollTop = this.scrollTop
+        document.scrollingElement.scrollLeft = this.scrollLeft
     }
     
     hide() {
+        // Set scroll
+        this.scrollTop = document.scrollingElement.scrollTop
+        this.scrollLeft = document.scrollingElement.scrollLeft
         // Hide own screen
         this.rootNode.style.display = 'none'
     }
