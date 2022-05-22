@@ -17,10 +17,10 @@ interface NodeMap {
 export class PaintScreen extends BaseScreen {
     // Static
 
-    static TOOLS = [ 'line', 'circle', 'square']
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
-    static WIDTHS = [5.0, 10.0, 50.0]
-    static ALPHAS = [0.5]
+    static WIDTHS = [5.0, 10.0, 25.0, 50.0]
+    static ALPHAS = [1.0,0.75,0.5,0.25]
+    static TOOLS = [ 'line', 'circle', 'square']
     static REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']
 
     // Non-static
@@ -54,12 +54,30 @@ export class PaintScreen extends BaseScreen {
     widthNode: HTMLDivElement
     widthNodes: NodeMap = {}
 
+    alphaNode: HTMLDivElement
+    alphaNodes: NodeMap = {}
+
     shareNode: HTMLDivElement
     sharePopupImageNode: HTMLImageElement
     sharePopupInputNode: HTMLInputElement
     sharePopupDivNode: HTMLDivElement
     sharePopupCanvasNode: HTMLCanvasElement
     sharePopupNode: HTMLDivElement
+
+    alphaPNode: HTMLDivElement
+    alphaPopupImageNode: HTMLImageElement
+    alphaPopupDivNode: HTMLDivElement
+    alphaPopupNode: HTMLDivElement
+
+    widthPNode: HTMLDivElement
+    widthPopupImageNode: HTMLImageElement
+    widthPopupDivNode: HTMLDivElement
+    widthPopupNode: HTMLDivElement
+
+    toolPNode: HTMLDivElement
+    toolPopupImageNode: HTMLImageElement
+    toolPopupDivNode: HTMLDivElement
+    toolPopupNode: HTMLDivElement
 
     reactionNode: HTMLDivElement
     reactionNodes: NodeMap = {}
@@ -78,10 +96,10 @@ export class PaintScreen extends BaseScreen {
         
         // Constants
         const name: string = undefined
-        const tool = PaintScreen.TOOLS.includes(localStorage.getItem('tool')) ? localStorage.getItem('tool') : PaintScreen.TOOLS[0]
         const color = PaintScreen.COLORS.includes(localStorage.getItem('color')) ? localStorage.getItem('color') : PaintScreen.COLORS[0]
         const width = PaintScreen.WIDTHS.includes(parseFloat(localStorage.getItem('width'))) ? parseFloat(localStorage.getItem('width')) : PaintScreen.WIDTHS[0]
         const alpha = PaintScreen.ALPHAS.includes(parseFloat(localStorage.getItem('alpha'))) ? parseFloat(localStorage.getItem('alpha')) : PaintScreen.ALPHAS[0]
+        const tool = PaintScreen.TOOLS.includes(localStorage.getItem('tool')) ? localStorage.getItem('tool') : PaintScreen.TOOLS[0]
         const position: PointObject = undefined
 
         // States
@@ -131,18 +149,6 @@ export class PaintScreen extends BaseScreen {
             span({ className: 'count shape' }, this.shapeCountNode),
             span({ className: 'count client' }, this.clientCountNode, img({ src: BASE + '/images/live.png' })),
             span({ className: 'count reaction' }, this.reactionCountNode))
-
-        // Nodes (tools)
-        for (const othertool of PaintScreen.TOOLS) {
-            this.toolNodes[othertool] = span({ className: othertool == tool ? 'tool icon active' : 'tool icon',
-                onclick: () => {
-                    this.changeTool(othertool)
-                }
-            }, img({ src: BASE + '/images/' + othertool + '.png' }))
-        }
-
-        // Nodes (tool)
-        this.toolNode = div({id: 'tool'}, Object.values(this.toolNodes))
 
         // Nodes (share)
         this.shareNode = div({ id: 'share', className: 'icon active',
@@ -196,6 +202,91 @@ export class PaintScreen extends BaseScreen {
         // Nodes (width)
         this.widthNode = div({ id: 'width' }, Object.values(this.widthNodes))
 
+        // Nodes (widthPopup)
+        this.widthPNode = div({ id: 'widthP', className: 'icon active',
+        onclick: () => {
+            this.widthPopupNode.style.display = 'block'
+        }
+        }, img({ src: BASE + '/images/width.png' }))
+
+        // Nodes (width popup image)
+        this.widthPopupImageNode = img({ src: BASE + '/images/close.png', 
+            onclick: () => {
+                this.widthPopupNode.style.display = 'none' 
+            }
+        })
+
+        // Nodes (width popup div)
+        this.widthPopupDivNode = div('Select width!')
+
+        // Nodes (width popup)
+        this.widthPopupNode = div({ id: 'width-popup' }, this.widthPopupImageNode, this.widthPopupDivNode, this.widthNode)
+
+        // Nodes (alphas)
+        for (const otherAlpha of PaintScreen.ALPHAS) {
+            let num = 100-otherAlpha*100;
+            this.alphaNodes[otherAlpha] = span({ className: otherAlpha == alpha ? 'alpha active': 'alpha',
+                onclick: () => {
+                    this.handleChangeAlpha(otherAlpha)
+                }
+            }, num.toString()+'%')
+        }
+
+        // Nodes (alpha)
+        this.alphaNode = div({ id: 'alpha' }, Object.values(this.alphaNodes))
+
+        // Nodes (alphaPopup)
+        this.alphaPNode = div({ id: 'alphaP', className: 'icon active',
+            onclick: () => {
+                this.alphaPopupNode.style.display = 'block'
+            }
+        }, img({ src: BASE + '/images/alpha.png' }))
+
+        // Nodes (alpha popup image)
+        this.alphaPopupImageNode = img({ src: BASE + '/images/close.png', 
+            onclick: () => {
+                this.alphaPopupNode.style.display = 'none' 
+            }
+        })
+
+        // Nodes (width popup div)
+        this.alphaPopupDivNode = div('Select transparency!')
+
+        // Nodes (alpha popup)
+        this.alphaPopupNode = div({ id: 'alpha-popup' }, this.alphaPopupImageNode, this.alphaPopupDivNode, this.alphaNode)
+
+        // Nodes (tools)
+        for (const othertool of PaintScreen.TOOLS) {
+            this.toolNodes[othertool] = span({ className: othertool == tool ? 'tool icon active' : 'tool icon',
+                onclick: () => {
+                    this.changeTool(othertool)
+                }
+            }, img({ src: BASE + '/images/' + othertool + '.png' }))
+        }
+
+        // Nodes (tool)
+        this.toolNode = div({id: 'tool'}, Object.values(this.toolNodes))
+
+        // Nodes (toolPopup)
+        this.toolPNode = div({ id: 'toolP', className: 'icon active',
+        onclick: () => {
+            this.toolPopupNode.style.display = 'block'
+        }
+        }, img({ src: BASE + '/images/tool.png' }))
+
+        // Nodes (tool popup image)
+        this.toolPopupImageNode = img({ src: BASE + '/images/close.png', 
+            onclick: () => {
+                this.toolPopupNode.style.display = 'none' 
+            }
+        })
+
+        // Nodes (tool popup div)
+        this.toolPopupDivNode = div('Select tool!')
+
+        // Nodes (toolpopup)
+        this.toolPopupNode = div({ id: 'tool-popup' }, this.toolPopupImageNode, this.toolPopupDivNode, this.toolNode)
+
         // Nodes (reactions)
         for (const reaction of PaintScreen.REACTIONS){
             this.reactionCountNodes[reaction] = span()
@@ -222,7 +313,7 @@ export class PaintScreen extends BaseScreen {
         this.reactionNode = div({id: 'reaction' }, Object.values(this.reactionNodes))
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.toolNode, this.colorNode, this.widthNode, this.shareNode, this.sharePopupNode, this.reactionNode])
+        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode, this.alphaPNode, this.alphaPopupNode, this.widthPNode, this.widthPopupNode, this.toolPNode,this.toolPopupNode])
     }
 
     // Screen
@@ -619,6 +710,19 @@ export class PaintScreen extends BaseScreen {
         localStorage.setItem('width', '' + this.clientModel.width)
         // Broadcast
         this.canvasModel.broadcast('client-width', this.clientModel.width)
+    }
+
+    handleChangeAlpha(value: number) {
+        // Deactivate
+        this.alphaNodes[this.clientModel.alpha].classList.remove('active')
+        // Update
+        this.clientModel.alpha = value
+        // Activate
+        this.alphaNodes[this.clientModel.alpha].classList.add('active')
+        // Remember
+        localStorage.setItem('alpha', '' + this.clientModel.alpha)
+        // Broadcast
+        this.canvasModel.broadcast('client-alpha', this.clientModel.alpha)
     }
     
     changeTool(value: string) {

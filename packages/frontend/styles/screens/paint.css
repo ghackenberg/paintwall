@@ -86,27 +86,13 @@ body > #paint > main > #canvas {
     bottom: 0;
 }
 
-body > #paint > main > #tool {
-    position: absolute;
-
-    top: 1em;
-    left: 4.5em;
-}
-
-body > #paint > main > #tool > span {
-    float: left;
-
-    margin: 0.5em;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
 body > #paint > main > #color {
     position: absolute;
 
-    top: 4em;
+    top: 16em;
     left: 1em;
 }
+
 body > #paint > main > #color > .color {
     display: block;
 
@@ -132,13 +118,22 @@ body > #paint > main > #color > .active {
     height: 3em;
 }
 
-body > #paint > main > #width {
-    position: absolute;
-    top: 1em;
-    left: 17em;
+body > #paint > main > #width > .active {
+    margin: 0;
+    margin-top: 1em;
+    width: 3em;
+    line-height: 3em;
+    border-radius: 1.5em;
+    margin-top: 0em;
 }
 
-body > #paint > main > #width > .width {
+body > #paint > main > #alpha {
+    position: absolute;
+    top: 1em;
+    left: 30em;
+}
+
+body > #paint > main > #alpha > .alpha {
     display: block;
     float: left;
     color : white;
@@ -147,6 +142,7 @@ body > #paint > main > #width > .width {
     margin: 0.5em;
     border-radius: 1.3em;
     text-align: center;
+    
 
     background-color: black;
     background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
@@ -156,7 +152,7 @@ body > #paint > main > #width > .width {
     cursor: pointer;
 }
 
-body > #paint > main > #width > .active {
+body > #paint > main > #alpha > .active {
     margin: 0;
     margin-top: 1em;
     width: 3em;
@@ -324,4 +320,282 @@ body > #paint > main > #reaction > span > span:last-child {
 
 body > #paint > footer {
     z-index: 0;
+}
+
+/*WIDTH Popup*/
+body > #paint > main > #widthP {
+    display: block;
+    z-index: 4;
+    
+    position: absolute;
+    
+    top: 5em;
+    left: 1em;
+    
+    width: 1em;
+    height: 1em;
+    border-radius: 1.5em;
+    
+    background-color: white;
+    background-size: 1em 1em;
+    background-position: center center;
+    background-repeat: no-repeat;
+    
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    
+    cursor: pointer;
+    overflow: hidden;
+}
+
+body > #paint > main > #widthP > img {
+    margin: -1em;
+    height: 3em;
+    width: 3em;
+    object-fit: contain;
+}
+
+body > #paint > main > #width-popup {
+    position: absolute;
+    z-index: 5;
+
+    top: 5em;
+    left: 1em;
+
+    border-radius: 1.5em;
+
+    background-color: white;
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    
+    display: none;
+}
+
+body > #paint > main > #width-popup > img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    padding: 1em;
+    border-radius: 1.5em;
+    cursor: pointer;
+}
+
+body > #paint > main > #width-popup > div {
+    display: block;
+    box-sizing: border-box;
+    border-radius: 1.5em;
+    margin: 1.2em;
+}
+
+body > #paint > main > #width-popup > div > span{
+    display: block;
+    float: left;
+
+    color : white;
+    
+    width: 2.3em;
+    line-height: 2.3em;
+    margin: 0.5em;
+    margin-bottom: 1em;
+    border-radius: 1.5em;
+    text-align: center;
+
+    background-color: black;
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+}
+
+body > #paint > main > #width-popup > div > .active {
+    margin: 0;
+    width: 3em;
+    line-height: 3em;
+    border-radius: 1.5em;
+}
+
+/*ALPHA Popup*/
+body > #paint > main > #alphaP {
+    display: block;
+    z-index: 2;
+    
+    position: absolute;
+    
+    top: 9em;
+    left: 1em;
+    
+    width: 1em;
+    height: 1em;
+    border-radius: 1.5em;
+    
+    background-color: white;
+    background-size: 1em 1em;
+    background-position: center center;
+    background-repeat: no-repeat;
+    
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    
+    cursor: pointer;
+    overflow: hidden;
+}
+
+body > #paint > main > #alphaP > img {
+    margin: -1em;
+    height: 3em;
+    width: 3em;
+    object-fit: contain;
+}
+
+body > #paint > main > #alpha-popup {
+    position: absolute;
+    z-index: 3;
+
+    top: 9em;
+    left: 1em;
+
+    border-radius: 1.5em;
+
+    background-color: white;
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    display: none;
+}
+
+body > #paint > main > #alpha-popup > img {
+    position: absolute;
+
+    top: 0;
+    right: 0;
+    width: 1em;
+    height: 1em;
+    padding: 1em;
+    border-radius: 1.5em;
+    cursor: pointer;
+}
+
+body > #paint > main > #alpha-popup > div {
+    display: block;
+    box-sizing: border-box;
+    border-radius: 1.5em;
+    margin: 1.2em;
+}
+
+body > #paint > main > #alpha-popup > div > span{
+    display: block;
+    float: left;
+
+    width: 2.3em;
+    line-height: 2.3em;
+    margin: 0.5em;
+    margin-bottom: 1em;
+
+    border-radius: 1.5em;
+    text-align: center;
+
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
+}
+
+body > #paint > main > #alpha-popup > div > span:first-child{
+    color: white;
+    background-color: #000000FF;
+}
+
+body > #paint > main > #alpha-popup > div > span:nth-child(2){
+    color: white;
+    background-color: #000000C0 ;
+}
+
+body > #paint > main > #alpha-popup > div > span:nth-child(3){
+    color: black;
+    background-color: #00000080 ;
+}
+
+body > #paint > main > #alpha-popup > div > :last-child{
+    color: black;
+    background-color: #00000040 ;
+}
+
+body > #paint > main > #alpha-popup > div > .active {
+    margin: 0;
+    width: 3em;
+    line-height: 3em;
+    border-radius: 1.5em;
+}
+
+/*TOOLPopup*/
+body > #paint > main > #toolP {
+    display: block;
+    z-index: 0;
+    
+    position: absolute;
+    
+    top: 13em;
+    left: 1em;
+    
+    width: 1em;
+    height: 1em;
+    border-radius: 1.5em;
+
+    background-color: white;
+    background-size: 1em 1em;
+    background-position: center center;
+    background-repeat: no-repeat;
+    
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    
+    overflow: hidden;
+    cursor: pointer;
+}
+
+body > #paint > main > #toolP > img {
+    margin: -1em;
+    height: 3em;
+    width: 3em;
+    object-fit: contain;
+}
+
+body > #paint > main > #tool-popup {
+    position: absolute;
+    z-index: 1;
+
+    top: 13em;
+    left: 1em;
+
+    border-radius: 1.5em;
+    background-color: white;
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    display: none;
+}
+
+body > #paint > main > #tool-popup > img {
+    position: absolute;
+    top: 0;
+
+    right: 0;
+    width: 1em;
+    height: 1em;
+    padding: 1em;
+    border-radius: 1.5em;
+    cursor: pointer;
+}
+
+body > #paint > main > #tool-popup > div {
+    display: block;
+    box-sizing: border-box;
+    border-radius: 1.5em;
+    margin: 1.2em;
+}
+
+body > #paint > main > #tool-popup > div > span{
+    float: left;
+
+    margin: 0.5em;
+    margin-top: 0;
+    margin-bottom: 1em;
 }
