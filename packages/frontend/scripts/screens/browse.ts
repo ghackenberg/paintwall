@@ -9,6 +9,15 @@ interface CountNodeMap {
 }
 
 export class BrowseScreen extends BaseScreen {
+    // Static
+
+    static OPTIONS: {[id: string]: (a: CanvasObject, b: CanvasObject) => number} = {
+        'Latest': (a, b) => a.timestamps.created - b.timestamps.created,
+        'Views': (a, b) => a.counts.views - b.counts.views,
+        'Reactions': (a, b) => a.counts.reactions - b.counts.reactions,
+    }
+
+    // Non-static
 
     // Counts
 
@@ -84,7 +93,7 @@ export class BrowseScreen extends BaseScreen {
             onchange: () => {
                 this.show()
             }
-        }, option('Latest'), option('Views'), option('Reactions'))
+        }, Object.keys(BrowseScreen.OPTIONS).map(text => option(text)))
         this.sortNode = span({ id: 'sort-canvas', className: 'button' }, [
             this.sortImageNode,
             this.sortSelectNode
@@ -248,15 +257,8 @@ export class BrowseScreen extends BaseScreen {
                 const canvasObjects: CanvasObject[] = JSON.parse(this.request.responseText)
                 // Reset
                 this.request = null
-                
-                if ( this.sortSelectNode.value == 'time' ) {
-                    canvasObjects.sort((a, b) => a.timestamps.created - b.timestamps.created)
-                } else if ( this.sortSelectNode.value == 'views'  ) {
-                    canvasObjects.sort((a, b) => a.counts.views - b.counts.views)
-                } else if ( this.sortSelectNode.value == 'reactions'  ) {
-                    canvasObjects.sort((a, b) => a.counts.reactions - b.counts.reactions)
-                }
-
+                // Sort
+                canvasObjects.sort(BrowseScreen.OPTIONS[this.sortSelectNode.value])
                 // Loop
                 for (const canvasObject of canvasObjects.reverse()) {
                     // Extract information
