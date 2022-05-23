@@ -15,6 +15,12 @@ body > #browse > header > .button {
     margin-bottom: 2.5em;
 }
 
+body > #browse > header > .select {
+    margin-top: 0.5em;
+    margin-bottom: 2.5em;
+    height: 32px;
+}
+
 body > #browse > header > #client-count {
     margin-left: 1em;
 
@@ -29,6 +35,14 @@ body > #browse > header > #canvas-create {
     margin-left: 1em;
 
     background-color: tomato;
+
+    cursor: pointer;
+}
+
+body > #browse > header > #sort-canvas {
+    margin-left: 1em;
+
+    background-color: rgb(43, 176, 209);
 
     cursor: pointer;
 }
