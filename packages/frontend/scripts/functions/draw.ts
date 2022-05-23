@@ -257,7 +257,7 @@ function drawClients(canvas: HTMLCanvasElement, context: CanvasRenderingContext2
 
 function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, client: ClientObject) {
     // Extract
-    const name = client.name
+    const name = client.userId || 'Anonymous'
     const tool = client.tool
     const color = client.color
     const width = client.width

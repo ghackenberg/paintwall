@@ -103,7 +103,8 @@ export class PaintScreen extends BaseScreen {
         super('paint')
         
         // Constants
-        const name: string = undefined
+        const clientId = CLIENT_ID
+        const userId: string = null
         const color = PaintScreen.COLORS.includes(localStorage.getItem('color')) ? localStorage.getItem('color') : PaintScreen.COLORS[0]
         const width = PaintScreen.WIDTHS.includes(parseFloat(localStorage.getItem('width'))) ? parseFloat(localStorage.getItem('width')) : PaintScreen.WIDTHS[0]
         const alpha = PaintScreen.ALPHAS.includes(parseFloat(localStorage.getItem('alpha'))) ? parseFloat(localStorage.getItem('alpha')) : PaintScreen.ALPHAS[0]
@@ -111,7 +112,7 @@ export class PaintScreen extends BaseScreen {
         const position: PointObject = undefined
 
         // States
-        this.clientModel = new ClientModel(CLIENT_ID, name, tool, color, width, alpha, position)
+        this.clientModel = new ClientModel(clientId, userId, tool, color, width, alpha, position)
 
         // Handlers
         this.handleResize = this.handleResize.bind(this)
@@ -417,9 +418,6 @@ export class PaintScreen extends BaseScreen {
 
         // Share popup code
         qrcode.toCanvas(this.sharePopupCanvasNode, location.href)
-
-        // Client name
-        this.clientModel.name = 'Anonymous'
 
         // Canvas model
         this.canvasModel = new CanvasModel(this.canvasNode, canvasId)
@@ -872,11 +870,13 @@ export class PaintScreen extends BaseScreen {
     startLine(point: PointObject) {
         // Define
         const lineId = '' + Math.random().toString(16).substring(2)
+        const clientId = this.clientModel.clientId
+        const userId = this.clientModel.userId
         const color = this.clientModel.color
         const width = this.clientModel.width
         const alpha = this.clientModel.alpha
         // Create
-        this.lineModel = new LineModel(lineId, CLIENT_ID, color, width, alpha, [point])
+        this.lineModel = new LineModel(lineId, clientId, userId, color, width, alpha, [point])
         // Update
         this.canvasModel.lines[lineId] = this.lineModel
         this.canvasModel.draw()
@@ -900,11 +900,13 @@ export class PaintScreen extends BaseScreen {
     startStraightLine(point: PointObject) {
         // Define
         const straightLineId = '' + Math.random().toString(16).substring(2)
+        const clientId = this.clientModel.clientId
+        const userId = this.clientModel.userId
         const color = this.clientModel.color
         const width = this.clientModel.width
         const alpha = this.clientModel.alpha
         // Create
-        this.straightLineModel = new StraightLineModel(straightLineId, CLIENT_ID, color, width, alpha, point, point)
+        this.straightLineModel = new StraightLineModel(straightLineId, clientId, userId, color, width, alpha, point, point)
         // Update
         this.canvasModel.straightLines[straightLineId] = this.straightLineModel
         this.canvasModel.draw()
@@ -928,11 +930,13 @@ export class PaintScreen extends BaseScreen {
     startCircle(point: PointObject) {
         // Define
         const circleId = '' + Math.random().toString(16).substring(2)
+        const clientId = this.clientModel.clientId
+        const userId = this.clientModel.userId
         const color = this.clientModel.color
         const width = this.clientModel.width
         const alpha = this.clientModel.alpha
         // Create
-        this.circleModel = new CircleModel(circleId, CLIENT_ID, color, width, alpha, point, point)
+        this.circleModel = new CircleModel(circleId, clientId, userId, color, width, alpha, point, point)
         // Update
         this.canvasModel.circles[circleId] = this.circleModel
         this.canvasModel.draw()
@@ -956,11 +960,13 @@ export class PaintScreen extends BaseScreen {
     startSquare(point: PointObject) {
         // Define
         const squareId = '' + Math.random().toString(16).substring(2)
+        const clientId = this.clientModel.clientId
+        const userId = this.clientModel.userId
         const color = this.clientModel.color
         const width = this.clientModel.width
         const alpha = this.clientModel.alpha
         // Create
-        this.squareModel = new SquareModel(squareId, CLIENT_ID, color, width, alpha, point, point)
+        this.squareModel = new SquareModel(squareId, clientId, userId, color, width, alpha, point, point)
         // Update
         this.canvasModel.squares[squareId] = this.squareModel
         this.canvasModel.draw()
@@ -984,11 +990,13 @@ export class PaintScreen extends BaseScreen {
     startTriangle(point: PointObject) {
         // Define
         const triangleId = '' + Math.random().toString(16).substring(2)
+        const clientId = this.clientModel.clientId
+        const userId = this.clientModel.userId
         const color = this.clientModel.color
         const width = this.clientModel.width
         const alpha = this.clientModel.alpha
         // Create
-        this.triangleModel = new TriangleModel(triangleId, CLIENT_ID, color, width, alpha, point, point)
+        this.triangleModel = new TriangleModel(triangleId, clientId, userId, color, width, alpha, point, point)
         // Update
         this.canvasModel.triangles[triangleId] = this.triangleModel
         this.canvasModel.draw()

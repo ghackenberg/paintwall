@@ -28,9 +28,13 @@ export class CanvasModel implements CanvasObject {
 
     canvasNode: HTMLCanvasElement
     canvasId: string
+
+    userId: string
+
     timestamps: TimestampData
     counts: CountData
     coordinates: CoordinateData
+    
     reactions: ReactionData
     clients: ClientObjectMap
     lines: LineObjectMap
@@ -39,12 +43,16 @@ export class CanvasModel implements CanvasObject {
     squares: SquareObjectMap
     triangles: TriangleObjectMap
 
-    constructor(canvasNode: HTMLCanvasElement, canvasId: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap, straightLines?: StraightLineObjectMap, circles?: CircleObjectMap, squares?: SquareObjectMap, triangles?: TriangleObjectMap) {
+    constructor(canvasNode: HTMLCanvasElement, canvasId: string, userId?: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap, straightLines?: StraightLineObjectMap, circles?: CircleObjectMap, squares?: SquareObjectMap, triangles?: TriangleObjectMap) {
         this.canvasNode = canvasNode
         this.canvasId = canvasId
+
+        this.userId = userId
+
         this.timestamps = timestamps
         this.counts = counts
         this.coordinates = coordinates
+        
         this.reactions = reactions || {}
         this.clients = clients || {}
         this.lines = lines || {}
@@ -52,6 +60,7 @@ export class CanvasModel implements CanvasObject {
         this.circles = circles || {}
         this.squares = squares || {}
         this.triangles = triangles || {}
+
         this.updateCenter()
         this.updateZoom()
     }
@@ -195,14 +204,14 @@ export class CanvasModel implements CanvasObject {
             switch (message.type) {
                 case 'client-enter': {
                     const clientId = message.clientId
-                    const name = message.data.name
+                    const userId = message.data.userId
                     const tool = message.data.tool
                     const color = message.data.color
                     const width = message.data.width
                     const alpha = message.data.alpha
                     const position = message.data.position
 
-                    this.clients[clientId] = new ClientModel(clientId, name, tool, color, width, alpha, position)
+                    this.clients[clientId] = new ClientModel(clientId, userId, tool, color, width, alpha, position)
 
                     this.counts.views++
                     this.counts.clients++
@@ -294,11 +303,12 @@ export class CanvasModel implements CanvasObject {
                     const lineId = message.data.lineId
                     const point = message.data.point
                     
+                    const userId = this.clients[clientId].userId
                     const color = this.clients[clientId].color
                     const width = this.clients[clientId].width
                     const alpha = this.clients[clientId].alpha
 
-                    this.lines[lineId] = new LineModel(lineId, clientId, color, width, alpha, [point])
+                    this.lines[lineId] = new LineModel(lineId, clientId, userId, color, width, alpha, [point])
 
                     this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
                     this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
@@ -329,11 +339,12 @@ export class CanvasModel implements CanvasObject {
                     const straightLineId = message.data.straightLineId
                     const point = message.data.point
                     
+                    const userId = this.clients[clientId].userId
                     const color = this.clients[clientId].color
                     const width = this.clients[clientId].width
                     const alpha = this.clients[clientId].alpha
 
-                    this.straightLines[straightLineId] = new StraightLineModel(straightLineId, clientId, color, width, alpha, point, point)
+                    this.straightLines[straightLineId] = new StraightLineModel(straightLineId, clientId, userId, color, width, alpha, point, point)
 
                     this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
                     this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
@@ -364,11 +375,12 @@ export class CanvasModel implements CanvasObject {
                     const circleId = message.data.circleId
                     const point = message.data.point
                     
+                    const userId = this.clients[clientId].userId
                     const color = this.clients[clientId].color
                     const width = this.clients[clientId].width
                     const alpha = this.clients[clientId].alpha
 
-                    this.circles[circleId] = new CircleModel(circleId, clientId, color, width, alpha, point, point)
+                    this.circles[circleId] = new CircleModel(circleId, clientId, userId, color, width, alpha, point, point)
 
                     this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
                     this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
@@ -399,11 +411,12 @@ export class CanvasModel implements CanvasObject {
                     const squareId = message.data.squareId
                     const point = message.data.point
                     
+                    const userId = this.clients[clientId].userId
                     const color = this.clients[clientId].color
                     const width = this.clients[clientId].width
                     const alpha = this.clients[clientId].alpha
 
-                    this.squares[squareId] = new SquareModel(squareId, clientId, color, width, alpha, point, point)
+                    this.squares[squareId] = new SquareModel(squareId, clientId, userId, color, width, alpha, point, point)
 
                     this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
                     this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
@@ -434,11 +447,12 @@ export class CanvasModel implements CanvasObject {
                     const triangleId = message.data.triangleId
                     const point = message.data.point
                     
+                    const userId = this.clients[clientId].userId
                     const color = this.clients[clientId].color
                     const width = this.clients[clientId].width
                     const alpha = this.clients[clientId].alpha
 
-                    this.triangles[triangleId] = new TriangleModel(triangleId, clientId, color, width, alpha, point, point)
+                    this.triangles[triangleId] = new TriangleModel(triangleId, clientId, userId, color, width, alpha, point, point)
 
                     this.coordinates.x.min = Math.min(this.coordinates.x.min, point.x)
                     this.coordinates.x.max = Math.max(this.coordinates.x.max, point.x)
@@ -502,78 +516,83 @@ export class CanvasModel implements CanvasObject {
                 }
                 case 'init-client': {
                     const clientId = message.data.clientId
-                    const name = message.data.name
+                    const userId = message.data.userId
                     const tool = message.data.tool
                     const color = message.data.color
                     const width = message.data.width
                     const alpha = message.data.alpha
                     const position = message.data.position
 
-                    this.clients[clientId] = new ClientModel(clientId, name, tool, color, width, alpha, position)
+                    this.clients[clientId] = new ClientModel(clientId, userId, tool, color, width, alpha, position)
 
                     break
                 }
                 case 'init-line': {
                     const lineId = message.data.lineId
                     const clientId = message.data.clientId
+                    const userId = message.data.userId
                     const color = message.data.color
                     const width = message.data.width
                     const alpha = message.data.alpha
                     const points = message.data.points
 
-                    this.lines[lineId] = new LineModel(lineId, clientId, color, width, alpha, points)
+                    this.lines[lineId] = new LineModel(lineId, clientId, userId, color, width, alpha, points)
 
                     break
                 }
                 case 'init-straightLine': {
                     const straightLineId = message.data.straightLineId
                     const clientId = message.data.clientId
+                    const userId = message.data.userId
                     const color = message.data.color
                     const width = message.data.width
                     const alpha = message.data.alpha
                     const start = message.data.start
                     const end = message.data.end
 
-                    this.straightLines[straightLineId] = new StraightLineModel(straightLineId, clientId, color, width, alpha, start, end)
+                    this.straightLines[straightLineId] = new StraightLineModel(straightLineId, clientId, userId, color, width, alpha, start, end)
 
                     break
                 }
                 case 'init-circle': {
                     const circleId = message.data.circleId
                     const clientId = message.data.clientId
+                    const userId = message.data.userId
                     const color = message.data.color
                     const width = message.data.width
                     const alpha = message.data.alpha
                     const start = message.data.start
                     const end = message.data.end
 
-                    this.circles[circleId] = new CircleModel(circleId, clientId, color, width, alpha, start, end)
+                    this.circles[circleId] = new CircleModel(circleId, clientId, userId, color, width, alpha, start, end)
 
                     break
                 }
                 case 'init-square': {
                     const squareId = message.data.squareId
                     const clientId = message.data.clientId
+                    const userId = message.data.userId
                     const color = message.data.color
                     const width = message.data.width
                     const alpha = message.data.alpha
                     const start = message.data.start
                     const end = message.data.end
 
-                    this.squares[squareId] = new SquareModel(squareId, clientId, color, width, alpha, start, end)
+                    this.squares[squareId] = new SquareModel(squareId, userId, clientId, color, width, alpha, start, end)
 
                     break
                 }
                 case 'init-triangle': {
                     const triangleId = message.data.triangleId
                     const clientId = message.data.clientId
+                    const userId = message.data.userId
                     const color = message.data.color
                     const width = message.data.width
                     const alpha = message.data.alpha
                     const start = message.data.start
                     const end = message.data.end
 
-                    this.triangles[triangleId] = new TriangleModel(triangleId, clientId, color, width, alpha, start, end)
+                    this.triangles[triangleId] = new TriangleModel(triangleId, clientId, userId, color, width, alpha, start, end)
 
                     break
                 }

@@ -41,26 +41,33 @@ export const CANVAS_OBJECT_MAP: CanvasObjectMap = loadCanvasObjectMap()
 
 // Reset database
 for (const canvasObject of Object.values(CANVAS_OBJECT_MAP)) {
-    // Initial straightLines, circles squares and triangles for existing canvasObjects
-    if (!('straightLines' in canvasObject)) {
-        canvasObject.straightLines = {}
+    if (!('userId' in canvasObject)) {
+        canvasObject.userId = null
     }
-    if (!('circles' in canvasObject)) {
-        canvasObject.circles = {}
+    for (const line of Object.values(canvasObject.lines)) {
+        if (!('userId' in line)) {
+            line.userId = null
+        }
     }
-    if (!('squares' in canvasObject)) {
-        canvasObject.squares = {}
+    for (const circle of Object.values(canvasObject.circles)) {
+        if (!('userId' in circle)) {
+            circle.userId = null
+        }
     }
-    if (!('triangles' in canvasObject)) {
-        canvasObject.triangles = {}
+    for (const square of Object.values(canvasObject.squares)) {
+        if (!('userId' in square)) {
+            square.userId = null
+        }
     }
-    if (!('shapes' in canvasObject.counts)) {
-        const lines = Object.values(canvasObject.lines).length
-        const straightLines = Object.values(canvasObject.straightLines).length
-        const circles = Object.values(canvasObject.circles).length
-        const squares = Object.values(canvasObject.squares).length
-        const triangles = Object.values(canvasObject.triangles).length
-        canvasObject.counts.shapes = lines + straightLines + circles + squares + triangles
+    for (const triangle of Object.values(canvasObject.triangles)) {
+        if (!('userId' in triangle)) {
+            triangle.userId = null
+        }
+    }
+    for (const straightLine of Object.values(canvasObject.straightLines)) {
+        if (!('userId' in straightLine)) {
+            straightLine.userId = null
+        }
     }
     // Reset counts
     canvasObject.counts.clients = 0

@@ -1,5 +1,16 @@
 export const BASE = '/paintwall'
 
+export interface UserObject {
+    userId: string
+    email: string
+    name: string
+    slogan: string
+}
+
+export interface UserObjectMap {
+    [id: string]: UserObject
+}
+
 export interface PointObject {
     x: number
     y: number
@@ -7,6 +18,7 @@ export interface PointObject {
 
 export interface ShapeObject {
     clientId: string
+    userId: string
     color: string
     width: number
     alpha: number
@@ -62,7 +74,7 @@ export interface TriangleObjectMap {
 }
 
 export interface ClientObject extends ShapeObject {
-    name: string
+    userId: string
     tool: string
     position: PointObject
 }
@@ -100,6 +112,7 @@ export interface ReactionData {
 
 export interface CanvasObject {
     canvasId: string
+    userId: string
     timestamps: TimestampData
     counts: CountData
     coordinates: CoordinateData
