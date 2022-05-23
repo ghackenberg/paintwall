@@ -76,5 +76,13 @@
             "platform": "narrow",
             "label": "Login screen (phone)"
         }
-    ]
+    ],
+    "related_applications": [
+        {
+            "platform": "play",
+            "url": "https://play.google.com/store/apps/details?id=at.fh_wels.iot.paintwall.twa",
+            "id": "at.fh_wels.iot.paintwall.twa"
+        }
+    ],
+    "prefer_related_applications": true
 }

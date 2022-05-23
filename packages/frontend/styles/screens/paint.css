@@ -5,10 +5,7 @@ body > #paint {
 /* Header */
 
 body > #paint > header {
-    z-index: 0;
-
-    padding-left: 5em;
-    padding-right: 5em;
+    display: none;
 }
 
 /* Main */
@@ -24,7 +21,7 @@ body > #paint > main {
     z-index: 1;
 }
 
-/* CANVAS */
+/* Main canvas */
 
 body > #paint > main > #canvas {
     position: absolute;
@@ -35,7 +32,7 @@ body > #paint > main > #canvas {
     bottom: 0;
 }
 
-/* COUNT */
+/* Main count */
 
 body > #paint > main > #count {
     position: absolute;
@@ -90,9 +87,11 @@ body > #paint > main > #count > span.count.client > img {
     }
 }
 
-/* SHARE */
+/* Main share */
 
 body > #paint > main > #share-button {
+    display: block;
+  
     position: absolute;
     
     top: 1em;
@@ -156,7 +155,7 @@ body > #paint > main > #share-popup > canvas {
     margin-bottom: 1em;
 }
 
-/* TOOL */
+/* Main tool */
 
 body > #paint > main > #tool-button {    
     position: absolute;
@@ -174,7 +173,7 @@ body > #paint > main > #tool-popup {
     left: 1em;
 }
 
-/* COLOR */
+/* Main color */
 
 body > #paint > main > #color-button {
     position: absolute;
@@ -198,7 +197,7 @@ body > #paint > main > #color-popup > div.select > span {
     background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
 }
 
-/* WIDTH */
+/* Main width */
 
 body > #paint > main > #width-button {
     position: absolute;
@@ -228,7 +227,7 @@ body > #paint > main > #width-popup > div.select > span {
     color : white;
 }
 
-/* ALPHA */
+/* Main alpha */
 
 body > #paint > main > #alpha-button {
     position: absolute;
@@ -256,7 +255,7 @@ body > #paint > main > #alpha-popup > div.select > span {
     color: white;
 }
 
-/* REACTION */
+/* Main reaction */
 
 body > #paint > main > #reaction {
     position: absolute;
@@ -318,5 +317,5 @@ body > #paint > main > #reaction > span > span:last-child {
 /* Footer */
 
 body > #paint > footer {
-    z-index: 0;
+    display: none;
 }

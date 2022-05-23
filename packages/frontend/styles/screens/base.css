@@ -1,16 +1,18 @@
 body > div.screen {
     display: none;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    
+    position: relative;
+
+    min-width: 100%;
+    min-height: 100vh;
 }
 
 /* Header */
 
 body > div.screen > header {
     position: fixed;
+
+    z-index: 1;
 
     top: 0;
     left: 0;
@@ -30,6 +32,10 @@ body > div.screen > header {
     font-weight: bold;
 }
 
+body > div.screen.document > header {
+    display: none;
+}
+
 body > div.screen > header > #logo {
     display: inline-block;
 
@@ -47,6 +53,8 @@ body > div.screen.document > main {
     min-height: 100%;
 
     width: 100%;
+
+    z-index: 0;
 }
 
 body > div.screen.document > main > h1 {
@@ -99,6 +107,8 @@ body > div.screen.document > main > div:last-child {
 body > div.screen > footer {
     position: fixed;
 
+    z-index: 1;
+
     left: 0;
     right: 0;
     bottom: 0;
@@ -113,4 +123,8 @@ body > div.screen > footer {
     overflow: hidden;
 
     text-align: center;
+}
+
+body > div.screen.document > footer {
+    display: none;
 }

@@ -119,4 +119,11 @@ export class DataScreen extends BaseScreen {
             )
         ])
     }
+
+    show() {
+        this.scrollTop = 0
+        this.scrollLeft = 0
+        
+        super.show()
+    }
 }
