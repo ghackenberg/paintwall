@@ -1,3 +1,10 @@
+/* Screen */
+
+body > #browse {
+    background-color: lightgray;
+    background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0));
+}
+
 /* Header */
 
 body > #browse > header {
@@ -61,9 +68,6 @@ body > #browse > header > #sort-canvas {
 /* Main */
 
 body > #browse > main {
-    background-color: lightgray;
-    background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0));
-
     padding-top: 5em;
     padding-bottom: 4em;
 
