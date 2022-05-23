@@ -10,8 +10,8 @@ import { BaseScreen } from './base'
 import { SquareModel } from '../models/square'
 import { CircleModel } from '../models/circle'
 
-interface NodeMap {
-    [id: string]: HTMLSpanElement
+interface NodeMap<T extends HTMLElement> {
+    [id: string]: T
 }
 
 export class PaintScreen extends BaseScreen {
@@ -19,7 +19,7 @@ export class PaintScreen extends BaseScreen {
 
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
     static WIDTHS = [5.0, 10.0, 25.0, 50.0]
-    static ALPHAS = [1.0,0.75,0.5,0.25]
+    static ALPHAS = [1.0, 0.75, 0.5, 0.25]
     static TOOLS = [ 'line', 'circle', 'square']
     static REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']
 
@@ -45,43 +45,47 @@ export class PaintScreen extends BaseScreen {
     clientCountNode: HTMLSpanElement
     reactionCountNode: HTMLSpanElement
 
-    toolNode: HTMLDivElement
-    toolNodes: NodeMap = {}
+    colorButtonNode: HTMLDivElement
+    colorPopupNode: HTMLDivElement
+    colorPopupImageNode: HTMLImageElement
+    colorPopupLabelNode: HTMLDivElement
+    colorPopupSelectNode: HTMLDivElement
+    colorPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
 
-    colorNode: HTMLDivElement
-    colorNodes: NodeMap = {}
-
-    widthNode: HTMLDivElement
-    widthNodes: NodeMap = {}
-
-    alphaNode: HTMLDivElement
-    alphaNodes: NodeMap = {}
-
-    shareNode: HTMLDivElement
+    shareButtonNode: HTMLDivElement
+    sharePopupNode: HTMLDivElement
     sharePopupImageNode: HTMLImageElement
     sharePopupInputNode: HTMLInputElement
     sharePopupDivNode: HTMLDivElement
     sharePopupCanvasNode: HTMLCanvasElement
-    sharePopupNode: HTMLDivElement
 
-    alphaPNode: HTMLDivElement
-    alphaPopupImageNode: HTMLImageElement
-    alphaPopupDivNode: HTMLDivElement
+    alphaButtonNode: HTMLDivElement
+    alphaButtonSpanNode: HTMLSpanElement
     alphaPopupNode: HTMLDivElement
+    alphaPopupImageNode: HTMLImageElement
+    alphaPopupLabelNode: HTMLDivElement
+    alphaPopupSelectNode: HTMLDivElement
+    alphaPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
 
-    widthPNode: HTMLDivElement
-    widthPopupImageNode: HTMLImageElement
-    widthPopupDivNode: HTMLDivElement
+    widthButtonNode: HTMLDivElement
+    widthButtonSpanNode: HTMLSpanElement
     widthPopupNode: HTMLDivElement
+    widthPopupImageNode: HTMLImageElement
+    widthPopupLabelNode: HTMLDivElement
+    widthPopupSelectNode: HTMLDivElement
+    widthPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
 
-    toolPNode: HTMLDivElement
-    toolPopupImageNode: HTMLImageElement
-    toolPopupDivNode: HTMLDivElement
+    toolButtonNode: HTMLDivElement
+    toolButtonImageNode: HTMLImageElement
     toolPopupNode: HTMLDivElement
+    toolPopupImageNode: HTMLImageElement
+    toolPopupLabelNode: HTMLDivElement
+    toolPopupSelectNode: HTMLDivElement
+    toolPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
 
-    reactionNode: HTMLDivElement
-    reactionNodes: NodeMap = {}
-    reactionCountNodes: NodeMap = {}
+    reactionSelectNode: HTMLDivElement
+    reactionSelectChildNodes: NodeMap<HTMLSpanElement> = {}
+    reactionSelectCountNodes: NodeMap<HTMLSpanElement> = {}
 
     // Coordinates
 
@@ -130,190 +134,258 @@ export class PaintScreen extends BaseScreen {
             onclick: () => history.back()
         }, img({ src:  BASE + '/images/back.png' }))
 
-
-        // Nodes (view count)
-        this.viewCountNode = span()
-
-        // Nodes (shape count)
-        this.shapeCountNode = span()
-
-        // Nodes (client count)
-        this.clientCountNode = span()
-
-        // Nodes (reaction count)
-        this.reactionCountNode = span()
-        
         // Nodes (count)
-        this.countNode = div({ id: 'count' }, 
-            span({ className: 'count view' }, this.viewCountNode),
-            span({ className: 'count shape' }, this.shapeCountNode),
-            span({ className: 'count client' }, this.clientCountNode, img({ src: BASE + '/images/live.png' })),
-            span({ className: 'count reaction' }, this.reactionCountNode))
+        {
+            // Children
+            this.viewCountNode = span()
+            this.shapeCountNode = span()
+            this.clientCountNode = span()
+            this.reactionCountNode = span()
+            
+            // Container
+            this.countNode = div({ id: 'count' }, [
+                span({ className: 'count view' }, this.viewCountNode),
+                span({ className: 'count shape' }, this.shapeCountNode),
+                span({ className: 'count client' }, this.clientCountNode, img({ src: BASE + '/images/live.png' })),
+                span({ className: 'count reaction' }, this.reactionCountNode)
+            ])
+        }
 
         // Nodes (share)
-        this.shareNode = div({ id: 'share', className: 'icon active',
-            onclick: () => {
-                this.sharePopupNode.style.display = 'block'
-                navigator.clipboard.writeText(location.href)
-            }
-        }, img({ src: BASE + '/images/share.png' }))
-
-        // Nodes (share popup image)
-        this.sharePopupImageNode = img({ src: BASE + '/images/close.png', 
-            onclick: () => {
-                this.sharePopupNode.style.display = 'none' 
-            }
-        })
-
-        // Nodes (share popup input)
-        this.sharePopupInputNode = input()
-
-        // Nodes (share popup div)
-        this.sharePopupDivNode = div('Copied to clipboard 📋')
-
-        // Nodes (share popup canvas)
-        this.sharePopupCanvasNode = canvas()
-
-        // Nodes (share popup)
-        this.sharePopupNode = div({ id: 'share-popup' }, this.sharePopupInputNode, this.sharePopupImageNode, this.sharePopupDivNode, this.sharePopupCanvasNode)
-
-        // Nodes (colors)
-        for (const otherColor of PaintScreen.COLORS) {
-            this.colorNodes[otherColor] = span({ className: otherColor == color ? 'color active' : 'color',
+        {
+            // Button
+            this.shareButtonNode = div({ id: 'share-button', className: 'icon active',
                 onclick: () => {
-                    this.changeColor(otherColor)
+                    this.sharePopupNode.style.display = 'block'
+                    navigator.clipboard.writeText(location.href)
+                }
+            }, img({ src: BASE + '/images/share.png' }))
+
+            // Popup children
+            this.sharePopupImageNode = img({ src: BASE + '/images/close.png', 
+                onclick: () => {
+                    this.sharePopupNode.style.display = 'none' 
                 }
             })
-            this.colorNodes[otherColor].style.backgroundColor = otherColor
+            this.sharePopupInputNode = input()
+            this.sharePopupDivNode = div('Copied to clipboard 📋')
+            this.sharePopupCanvasNode = canvas()
+
+            // Popup container
+            this.sharePopupNode = div({ id: 'share-popup', className: 'popup' }, [
+                this.sharePopupInputNode,
+                this.sharePopupImageNode,
+                this.sharePopupDivNode,
+                this.sharePopupCanvasNode
+            ])
         }
 
         // Nodes (color)
-        this.colorNode = div({ id: 'color' }, Object.values(this.colorNodes))
-        
-        // Nodes (widths)
-        for (const otherWidth of PaintScreen.WIDTHS) {
-            this.widthNodes[otherWidth] = span({ className: otherWidth == width ? 'width active': 'width',
+        {
+            // Button
+            this.colorButtonNode = div({ id: 'color-button', className: 'icon active',
                 onclick: () => {
-                    this.handleChangeWidth(otherWidth)
+                    this.colorPopupNode.style.display = 'block'
                 }
-            }, otherWidth)
+            })
+            this.colorButtonNode.style.backgroundColor = color
+
+            // Popup select children
+            for (const otherColor of PaintScreen.COLORS) {
+                this.colorPopupSelectChildNodes[otherColor] = span({ className: otherColor == color ? 'icon active' : 'icon',
+                    onclick: () => {
+                        this.changeColor(otherColor)
+                        this.colorPopupNode.style.display = 'none'
+                    }
+                })
+                this.colorPopupSelectChildNodes[otherColor].style.backgroundColor = otherColor
+            }
+
+            // Popup children
+            this.colorPopupImageNode = img({ src: BASE + '/images/close.png', 
+                onclick: () => {
+                    this.colorPopupNode.style.display = 'none' 
+                }
+            })
+            this.colorPopupLabelNode = div({ className: 'label' }, 'Select color!')
+            this.colorPopupSelectNode = div({ className: 'select' }, Object.values(this.colorPopupSelectChildNodes))
+
+            // Popup
+            this.colorPopupNode = div({ id: 'color-popup', className: 'popup' }, [
+                this.colorPopupImageNode,
+                this.colorPopupLabelNode,
+                this.colorPopupSelectNode
+            ])
         }
 
         // Nodes (width)
-        this.widthNode = div({ id: 'width' }, Object.values(this.widthNodes))
+        {
+            // Button children
+            this.widthButtonSpanNode = span(width)
 
-        // Nodes (widthPopup)
-        this.widthPNode = div({ id: 'widthP', className: 'icon active',
-        onclick: () => {
-            this.widthPopupNode.style.display = 'block'
-        }
-        }, img({ src: BASE + '/images/width.png' }))
-
-        // Nodes (width popup image)
-        this.widthPopupImageNode = img({ src: BASE + '/images/close.png', 
-            onclick: () => {
-                this.widthPopupNode.style.display = 'none' 
-            }
-        })
-
-        // Nodes (width popup div)
-        this.widthPopupDivNode = div('Select width!')
-
-        // Nodes (width popup)
-        this.widthPopupNode = div({ id: 'width-popup' }, this.widthPopupImageNode, this.widthPopupDivNode, this.widthNode)
-
-        // Nodes (alphas)
-        for (const otherAlpha of PaintScreen.ALPHAS) {
-            let num = 100-otherAlpha*100;
-            this.alphaNodes[otherAlpha] = span({ className: otherAlpha == alpha ? 'alpha active': 'alpha',
+            // Button container
+            this.widthButtonNode = div({ id: 'width-button', className: 'icon active',
                 onclick: () => {
-                    this.handleChangeAlpha(otherAlpha)
+                    this.widthPopupNode.style.display = 'block'
                 }
-            }, num.toString()+'%')
+            }, this.widthButtonSpanNode)
+
+            // Popup select children
+            for (const otherWidth of PaintScreen.WIDTHS) {
+                this.widthPopupSelectChildNodes[otherWidth] = span({ className: otherWidth == width ? 'icon active': 'icon',
+                    onclick: () => {
+                        this.handleChangeWidth(otherWidth)
+                        this.widthPopupNode.style.display = 'none'
+                    }
+                }, span(otherWidth))
+            }
+
+            // Popup children
+            this.widthPopupImageNode = img({ src: BASE + '/images/close.png', 
+                onclick: () => {
+                    this.widthPopupNode.style.display = 'none' 
+                }
+            })
+            this.widthPopupLabelNode = div({ className: 'label' }, 'Select width!')
+            this.widthPopupSelectNode = div({ className: 'select' }, Object.values(this.widthPopupSelectChildNodes))
+
+            // Popup container
+            this.widthPopupNode = div({ id: 'width-popup', className: 'popup' }, [
+                this.widthPopupImageNode,
+                this.widthPopupLabelNode,
+                this.widthPopupSelectNode
+            ])
         }
 
         // Nodes (alpha)
-        this.alphaNode = div({ id: 'alpha' }, Object.values(this.alphaNodes))
+        {
+            const color = Math.round(255 - 255 * alpha)
 
-        // Nodes (alphaPopup)
-        this.alphaPNode = div({ id: 'alphaP', className: 'icon active',
-            onclick: () => {
-                this.alphaPopupNode.style.display = 'block'
-            }
-        }, img({ src: BASE + '/images/alpha.png' }))
+            // Button children
+            this.alphaButtonSpanNode = span((100 - alpha * 100) + '%')
 
-        // Nodes (alpha popup image)
-        this.alphaPopupImageNode = img({ src: BASE + '/images/close.png', 
-            onclick: () => {
-                this.alphaPopupNode.style.display = 'none' 
-            }
-        })
-
-        // Nodes (width popup div)
-        this.alphaPopupDivNode = div('Select transparency!')
-
-        // Nodes (alpha popup)
-        this.alphaPopupNode = div({ id: 'alpha-popup' }, this.alphaPopupImageNode, this.alphaPopupDivNode, this.alphaNode)
-
-        // Nodes (tools)
-        for (const othertool of PaintScreen.TOOLS) {
-            this.toolNodes[othertool] = span({ className: othertool == tool ? 'tool icon active' : 'tool icon',
+            // Button container
+            this.alphaButtonNode = div({ id: 'alpha-button', className: 'icon active',
                 onclick: () => {
-                    this.changeTool(othertool)
+                    this.alphaPopupNode.style.display = 'block'
                 }
-            }, img({ src: BASE + '/images/' + othertool + '.png' }))
-        }
+            }, this.alphaButtonSpanNode)
+            this.alphaButtonNode.style.backgroundColor = 'rgb(' + color + ',' + color + ',' + color + ')'
 
-        // Nodes (tool)
-        this.toolNode = div({id: 'tool'}, Object.values(this.toolNodes))
+            // Popup select children
+            for (const otherAlpha of PaintScreen.ALPHAS) {
+                const color = Math.round(255 - 255 * otherAlpha)
 
-        // Nodes (toolPopup)
-        this.toolPNode = div({ id: 'toolP', className: 'icon active',
-        onclick: () => {
-            this.toolPopupNode.style.display = 'block'
-        }
-        }, img({ src: BASE + '/images/tool.png' }))
-
-        // Nodes (tool popup image)
-        this.toolPopupImageNode = img({ src: BASE + '/images/close.png', 
-            onclick: () => {
-                this.toolPopupNode.style.display = 'none' 
-            }
-        })
-
-        // Nodes (tool popup div)
-        this.toolPopupDivNode = div('Select tool!')
-
-        // Nodes (toolpopup)
-        this.toolPopupNode = div({ id: 'tool-popup' }, this.toolPopupImageNode, this.toolPopupDivNode, this.toolNode)
-
-        // Nodes (reactions)
-        for (const reaction of PaintScreen.REACTIONS){
-            this.reactionCountNodes[reaction] = span()
-            this.reactionCountNodes[reaction].style.display = 'none'
-
-            this.reactionNodes[reaction] = span({
-                onclick: () => {
-                    // Update reaction count
-                    if (reaction in this.canvasModel.reactions) {
-                        this.canvasModel.reactions[reaction]++
-                    } else {
-                        this.canvasModel.reactions[reaction] = 1
+                const percentage = 100 - otherAlpha * 100;
+                this.alphaPopupSelectChildNodes[otherAlpha] = span({ className: otherAlpha == alpha ? 'icon active': 'icon',
+                    onclick: () => {
+                        this.handleChangeAlpha(otherAlpha)
+                        this.alphaPopupNode.style.display = 'none'
                     }
-                    // Update reaction count node
-                    this.reactionCountNodes[reaction].textContent = `${this.canvasModel.reactions[reaction]}`
-                    this.reactionCountNodes[reaction].style.display = 'block'
-                    // Broadcast reaction
-                    this.canvasModel.broadcast('client-react', reaction)
+                }, span(percentage + '%'))
+                this.alphaPopupSelectChildNodes[otherAlpha].style.backgroundColor = 'rgb(' + color + ',' + color + ',' + color + ')'
+            }
+
+            // Popup children
+            this.alphaPopupImageNode = img({ src: BASE + '/images/close.png', 
+                onclick: () => {
+                    this.alphaPopupNode.style.display = 'none' 
                 }
-            }, span(reaction), this.reactionCountNodes[reaction])
+            })
+            this.alphaPopupLabelNode = div({ className: 'label' }, 'Select transparency!')
+            this.alphaPopupSelectNode = div({ className: 'select' }, Object.values(this.alphaPopupSelectChildNodes))
+
+            // Popup container
+            this.alphaPopupNode = div({ id: 'alpha-popup', className: 'popup' }, [
+                this.alphaPopupImageNode,
+                this.alphaPopupLabelNode,
+                this.alphaPopupSelectNode
+            ])
+        }
+        
+        // Nodes (tool)
+        {
+            // Button children
+            this.toolButtonImageNode = img({ src: BASE + '/images/' + tool + '.png' })
+
+            // Button container
+            this.toolButtonNode = div({ id: 'tool-button', className: 'icon active',
+                onclick: () => {
+                    this.toolPopupNode.style.display = 'block'
+                }
+            }, this.toolButtonImageNode)
+
+            // Popup select children
+            for (const otherTool of PaintScreen.TOOLS) {
+                this.toolPopupSelectChildNodes[otherTool] = span({ className: otherTool == tool ? 'icon active' : 'icon',
+                    onclick: () => {
+                        this.changeTool(otherTool)
+                        this.toolPopupNode.style.display = 'none'
+                    }
+                }, img({ src: BASE + '/images/' + otherTool + '.png' }))
+            }
+
+            // Popup children
+            this.toolPopupImageNode = img({ src: BASE + '/images/close.png', 
+                onclick: () => {
+                    this.toolPopupNode.style.display = 'none' 
+                }
+            })
+            this.toolPopupLabelNode = div({ className: 'label' }, 'Select tool!')
+            this.toolPopupSelectNode = div({ className: 'select' }, Object.values(this.toolPopupSelectChildNodes))
+
+            // Popup container
+            this.toolPopupNode = div({ id: 'tool-popup', className: 'popup' }, [
+                this.toolPopupImageNode,
+                this.toolPopupLabelNode,
+                this.toolPopupSelectNode
+            ])
         }
 
         // Nodes (reaction)
-        this.reactionNode = div({id: 'reaction' }, Object.values(this.reactionNodes))
+        {
+            // Children
+            for (const reaction of PaintScreen.REACTIONS){
+                this.reactionSelectCountNodes[reaction] = span()
+                this.reactionSelectCountNodes[reaction].style.display = 'none'
+
+                this.reactionSelectChildNodes[reaction] = span({
+                    onclick: () => {
+                        // Update reaction count
+                        if (reaction in this.canvasModel.reactions) {
+                            this.canvasModel.reactions[reaction]++
+                        } else {
+                            this.canvasModel.reactions[reaction] = 1
+                        }
+                        // Update reaction count node
+                        this.reactionSelectCountNodes[reaction].textContent = `${this.canvasModel.reactions[reaction]}`
+                        this.reactionSelectCountNodes[reaction].style.display = 'block'
+                        // Broadcast reaction
+                        this.canvasModel.broadcast('client-react', reaction)
+                    }
+                }, [
+                    span(reaction),
+                    this.reactionSelectCountNodes[reaction]
+                ])
+            }
+
+            // Container
+            this.reactionSelectNode = div({id: 'reaction' }, Object.values(this.reactionSelectChildNodes))
+        }
 
         // Nodes (main)
-        append(this.mainNode, [ this.loadNode, this.canvasNode, this.backNode, this.countNode, this.colorNode, this.shareNode, this.sharePopupNode, this.reactionNode, this.alphaPNode, this.alphaPopupNode, this.widthPNode, this.widthPopupNode, this.toolPNode,this.toolPopupNode])
+        append(this.mainNode, [
+            this.loadNode,
+            this.canvasNode,
+            this.backNode,
+            this.countNode,
+            this.reactionSelectNode,
+            this.colorButtonNode, this.colorPopupNode,
+            this.alphaButtonNode, this.alphaPopupNode,
+            this.widthButtonNode, this.widthPopupNode,
+            this.toolButtonNode, this.toolPopupNode,
+            this.shareButtonNode, this.sharePopupNode
+        ])
     }
 
     // Screen
@@ -348,11 +420,11 @@ export class PaintScreen extends BaseScreen {
         this.canvasModel.on('init-reactions', (data) => {
             for (const reaction of PaintScreen.REACTIONS){
                 if (reaction in this.canvasModel.reactions) {
-                    this.reactionCountNodes[reaction].textContent = `${data[reaction]}`
-                    this.reactionCountNodes[reaction].style.display = 'block'
+                    this.reactionSelectCountNodes[reaction].textContent = `${data[reaction]}`
+                    this.reactionSelectCountNodes[reaction].style.display = 'block'
                 } else {
-                    this.reactionCountNodes[reaction].textContent = '0'
-                    this.reactionCountNodes[reaction].style.display = 'none'
+                    this.reactionSelectCountNodes[reaction].textContent = '0'
+                    this.reactionSelectCountNodes[reaction].style.display = 'none'
                 }
             }
         })
@@ -369,9 +441,9 @@ export class PaintScreen extends BaseScreen {
             this.clientCountNode.textContent = `${this.canvasModel.counts.clients}`
         })
         this.canvasModel.on('client-react', (clientId, data) => {
-            if (data in this.reactionCountNodes) {
-                this.reactionCountNodes[data].textContent = `${this.canvasModel.reactions[data]}`
-                this.reactionCountNodes[data].style.display = 'block'
+            if (data in this.reactionSelectCountNodes) {
+                this.reactionSelectCountNodes[data].textContent = `${this.canvasModel.reactions[data]}`
+                this.reactionSelectCountNodes[data].style.display = 'block'
             }
         })
         this.canvasModel.connect(this.clientModel)
@@ -686,12 +758,13 @@ export class PaintScreen extends BaseScreen {
     // Handlers (change)
 
     changeColor(value: string) {
+        this.colorButtonNode.style.backgroundColor = value
         // Deactivate
-        this.colorNodes[this.clientModel.color].classList.remove('active')
+        this.colorPopupSelectChildNodes[this.clientModel.color].classList.remove('active')
         // Update
         this.clientModel.color = value
         // Activate
-        this.colorNodes[this.clientModel.color].classList.add('active')
+        this.colorPopupSelectChildNodes[this.clientModel.color].classList.add('active')
         // Remember
         localStorage.setItem('color', this.clientModel.color)
         // Broadcast
@@ -700,12 +773,13 @@ export class PaintScreen extends BaseScreen {
 
 
     handleChangeWidth(value: number) {
+        this.widthButtonSpanNode.textContent = '' + value
         // Deactivate
-        this.widthNodes[this.clientModel.width].classList.remove('active')
+        this.widthPopupSelectChildNodes[this.clientModel.width].classList.remove('active')
         // Update
         this.clientModel.width = value
         // Activate
-        this.widthNodes[this.clientModel.width].classList.add('active')
+        this.widthPopupSelectChildNodes[this.clientModel.width].classList.add('active')
         // Remember
         localStorage.setItem('width', '' + this.clientModel.width)
         // Broadcast
@@ -713,12 +787,15 @@ export class PaintScreen extends BaseScreen {
     }
 
     handleChangeAlpha(value: number) {
+        const color = Math.round(255 - value * 255)
+        this.alphaButtonSpanNode.textContent = (100 - value * 100) + '%'
+        this.alphaButtonNode.style.backgroundColor = 'rgb(' + color + ',' + color + ',' + color + ')'
         // Deactivate
-        this.alphaNodes[this.clientModel.alpha].classList.remove('active')
+        this.alphaPopupSelectChildNodes[this.clientModel.alpha].classList.remove('active')
         // Update
         this.clientModel.alpha = value
         // Activate
-        this.alphaNodes[this.clientModel.alpha].classList.add('active')
+        this.alphaPopupSelectChildNodes[this.clientModel.alpha].classList.add('active')
         // Remember
         localStorage.setItem('alpha', '' + this.clientModel.alpha)
         // Broadcast
@@ -726,12 +803,13 @@ export class PaintScreen extends BaseScreen {
     }
     
     changeTool(value: string) {
+        this.toolButtonImageNode.src = BASE + '/images/' + value + '.png'
         // Deactivate
-        this.toolNodes[this.clientModel.tool].classList.remove('active')
+        this.toolPopupSelectChildNodes[this.clientModel.tool].classList.remove('active')
         // Update
         this.clientModel.tool = value
         // Activate
-        this.toolNodes[this.clientModel.tool].classList.add('active')
+        this.toolPopupSelectChildNodes[this.clientModel.tool].classList.add('active')
         // Remember
         localStorage.setItem('tool', this.clientModel.tool)
         // Broadcast

@@ -91,10 +91,13 @@ img.load {
 *.icon {
     display: block;
 
-    width: 1em;
+    width: 3em;
     height: 1em;
 
-    padding: 1em;
+    padding-top: 1em;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 1em;
 
     background-color: white;
 
@@ -104,19 +107,82 @@ img.load {
 
     cursor: pointer;
 }
+*.icon > * {
+
+    opacity: 0.25;
+}
+*.icon:hover > * {
+    opacity: 0.5;
+}
+*.icon.active > * {
+    opacity: 1;
+}
 *.icon > img {
     display: block;
+
+    margin-left: 1em;
+    margin-right: 1em;
+
+    width: 1em;
+    height: 1em;
+}
+*.icon > span {
+    display: block;
+    
+    width: 3em;
+    height: 1em;
+
+    text-align: center;
+}
+
+div.popup {
+    position: absolute;
+
+    max-width: calc(100% - 2em);
+
+    border-radius: 1.5em;
+
+    background-color: white;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+    
+    display: none;
+}
+div.popup > img {
+    position: absolute;
+
+    top: 0;
+    right: 0;
 
     width: 1em;
     height: 1em;
 
-    opacity: 0.25;
+    padding: 1em;
+
+    border-radius: 1.5em;
+
+    cursor: pointer;
 }
-*.icon:hover > img {
-    opacity: 0.5;
+div.popup > div.label {
+    line-height: 3em;
+
+    padding-left: 1em;
+    padding-right: 3em;
 }
-*.icon.active > img {
-    opacity: 1;
+div.popup > div.select {
+    padding-left: 1em;
+}
+div.popup > div.select > * {
+    display: inline-block;
+
+    margin-right: 1em;
+    margin-bottom: 1em;
+
+    border-radius: 1.5em;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
+
+    cursor: pointer;
 }
 
 *.button {
