@@ -90,8 +90,6 @@ body > #paint > main > #count > span.count.client > img {
 /* Main share */
 
 body > #paint > main > #share-button {
-    display: block;
-  
     position: absolute;
     
     top: 1em;
