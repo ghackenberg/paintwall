@@ -2,33 +2,33 @@ import * as WebSocket from 'ws'
 import { readFileSync, writeFileSync } from 'fs'
 import { CanvasObject, UserObjectMap } from 'paintwall-common'
 
-const userObjectMapFile = 'user.json'
-const canvasObjectMapFile = 'canvas.json'
+const USER_OBJECT_MAP_FILE = 'user.json'
+const CANVAS_OBJECT_MAP_FILE = 'canvas.json'
 
 function loadUserObjectMap(): UserObjectMap {
     try {
-        console.log('Loading userObjectMap')
-        return JSON.parse(readFileSync(userObjectMapFile, 'utf-8'))
+        console.log('Loading USER_OBJECT_MAP')
+        return JSON.parse(readFileSync(USER_OBJECT_MAP_FILE, 'utf-8'))
     } catch (error) {
-        console.log('Initializing userObjectMap')
+        console.log('Initializing USER_OBJECT_MAP')
         return {}
     }
 }
 
 function loadCanvasObjectMap(): CanvasObjectMap {
     try {
-        console.log('Loading canvasObjectMap')
-        return JSON.parse(readFileSync(canvasObjectMapFile, 'utf-8'))
+        console.log('Loading CANVAS_OBJECT_MAP')
+        return JSON.parse(readFileSync(CANVAS_OBJECT_MAP_FILE, 'utf-8'))
     } catch (error) {
-        console.log('Initializing canvasObjectMap')
+        console.log('Initializing CANVAS_OBJECT_MAP')
         return {}
     }
 }
 
 function saveUserObjectMap() {
     try {
-        console.log('Saving userObjectMap')
-        writeFileSync(userObjectMapFile, JSON.stringify(USER_OBJECT_MAP))
+        console.log('Saving USER_OBJECT_MAP')
+        writeFileSync(USER_OBJECT_MAP_FILE, JSON.stringify(USER_OBJECT_MAP))
     } catch (error) {
         console.error(error)
     }
@@ -36,8 +36,8 @@ function saveUserObjectMap() {
 
 function saveCanvasObjectMap() {
     try {
-        console.log('Saving canvasObjectMap')
-        writeFileSync(canvasObjectMapFile, JSON.stringify(CANVAS_OBJECT_MAP))
+        console.log('Saving CANVAS_OBJECT_MAP')
+        writeFileSync(CANVAS_OBJECT_MAP_FILE, JSON.stringify(CANVAS_OBJECT_MAP))
     } catch (error) {
         console.error(error)
     }
@@ -112,3 +112,6 @@ setTimeout(() => {
 setTimeout(() => {
     setInterval(saveCanvasObjectMap, 30000)
 }, 10000)
+setTimeout(() => {
+    setInterval(() => console.log('Saving data done'), 30000)
+}, 15000)
