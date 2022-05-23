@@ -3,7 +3,7 @@
 body > #browse > header {
     background-color: white;
 
-    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.1);
+    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
 }
 
 body > #browse > header > #logo {
@@ -61,6 +61,9 @@ body > #browse > header > #sort-canvas {
 /* Main */
 
 body > #browse > main {
+    background-color: lightgray;
+    background-image: linear-gradient(rgba(255,255,255,0.5), rgba(255,255,255,0));
+
     padding-top: 5em;
     padding-bottom: 4em;
 
@@ -123,6 +126,8 @@ body > #browse > main > div > div {
     margin: 1em;
 
     border-radius: 0.5em;
+
+    background-color: white;
 
     box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
 
@@ -273,7 +278,7 @@ body > #browse > main > div > div > div.info > div.count.reaction::after {
 body > #browse > footer {
     background-color: white;
 
-    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.1);
+    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
 }
 
 body > #browse > footer > a {

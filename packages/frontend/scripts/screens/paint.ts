@@ -21,7 +21,7 @@ export class PaintScreen extends BaseScreen {
 
     static TOOLS = [ 'line', 'straightLine', 'circle', 'square', 'triangle']
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
-    static WIDTHS = [1, 5, 10, 25, 50]
+    static WIDTHS = [1, 5, 10]
     static ALPHAS = [1, 0.75, 0.5, 0.25]
     static REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']
 
