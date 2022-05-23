@@ -34,6 +34,7 @@ export function ws() {
         // Extract path parameters
         const canvasId = request.params.canvas
         const clientId = request.params.client
+        const userId: string = null
 
         // Create canvas socket
         if (!(canvasId in CANVAS_SOCKET_MAP)) {
@@ -69,7 +70,7 @@ export function ws() {
             const triangles = {}
 
             // Create canvas object
-            CANVAS_OBJECT_MAP[canvasId] = { canvasId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares, straightLines, triangles }
+            CANVAS_OBJECT_MAP[canvasId] = { canvasId, userId, timestamps, counts, coordinates, reactions, clients, lines, circles, squares, straightLines, triangles }
 
             // Message
             const message = { type: 'canvas-count', data: Object.entries(CANVAS_OBJECT_MAP).length }
@@ -101,7 +102,7 @@ export function ws() {
         counts.clients++
 
         // Remember client
-        clients[clientId] = { clientId, name: undefined, tool: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
+        clients[clientId] = { clientId, userId, tool: undefined, color: undefined, width: undefined, alpha: undefined, position: undefined }
 
         // Synchronize timestamp and coordinate data
         socket.send(JSON.stringify({ type: 'init-timestamps', data: timestamps}))
@@ -143,7 +144,7 @@ export function ws() {
             switch (message.type) {
                 case 'client-enter': {
                     if (clientId in clients) {
-                        clients[clientId].name = message.data.name
+                        clients[clientId].userId = message.data.userId
                         clients[clientId].tool = message.data.tool
                         clients[clientId].color = message.data.color
                         clients[clientId].width = message.data.width
@@ -200,11 +201,12 @@ export function ws() {
                     const point = message.data.point
                     const points = [point]
 
+                    const userId = clients[clientId].userId
                     const color = clients[clientId].color
                     const width = clients[clientId].width
                     const alpha = clients[clientId].alpha
 
-                    lines[lineId] = { lineId, clientId, color, width, alpha, points }
+                    lines[lineId] = { lineId, clientId, userId, color, width, alpha, points }
 
                     counts.shapes++
 
@@ -239,11 +241,12 @@ export function ws() {
                     const circleId = message.data.circleId
                     const point = message.data.point
 
+                    const userId = clients[clientId].userId
                     const color = clients[clientId].color
                     const width = clients[clientId].width
                     const alpha = clients[clientId].alpha
 
-                    circles[circleId] = { circleId, clientId, color, width, alpha, start: point, end: point }
+                    circles[circleId] = { circleId, clientId, userId, color, width, alpha, start: point, end: point }
 
                     counts.shapes++
 
@@ -278,11 +281,12 @@ export function ws() {
                     const squareId = message.data.squareId
                     const point = message.data.point
 
+                    const userId = clients[clientId].userId
                     const color = clients[clientId].color
                     const width = clients[clientId].width
                     const alpha = clients[clientId].alpha
 
-                    squares[squareId] = { squareId, clientId, color, width, alpha, start: point, end: point }
+                    squares[squareId] = { squareId, clientId, userId, color, width, alpha, start: point, end: point }
 
                     counts.shapes++
 
@@ -317,11 +321,12 @@ export function ws() {
                     const straightLineId = message.data.straightLineId
                     const point = message.data.point
 
+                    const userId = clients[clientId].userId
                     const color = clients[clientId].color
                     const width = clients[clientId].width
                     const alpha = clients[clientId].alpha
 
-                    straightLines[straightLineId] = { straightLineId, clientId, color, width, alpha, start: point, end: point }
+                    straightLines[straightLineId] = { straightLineId, clientId, userId, color, width, alpha, start: point, end: point }
 
                     counts.shapes++
 
@@ -356,11 +361,12 @@ export function ws() {
                     const triangleId = message.data.triangleId
                     const point = message.data.point
 
+                    const userId = clients[clientId].userId
                     const color = clients[clientId].color
                     const width = clients[clientId].width
                     const alpha = clients[clientId].alpha
 
-                    triangles[triangleId] = { triangleId, clientId, color, width, alpha, start: point, end: point }
+                    triangles[triangleId] = { triangleId, clientId, userId, color, width, alpha, start: point, end: point }
 
                     counts.shapes++
 

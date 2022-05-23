@@ -2,6 +2,8 @@ node_modules
 
 package-lock.json
 
-database.json
+config.json
+user.json
+canvas.json
 
 bundle.js

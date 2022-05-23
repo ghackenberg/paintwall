@@ -1,8 +1,19 @@
 import * as WebSocket from 'ws'
 import { readFileSync, writeFileSync } from 'fs'
-import { CanvasObject } from 'paintwall-common'
+import { CanvasObject, UserObjectMap } from 'paintwall-common'
 
-const canvasObjectMapFile = 'database.json'
+const userObjectMapFile = 'user.json'
+const canvasObjectMapFile = 'canvas.json'
+
+function loadUserObjectMap(): UserObjectMap {
+    try {
+        console.log('Loading userObjectMap')
+        return JSON.parse(readFileSync(userObjectMapFile, 'utf-8'))
+    } catch (error) {
+        console.log('Initializing userObjectMap')
+        return {}
+    }
+}
 
 function loadCanvasObjectMap(): CanvasObjectMap {
     try {
@@ -11,6 +22,15 @@ function loadCanvasObjectMap(): CanvasObjectMap {
     } catch (error) {
         console.log('Initializing canvasObjectMap')
         return {}
+    }
+}
+
+function saveUserObjectMap() {
+    try {
+        console.log('Saving userObjectMap')
+        writeFileSync(userObjectMapFile, JSON.stringify(USER_OBJECT_MAP))
+    } catch (error) {
+        console.error(error)
     }
 }
 
@@ -37,9 +57,17 @@ interface CanvasObjectMap {
 
 export const CLIENT_SOCKET_MAP: ClientSocketMap = {}
 export const CANVAS_SOCKET_MAP: CanvasSocketMap = {}
-export const CANVAS_OBJECT_MAP: CanvasObjectMap = loadCanvasObjectMap()
+export const TOKEN_OBJECT_MAP: {[id: string]: { tokenId: string, email: string, code: string }} = {}
+export const USER_OBJECT_MAP = loadUserObjectMap()
+export const CANVAS_OBJECT_MAP = loadCanvasObjectMap()
+export const USER_OBJECT_EMAIL_MAP: UserObjectMap = {}
 
-// Reset database
+// Initialize user
+for (const userObject of Object.values(USER_OBJECT_MAP)) {
+    USER_OBJECT_EMAIL_MAP[userObject.email] = userObject
+}
+
+// Reset canvas
 for (const canvasObject of Object.values(CANVAS_OBJECT_MAP)) {
     if (!('userId' in canvasObject)) {
         canvasObject.userId = null
@@ -75,4 +103,12 @@ for (const canvasObject of Object.values(CANVAS_OBJECT_MAP)) {
     canvasObject.clients = {}
 }
 
-setInterval(saveCanvasObjectMap, 30000)
+setTimeout(() => {
+    setInterval(() => console.log('Saving data in 5 seconds'), 30000)
+}, 0)
+setTimeout(() => {
+    setInterval(saveUserObjectMap, 30000)
+}, 5000)
+setTimeout(() => {
+    setInterval(saveCanvasObjectMap, 30000)
+}, 10000)
