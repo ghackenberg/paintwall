@@ -18,9 +18,9 @@ export class PaintScreen extends BaseScreen {
     // Static
 
     static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
-    static WIDTHS = [5.0, 10.0, 25.0, 50.0]
-    static ALPHAS = [1.0, 0.75, 0.5, 0.25]
-    static TOOLS = [ 'line', 'circle', 'square']
+    static WIDTHS = [1, 5, 10, 25, 50]
+    static ALPHAS = [1, 0.75, 0.5, 0.25]
+    static TOOLS = ['line', 'circle', 'square']
     static REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']
 
     // Non-static
@@ -45,13 +45,6 @@ export class PaintScreen extends BaseScreen {
     clientCountNode: HTMLSpanElement
     reactionCountNode: HTMLSpanElement
 
-    colorButtonNode: HTMLDivElement
-    colorPopupNode: HTMLDivElement
-    colorPopupImageNode: HTMLImageElement
-    colorPopupLabelNode: HTMLDivElement
-    colorPopupSelectNode: HTMLDivElement
-    colorPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
-
     shareButtonNode: HTMLDivElement
     sharePopupNode: HTMLDivElement
     sharePopupImageNode: HTMLImageElement
@@ -59,13 +52,20 @@ export class PaintScreen extends BaseScreen {
     sharePopupDivNode: HTMLDivElement
     sharePopupCanvasNode: HTMLCanvasElement
 
-    alphaButtonNode: HTMLDivElement
-    alphaButtonSpanNode: HTMLSpanElement
-    alphaPopupNode: HTMLDivElement
-    alphaPopupImageNode: HTMLImageElement
-    alphaPopupLabelNode: HTMLDivElement
-    alphaPopupSelectNode: HTMLDivElement
-    alphaPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
+    toolButtonNode: HTMLDivElement
+    toolButtonImageNode: HTMLImageElement
+    toolPopupNode: HTMLDivElement
+    toolPopupImageNode: HTMLImageElement
+    toolPopupLabelNode: HTMLDivElement
+    toolPopupSelectNode: HTMLDivElement
+    toolPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
+
+    colorButtonNode: HTMLDivElement
+    colorPopupNode: HTMLDivElement
+    colorPopupImageNode: HTMLImageElement
+    colorPopupLabelNode: HTMLDivElement
+    colorPopupSelectNode: HTMLDivElement
+    colorPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
 
     widthButtonNode: HTMLDivElement
     widthButtonSpanNode: HTMLSpanElement
@@ -75,13 +75,13 @@ export class PaintScreen extends BaseScreen {
     widthPopupSelectNode: HTMLDivElement
     widthPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
 
-    toolButtonNode: HTMLDivElement
-    toolButtonImageNode: HTMLImageElement
-    toolPopupNode: HTMLDivElement
-    toolPopupImageNode: HTMLImageElement
-    toolPopupLabelNode: HTMLDivElement
-    toolPopupSelectNode: HTMLDivElement
-    toolPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
+    alphaButtonNode: HTMLDivElement
+    alphaButtonSpanNode: HTMLSpanElement
+    alphaPopupNode: HTMLDivElement
+    alphaPopupImageNode: HTMLImageElement
+    alphaPopupLabelNode: HTMLDivElement
+    alphaPopupSelectNode: HTMLDivElement
+    alphaPopupSelectChildNodes: NodeMap<HTMLSpanElement> = {}
 
     reactionSelectNode: HTMLDivElement
     reactionSelectChildNodes: NodeMap<HTMLSpanElement> = {}
@@ -156,6 +156,7 @@ export class PaintScreen extends BaseScreen {
             // Button
             this.shareButtonNode = div({ id: 'share-button', className: 'icon active',
                 onclick: () => {
+                    this.hidePopups()
                     this.sharePopupNode.style.display = 'block'
                     navigator.clipboard.writeText(location.href)
                 }
@@ -179,12 +180,53 @@ export class PaintScreen extends BaseScreen {
                 this.sharePopupCanvasNode
             ])
         }
+        
+        // Nodes (tool)
+        {
+            // Button children
+            this.toolButtonImageNode = img({ src: BASE + '/images/' + tool + '.png' })
+
+            // Button container
+            this.toolButtonNode = div({ id: 'tool-button', className: 'icon active',
+                onclick: () => {
+                    this.hidePopups()
+                    this.toolPopupNode.style.display = 'block'
+                }
+            }, this.toolButtonImageNode)
+
+            // Popup select children
+            for (const otherTool of PaintScreen.TOOLS) {
+                this.toolPopupSelectChildNodes[otherTool] = span({ className: otherTool == tool ? 'icon active' : 'icon',
+                    onclick: () => {
+                        this.changeTool(otherTool)
+                        this.toolPopupNode.style.display = 'none'
+                    }
+                }, img({ src: BASE + '/images/' + otherTool + '.png' }))
+            }
+
+            // Popup children
+            this.toolPopupImageNode = img({ src: BASE + '/images/close.png', 
+                onclick: () => {
+                    this.toolPopupNode.style.display = 'none' 
+                }
+            })
+            this.toolPopupLabelNode = div({ className: 'label' }, 'Select tool!')
+            this.toolPopupSelectNode = div({ className: 'select' }, Object.values(this.toolPopupSelectChildNodes))
+
+            // Popup container
+            this.toolPopupNode = div({ id: 'tool-popup', className: 'popup' }, [
+                this.toolPopupImageNode,
+                this.toolPopupLabelNode,
+                this.toolPopupSelectNode
+            ])
+        }
 
         // Nodes (color)
         {
             // Button
             this.colorButtonNode = div({ id: 'color-button', className: 'icon active',
                 onclick: () => {
+                    this.hidePopups()
                     this.colorPopupNode.style.display = 'block'
                 }
             })
@@ -226,6 +268,7 @@ export class PaintScreen extends BaseScreen {
             // Button container
             this.widthButtonNode = div({ id: 'width-button', className: 'icon active',
                 onclick: () => {
+                    this.hidePopups()
                     this.widthPopupNode.style.display = 'block'
                 }
             }, this.widthButtonSpanNode)
@@ -267,6 +310,7 @@ export class PaintScreen extends BaseScreen {
             // Button container
             this.alphaButtonNode = div({ id: 'alpha-button', className: 'icon active',
                 onclick: () => {
+                    this.hidePopups()
                     this.alphaPopupNode.style.display = 'block'
                 }
             }, this.alphaButtonSpanNode)
@@ -300,45 +344,6 @@ export class PaintScreen extends BaseScreen {
                 this.alphaPopupImageNode,
                 this.alphaPopupLabelNode,
                 this.alphaPopupSelectNode
-            ])
-        }
-        
-        // Nodes (tool)
-        {
-            // Button children
-            this.toolButtonImageNode = img({ src: BASE + '/images/' + tool + '.png' })
-
-            // Button container
-            this.toolButtonNode = div({ id: 'tool-button', className: 'icon active',
-                onclick: () => {
-                    this.toolPopupNode.style.display = 'block'
-                }
-            }, this.toolButtonImageNode)
-
-            // Popup select children
-            for (const otherTool of PaintScreen.TOOLS) {
-                this.toolPopupSelectChildNodes[otherTool] = span({ className: otherTool == tool ? 'icon active' : 'icon',
-                    onclick: () => {
-                        this.changeTool(otherTool)
-                        this.toolPopupNode.style.display = 'none'
-                    }
-                }, img({ src: BASE + '/images/' + otherTool + '.png' }))
-            }
-
-            // Popup children
-            this.toolPopupImageNode = img({ src: BASE + '/images/close.png', 
-                onclick: () => {
-                    this.toolPopupNode.style.display = 'none' 
-                }
-            })
-            this.toolPopupLabelNode = div({ className: 'label' }, 'Select tool!')
-            this.toolPopupSelectNode = div({ className: 'select' }, Object.values(this.toolPopupSelectChildNodes))
-
-            // Popup container
-            this.toolPopupNode = div({ id: 'tool-popup', className: 'popup' }, [
-                this.toolPopupImageNode,
-                this.toolPopupLabelNode,
-                this.toolPopupSelectNode
             ])
         }
 
@@ -457,12 +462,23 @@ export class PaintScreen extends BaseScreen {
     hide() {
         // Node
         super.hide()
+        // Popups
+        this.hidePopups()
         // Canvas
         this.canvasModel.disconnect()
         this.canvasModel = undefined
+        // Line
         this.lineModel = undefined
         // Window
         window.removeEventListener('resize', this.handleResize)
+    }
+
+    hidePopups() {
+        this.sharePopupNode.style.display = 'none'
+        this.toolPopupNode.style.display = 'none'
+        this.colorPopupNode.style.display = 'none'
+        this.widthPopupNode.style.display = 'none'
+        this.alphaPopupNode.style.display = 'none'
     }
 
     // Handlers (resize)
@@ -519,6 +535,7 @@ export class PaintScreen extends BaseScreen {
             const point = { x, y }
             // Check
             if (event.buttons == 1) {
+                this.hidePopups()
                 if (this.clientModel.tool == 'line') {
                     this.startLine(point)
                 } else if (this.clientModel.tool == 'circle') {
@@ -585,6 +602,7 @@ export class PaintScreen extends BaseScreen {
             const point = { x, y }
             // Check
             if (event.buttons == 1) {
+                this.hidePopups()
                 if (this.clientModel.tool == 'line') {
                     this.startLine(point)
                 } else if (this.clientModel.tool == 'circle') {
@@ -675,6 +693,7 @@ export class PaintScreen extends BaseScreen {
                 if (this.previousTouches.length > 0) {
                     this.previousTouches.push(point)
                     if (this.previousTouches.length > 10) {
+                        this.hidePopups()
                         if (this.clientModel.tool == 'line') {
                             this.startLine(this.previousTouches.shift())
                             while (this.previousTouches.length > 0) {
@@ -788,7 +807,9 @@ export class PaintScreen extends BaseScreen {
 
     handleChangeAlpha(value: number) {
         const color = Math.round(255 - value * 255)
+        // Update button span
         this.alphaButtonSpanNode.textContent = (100 - value * 100) + '%'
+        // Update button
         this.alphaButtonNode.style.backgroundColor = 'rgb(' + color + ',' + color + ',' + color + ')'
         // Deactivate
         this.alphaPopupSelectChildNodes[this.clientModel.alpha].classList.remove('active')
