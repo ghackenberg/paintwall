@@ -1,30 +1,39 @@
 /* Header */
 
 body > #browse > header {
-    padding-bottom: 1em;
+    background-color: white;
 
-    background-image: linear-gradient(rgba(255,255,255,1), rgba(255,255,255,1) 75%, rgba(255,0,255,0));
+    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.1);
 }
 
 body > #browse > header > #logo {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
     margin-bottom: 1.5em;
 }
 
-body > #browse > header > .button {
+body > #browse > header > *.button {
     margin-top: 0.5em;
     margin-bottom: 2.5em;
 }
 
-body > #browse > header > .select {
-    margin-top: 0.5em;
-    margin-bottom: 2.5em;
-    height: 32px;
+@media screen and (max-width: 40em) {
+    body > #browse > header > #logo {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 35em) {
+    body > #browse > header > #client-count {
+        display: none;
+    }
 }
 
 body > #browse > header > #client-count {
-    margin-left: 1em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
 
-    background-color: yellowgreen;
+    background-color: lightgray;
 }
 
 body > #browse > header > #client-count::after {
@@ -32,41 +41,19 @@ body > #browse > header > #client-count::after {
 }
 
 body > #browse > header > #canvas-create {
-    margin-left: 1em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
 
-    background-color: tomato;
+    background-color: gray;
 
     cursor: pointer;
 }
 
 body > #browse > header > #sort-canvas {
-    margin-left: 1em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
 
-    background-color: rgb(43, 176, 209);
-
-    cursor: pointer;
-}
-
-body > #browse > header > #user-login {
-    margin-left: 1em;
-
-    background-color: steelblue;
-
-    cursor: pointer;
-}
-
-body > #browse > header > #user-logout {
-    margin-left: 1em;
-
-    background-color: steelblue;
-
-    cursor: pointer;
-}
-
-body > #browse > header > #user-wait {
-    margin-left: 1em;
-
-    background-color: steelblue;
+    background-color: gray;
 
     cursor: pointer;
 }
@@ -74,8 +61,8 @@ body > #browse > header > #user-wait {
 /* Main */
 
 body > #browse > main {
-    padding-top: 3em;
-    padding-bottom: 3em;
+    padding-top: 5em;
+    padding-bottom: 4em;
 
     text-align: center;
 }
@@ -284,15 +271,15 @@ body > #browse > main > div > div > div.info > div.count.reaction::after {
 /* Footer */
 
 body > #browse > footer {
-    padding-top: 1em;
+    background-color: white;
 
-    background-image: linear-gradient(rgba(255,0,255,0), rgba(255,255,255,1) 25%, rgba(255,255,255,1));
+    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.1);
 }
 
 body > #browse > footer > a {
     cursor: pointer;
 
-    color: blue;
+    color: gray;
 }
 
 body > #browse > footer > a::before {

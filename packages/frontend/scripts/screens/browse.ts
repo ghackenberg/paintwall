@@ -21,13 +21,21 @@ export class BrowseScreen extends BaseScreen {
     // Nodes
 
     logoNode: HTMLSpanElement
+
+    clientCountImageNode: HTMLImageElement
+    clientCountSpanNode: HTMLSpanElement
+    clientCountNode: HTMLSpanElement
+
     createNode: HTMLButtonElement
-    sortNode: HTMLSelectElement
+    
+    sortImageNode: HTMLImageElement
+    sortSelectNode: HTMLSelectElement
+    sortNode: HTMLSpanElement
 
     loadNode: HTMLImageElement
+
     canvasNode: HTMLDivElement
 
-    clientCountNode: HTMLSpanElement
     canvasCountNode: HTMLSpanElement
 
     viewCountNodes: CountNodeMap = {}
@@ -53,21 +61,34 @@ export class BrowseScreen extends BaseScreen {
         this.logoNode = span({ id: 'logo' }, 'PaintWall')
 
         // Client count
-        this.clientCountNode = span({ id: 'client-count', className: 'button' }, img({ className: 'load', src: BASE + '/images/load.png' }))
+        this.clientCountImageNode = img({ src: BASE + '/images/live.png' })
+        this.clientCountSpanNode = span(img({ className: 'load', src: BASE + '/images/load.png' }))
+        this.clientCountNode = span({ id: 'client-count', className: 'button' }, [
+            this.clientCountImageNode,
+            this.clientCountSpanNode
+        ])
 
         // Button
         this.createNode = button({ id: 'canvas-create', className: 'button',
             onclick: () => {
                 history.pushState(null, undefined, BASE + '/canvas/' + Math.random().toString(16).substring(2))
             }
-        }, 'New canvas')
+        }, [
+            img({ src: BASE + '/images/plus.png' }),
+            span('New canvas')
+        ])
 
         // Dropdown
-        this.sortNode = select({ id: 'sort-canvas', className: 'select',
+        this.sortImageNode = img({ src: BASE + '/images/sort.png'})
+        this.sortSelectNode = select({
             onchange: () => {
                 this.show()
             }
-        }, option('sort by: latest'), option('sort by: most viewed'), option('sort by: most reactions'))
+        }, option('Latest'), option('Views'), option('Reactions'))
+        this.sortNode = span({ id: 'sort-canvas', className: 'button' }, [
+            this.sortImageNode,
+            this.sortSelectNode
+        ])
 
         // Header
         append(this.headerNode, [ this.logoNode, this.clientCountNode, this.createNode, this.sortNode ])
@@ -144,7 +165,7 @@ export class BrowseScreen extends BaseScreen {
             switch (message.type) {
                 case 'client-count': {
                     const count = message.data
-                    this.clientCountNode.textContent = count
+                    this.clientCountSpanNode.textContent = count
                     break
                 }
                 case 'canvas-count': {
@@ -228,11 +249,11 @@ export class BrowseScreen extends BaseScreen {
                 // Reset
                 this.request = null
                 
-                if ( this.sortNode.value == 'sort by: latest' ) {
+                if ( this.sortSelectNode.value == 'time' ) {
                     canvasObjects.sort((a, b) => a.timestamps.created - b.timestamps.created)
-                } else if ( this.sortNode.value == 'sort by: most viewed'  ) {
+                } else if ( this.sortSelectNode.value == 'views'  ) {
                     canvasObjects.sort((a, b) => a.counts.views - b.counts.views)
-                } else if ( this.sortNode.value == 'sort by: most reactions'  ) {
+                } else if ( this.sortSelectNode.value == 'reactions'  ) {
                     canvasObjects.sort((a, b) => a.counts.reactions - b.counts.reactions)
                 }
 
