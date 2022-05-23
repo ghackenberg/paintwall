@@ -105,14 +105,6 @@ body > div.screen.document > main > div:last-child {
 /* Footer */
 
 body > div.screen > footer {
-    position: fixed;
-
-    z-index: 1;
-
-    left: 0;
-    right: 0;
-    bottom: 0;
-
     padding-left: 1em;
     padding-right: 1em;
 

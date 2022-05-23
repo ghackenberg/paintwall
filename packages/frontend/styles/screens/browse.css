@@ -68,8 +68,10 @@ body > #browse > header > #sort-canvas {
 /* Main */
 
 body > #browse > main {
+    min-height: calc(100vh - 9em);
+
     padding-top: 5em;
-    padding-bottom: 4em;
+    padding-bottom: 1em;
 
     text-align: center;
 }
@@ -280,7 +282,9 @@ body > #browse > main > div > div > div.info > div.count.reaction::after {
 /* Footer */
 
 body > #browse > footer {
-    background-color: white;
+    background-color: gray;
+
+    color: white;
 
     box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
 }
@@ -288,13 +292,17 @@ body > #browse > footer {
 body > #browse > footer > a {
     cursor: pointer;
 
-    color: gray;
+    color: lightgray;
+}
+
+body > #browse > footer > a:hover {
+    color: white;
 }
 
 body > #browse > footer > a::before {
     content: ' | ';
 
-    color: black;
+    color: white;
 
     cursor: default;
 }
