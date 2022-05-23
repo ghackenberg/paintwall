@@ -715,14 +715,12 @@ export class PaintScreen extends BaseScreen {
                             while (this.previousTouches.length > 0) {
                                 this.continueLine(this.previousTouches.shift())
                             }
-                        }  
-                        else if (this.clientModel.tool == 'straightLine') {
+                        } else if (this.clientModel.tool == 'straightLine') {
                             this.startStraightLine(this.previousTouches.shift())
                             while (this.previousTouches.length > 0) {
                                 this.continueStraightLine(this.previousTouches.shift())
                             }
-                        }
-                        else if (this.clientModel.tool == 'circle') {
+                        } else if (this.clientModel.tool == 'circle') {
                             this.startCircle(this.previousTouches.shift())
                             while (this.previousTouches.length > 0) {
                                 this.continueCircle(this.previousTouches.shift())

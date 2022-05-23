@@ -241,12 +241,10 @@ function drawTriangle(canvas: HTMLCanvasElement, context: CanvasRenderingContext
 
     // Stroke
     context.beginPath();
-    context.moveTo(x, y)
-    context.lineTo(xEnd, y)
-    context.moveTo(xEnd, y)
-    context.lineTo(x+(xEnd-x)/2, yEnd)
-    context.moveTo(x+(xEnd-x)/2, yEnd)
-    context.lineTo(x, y)
+    context.moveTo(x, yEnd)
+    context.lineTo(xEnd, yEnd)
+    context.lineTo((x + xEnd) / 2, y)
+    context.lineTo(x, yEnd)
     context.stroke()
     
 }
