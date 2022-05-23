@@ -87,147 +87,20 @@ body > #paint > main > #count > span.count.client > img {
     }
 }
 
-/* Main tool */
-
-body > #paint > main > #tool {
-    position: absolute;
-
-    top: 1em;
-    left: 4.5em;
-}
-
-body > #paint > main > #tool > span {
-    float: left;
-
-    margin: 0.5em;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-/* Main color */
-
-body > #paint > main > #color {
-    position: absolute;
-
-    top: 4em;
-    left: 1em;
-}
-body > #paint > main > #color > .color {
-    display: block;
-
-    margin: 0.5em;
-    margin-top: 1em;
-
-    width: 2em;
-    height: 2em;
-
-    border-radius: 1.5em;
-
-    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
-
-    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
-
-    cursor: pointer;
-}
-body > #paint > main > #color > .active {
-    margin: 0;
-    margin-top: 1em;
-
-    width: 3em;
-    height: 3em;
-}
-
-/* Main width */
-
-body > #paint > main > #width {
-    position: absolute;
-    top: 1em;
-    left: 17em;
-}
-
-@media screen and (max-width: 30em) {
-    body > #paint > main > #width {
-        top: 5em;
-        left: auto;
-        right: 1em;
-        
-        width: 3em;
-    }
-}
-
-body > #paint > main > #width > .width {
-    display: block;
-    float: left;
-    color : white;
-    width: 2em;
-    line-height: 2em;
-    margin: 0.5em;
-    border-radius: 1.3em;
-    text-align: center;
-
-    background-color: black;
-    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
-
-    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
-
-    cursor: pointer;
-}
-
-body > #paint > main > #width > .active {
-    margin: 0;
-    margin-top: 1em;
-    width: 3em;
-    line-height: 3em;
-    border-radius: 1.5em;
-    margin-top: 0em;
-}
-
 /* Main share */
 
-body > #paint > main > #share {
+body > #paint > main > #share-button {
     display: block;
-    
+  
     position: absolute;
     
     top: 1em;
     right: 1em;
-    
-    padding: 1em;
-    
-    width: 1em;
-    height: 1em;
-    
-    border-radius: 1.5em;
-    
-    background-color: white;
-    background-size: 1em 1em;
-    background-position: center center;
-    background-repeat: no-repeat;
-    
-    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
-    
-    cursor: pointer;
 }
 
 body > #paint > main > #share-popup {
-    position: absolute;
     top: 1em;
     right: 1em;
-    border-radius: 1.5em;
-    background-color: white;
-    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
-    display: none;
-}
-
-body > #paint > main > #share-popup > img {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 1em;
-    height: 1em;
-    padding: 1em;
-    border-radius: 1.5em;
-    cursor: pointer;
 }
 
 body > #paint > main > #share-popup > input {
@@ -280,6 +153,106 @@ body > #paint > main > #share-popup > canvas {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 1em;
+}
+
+/* Main tool */
+
+body > #paint > main > #tool-button {    
+    position: absolute;
+
+    z-index: 4;
+    
+    top: 5em;
+    left: 1em;
+}
+
+body > #paint > main > #tool-popup {
+    z-index: 5;
+
+    top: 5em;
+    left: 1em;
+}
+
+/* Main color */
+
+body > #paint > main > #color-button {
+    position: absolute;
+
+    z-index: 4;
+
+    top: 9em;
+    left: 1em;
+
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+}
+
+body > #paint > main > #color-popup {
+    z-index: 5;
+
+    top: 9em;
+    left: 1em;
+}
+
+body > #paint > main > #color-popup > div.select > span {
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+}
+
+/* Main width */
+
+body > #paint > main > #width-button {
+    position: absolute;
+
+    z-index: 4;
+    
+    top: 13em;
+    left: 1em;
+
+    background-color: black;
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+
+    color: white;
+}
+
+body > #paint > main > #width-popup {
+    z-index: 5;
+
+    top: 13em;
+    left: 1em;
+}
+
+body > #paint > main > #width-popup > div.select > span {
+    background-color: black;
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+
+    color : white;
+}
+
+/* Main alpha */
+
+body > #paint > main > #alpha-button {
+    position: absolute;
+
+    z-index: 4;
+    
+    top: 17em;
+    left: 1em;
+
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+    
+    color: white;
+}
+
+body > #paint > main > #alpha-popup {
+    z-index: 5;
+
+    top: 17em;
+    left: 1em;
+}
+
+body > #paint > main > #alpha-popup > div.select > span {
+    background-image: radial-gradient(farthest-corner at 66% 33%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.0));
+
+    color: white;
 }
 
 /* Main reaction */
