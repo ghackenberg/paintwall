@@ -113,7 +113,7 @@ function drawLine(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, 
         // Style
         context.globalAlpha = alpha
         context.strokeStyle = color
-        context.lineWidth = Math.max(width * zoom, 1)
+        context.lineWidth = width //Math.max(width * zoom, 1)
         context.lineCap = 'round'
 
         // Stroke
@@ -143,7 +143,7 @@ function drawStraightLine(canvas: HTMLCanvasElement, context: CanvasRenderingCon
     // Style
     context.globalAlpha = alpha
     context.strokeStyle = color
-    context.lineWidth = Math.max(width * zoom, 1)
+    context.lineWidth = width //Math.max(width * zoom, 1)
     context.lineCap = 'round'
 
     // Stroke
@@ -176,7 +176,7 @@ function drawCircle(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
     // Style
     context.globalAlpha = alpha
     context.strokeStyle = color
-    context.lineWidth = Math.max(width * zoom, 1)
+    context.lineWidth = width //Math.max(width * zoom, 1)
     context.lineCap = 'round'
 
     // Stroke
@@ -207,7 +207,7 @@ function drawSquare(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
     // Style
     context.globalAlpha = alpha
     context.strokeStyle = color
-    context.lineWidth = Math.max(width * zoom, 1)
+    context.lineWidth = width //Math.max(width * zoom, 1)
     context.lineCap = 'round'
 
     // Stroke
@@ -236,7 +236,7 @@ function drawTriangle(canvas: HTMLCanvasElement, context: CanvasRenderingContext
     // Style
     context.globalAlpha = alpha
     context.strokeStyle = color
-    context.lineWidth = Math.max(width * zoom, 1)
+    context.lineWidth = width //Math.max(width * zoom, 1)
     context.lineCap = 'round'
 
     // Stroke
@@ -244,7 +244,7 @@ function drawTriangle(canvas: HTMLCanvasElement, context: CanvasRenderingContext
     context.moveTo(x, yEnd)
     context.lineTo(xEnd, yEnd)
     context.lineTo((x + xEnd) / 2, y)
-    context.lineTo(x, yEnd)
+    context.closePath()
     context.stroke()
     
 }
