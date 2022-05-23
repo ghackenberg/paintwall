@@ -1,4 +1,5 @@
 import { BASE, CanvasObject } from 'paintwall-common'
+import { USER_DATA } from '../constants/user'
 import { a, append, button, canvas, clear, div, img, option, prepend, remove, select, span } from '../functions/html'
 import { makeSocketURL } from '../functions/socket'
 import { CanvasModel } from '../models/canvas'
@@ -80,7 +81,11 @@ export class BrowseScreen extends BaseScreen {
         // Button
         this.createNode = button({ id: 'canvas-create', className: 'button',
             onclick: () => {
-                history.pushState(null, undefined, BASE + '/canvas/' + Math.random().toString(16).substring(2))
+                if (USER_DATA.userId) {
+                    history.pushState(null, undefined, BASE + '/canvas/' + Math.random().toString(16).substring(2))
+                } else {
+                    history.pushState(null, undefined, BASE + '/email')
+                }
             }
         }, [
             img({ src: BASE + '/images/plus.png' }),
@@ -339,6 +344,9 @@ export class BrowseScreen extends BaseScreen {
             }
         }
         this.request.open('GET', BASE + '/api/v1/canvas/')
+        if (USER_DATA.jwtToken) {
+            this.request.setRequestHeader('Authorization', 'Bearer ' + USER_DATA.jwtToken)
+        }
         this.request.send()
     }
 

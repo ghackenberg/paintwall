@@ -13,18 +13,17 @@ export function api() {
         const email = request.body.email
         const code = Math.random().toString(16).substring(2, 6)
         TOKEN_OBJECT_MAP[tokenId] = { tokenId, email, code }
-        MAIL.sendMail({ from: 'PaintWall <' + CONFIG.mail.auth.user + '>', to: email, text: 'Your code: ' + code }, (error, info) => {
+        MAIL.sendMail({ from: 'PaintWall <' + CONFIG.mail.auth.user + '>', to: email, subject: 'Your code', text: 'Your code: ' + code }, (error, info) => {
             if (error) {
                 console.error(error)
-                console.log(TOKEN_OBJECT_MAP[tokenId])
             }
         })
-        response.status(200).json(TOKEN_OBJECT_MAP[tokenId])
+        response.status(200).json({ ...TOKEN_OBJECT_MAP[tokenId], code: undefined })
     })
 
     router.delete(BASE + '/api/v1/token/:id', (request, response) => {
         const tokenId = request.params.id
-        const code = typeof request.query.code == 'string' ? request.query.code : undefined
+        const code = request.query.code
         if (tokenId in TOKEN_OBJECT_MAP && TOKEN_OBJECT_MAP[tokenId].code == code) {
             const tokenObject = TOKEN_OBJECT_MAP[tokenId]
             const email = tokenObject.email
@@ -39,8 +38,7 @@ export function api() {
             const userObject = USER_OBJECT_EMAIL_MAP[email]
             const userId = userObject.userId
             delete TOKEN_OBJECT_MAP[tokenId]
-            response.setHeader('authorization', sign(userId, CONFIG.jwt.secret))
-            response.status(200).json(tokenObject)
+            response.status(200).json({ jwtToken: sign(userId, CONFIG.jwt.secret), userId, userObject })
         } else {
             response.status(403).send()
         }
@@ -65,7 +63,7 @@ export function api() {
 
     router.put(BASE + '/api/v1/user/:id', (request, response) => {
         try {
-            const authUserId = verify(request.header('authentication'), CONFIG.jwt.secret)
+            const authUserId = verify(request.header('Authorization').split(' ')[1], CONFIG.jwt.secret)
             const userId = request.params.userId
             if (authUserId != userId) {
                 response.status(403).send()
@@ -81,7 +79,7 @@ export function api() {
 
     router.delete(BASE + '/api/v1/user/:id', (request, response) => {
         try {
-            const authUserId = verify(request.header('authentication'), CONFIG.jwt.secret)
+            const authUserId = verify(request.header('Authorization').split(' ')[1], CONFIG.jwt.secret)
             const userId = request.params.id
             if (authUserId != userId) {
                 response.status(403).send()

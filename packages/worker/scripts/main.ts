@@ -34,6 +34,8 @@ const files = [
     '/styles/screens/error.css',
     '/styles/screens/browse.css',
     '/styles/screens/paint.css',
+    '/styles/screens/email.css',
+    '/styles/screens/code.css',
     '/styles/screens/imprint.css',
     '/styles/screens/data.css',
     '/styles/screens/terms.css',
