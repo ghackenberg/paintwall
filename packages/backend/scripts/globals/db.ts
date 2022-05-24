@@ -56,11 +56,14 @@ interface CanvasObjectMap {
 }
 
 export const CLIENT_SOCKET_MAP: ClientSocketMap = {}
-export const CANVAS_SOCKET_MAP: CanvasSocketMap = {}
-export const TOKEN_OBJECT_MAP: {[id: string]: { tokenId: string, email: string, code: string }} = {}
+
+export const CODE_OBJECT_MAP: {[id: string]: { codeId: string, email: string, secret: string }} = {}
+
 export const USER_OBJECT_MAP = loadUserObjectMap()
-export const CANVAS_OBJECT_MAP = loadCanvasObjectMap()
 export const USER_OBJECT_EMAIL_MAP: UserObjectMap = {}
+
+export const CANVAS_OBJECT_MAP = loadCanvasObjectMap()
+export const CANVAS_SOCKET_MAP: CanvasSocketMap = {}
 
 // Initialize user
 for (const userObject of Object.values(USER_OBJECT_MAP)) {

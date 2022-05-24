@@ -6,7 +6,7 @@ import { BaseScreen } from './base'
 export class CodeScreen extends BaseScreen {
     backNode: HTMLDivElement
 
-    fromCodeNode: HTMLInputElement
+    fromSecretNode: HTMLInputElement
     formSubmitNode: HTMLInputElement
     formNode: HTMLFormElement
 
@@ -17,38 +17,40 @@ export class CodeScreen extends BaseScreen {
             onclick: () => history.back(),
         }, img({ src:  BASE + '/images/back.png' }))
 
-        this.fromCodeNode = input({ type: 'text', placeholder: 'Your code' })
+        this.fromSecretNode = input({ type: 'text', placeholder: 'Your code' })
         this.formSubmitNode = input({ type: 'submit', value: 'Get code' })
         this.formNode = form({
             onsubmit: event => {
                 event.preventDefault()
-                const code = this.fromCodeNode.value
+                const secret = this.fromSecretNode.value
                 const request = new XMLHttpRequest()
                 request.onreadystatechange = event => {
                     if (request.readyState == XMLHttpRequest.DONE) {
                         if (request.status == 200) {
                             const response = JSON.parse(request.responseText)
-                            USER_DATA.jwtToken = response.jwtToken
-                            USER_DATA.userId = response.userId
-                            USER_DATA.userObject = response.userObject
-                            localStorage.setItem('jwtToken', USER_DATA.jwtToken)
-                            localStorage.setItem('userId', USER_DATA.userId)
-                            localStorage.setItem('userObject', JSON.stringify(USER_DATA.userObject))
-                            history.back()
+                            USER_DATA.token = response.token
+                            USER_DATA.user = response.user
+                            localStorage.setItem('token', USER_DATA.token)
+                            localStorage.setItem('user', JSON.stringify(USER_DATA.user))
+                            history.replaceState(null, undefined, location.href)
                         } else {
                             alert('An unexpected error occurred. Please try again.')
                         }
                     }
                 }
-                request.open('DELETE', BASE + '/api/v1/token/' + USER_DATA.mailToken.tokenId + '?code=' + code)
+                request.open('DELETE', BASE + '/api/v1/code/' + USER_DATA.code.codeId + '?secret=' + secret)
                 request.send()
             }
-        }, this.fromCodeNode, this.formSubmitNode)
+        }, this.fromSecretNode, this.formSubmitNode)
 
         append(this.mainNode, [
             this.backNode,
             h1('Authentication required'),
             div(this.formNode)
         ])
+    }
+
+    hide() {
+        USER_DATA.code = null
     }
 }

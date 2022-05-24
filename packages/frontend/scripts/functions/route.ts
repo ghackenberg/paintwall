@@ -1,4 +1,5 @@
 import { BASE } from 'paintwall-common'
+import { USER_DATA } from '../constants/user'
 import { BrowseScreen } from '../screens/browse'
 import { CodeScreen } from '../screens/code'
 import { DataScreen } from '../screens/data'
@@ -24,11 +25,13 @@ loadScreen.show()
 export function route() {
     // Switch
     if (location.pathname.startsWith(BASE + '/canvas/')) {
-        paintScreen.show()
-    } else if (location.pathname == BASE + '/email') {
-        emailScreen.show()
-    } else if (location.pathname == BASE + '/code') {
-        codeScreen.show()
+        if (USER_DATA.token) {
+            paintScreen.show()
+        } else if (USER_DATA.code) {
+            codeScreen.show()
+        } else {
+            emailScreen.show()
+        }
     } else if (location.pathname == BASE + '/imprint') {
         imprintScreen.show()
     } else if (location.pathname == BASE + '/data-protection') {

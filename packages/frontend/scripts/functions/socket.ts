@@ -9,5 +9,5 @@ const socketHost = location.host
 // FUNCTIONS
 
 export function makeSocketURL(path: string) {
-    return socketProtocol + '//' + socketHost + path + CLIENT_ID + (USER_DATA.jwtToken ? '?jwtToken=' + USER_DATA.jwtToken : '')
+    return socketProtocol + '//' + socketHost + path + CLIENT_ID + (USER_DATA.token ? '?token=' + USER_DATA.token : '')
 }

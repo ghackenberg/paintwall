@@ -1,15 +1,13 @@
 import { UserObject } from "paintwall-common"
 
 interface UserData {
-    mailToken: { tokenId: string, email: string }
-    jwtToken: string
-    userId: string
-    userObject: UserObject
+    code: { codeId: string, email: string }
+    token: string
+    user: UserObject
 }
 
 export const USER_DATA: UserData = {
-    mailToken: null,
-    jwtToken: localStorage.getItem('jwtToken'),
-    userId: localStorage.getItem('userId'),
-    userObject: JSON.parse(localStorage.getItem('userObject') || 'null')
+    code: null,
+    token: localStorage.getItem('token'),
+    user: JSON.parse(localStorage.getItem('user') || 'null')
 }

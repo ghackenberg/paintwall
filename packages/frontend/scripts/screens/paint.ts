@@ -105,7 +105,7 @@ export class PaintScreen extends BaseScreen {
         
         // Constants
         const clientId = CLIENT_ID
-        const userId: string = USER_DATA.userId
+        const userId: string = USER_DATA.user ? USER_DATA.user.userId : null
         const color = PaintScreen.COLORS.includes(localStorage.getItem('color')) ? localStorage.getItem('color') : PaintScreen.COLORS[0]
         const width = PaintScreen.WIDTHS.includes(parseFloat(localStorage.getItem('width'))) ? parseFloat(localStorage.getItem('width')) : PaintScreen.WIDTHS[0]
         const alpha = PaintScreen.ALPHAS.includes(parseFloat(localStorage.getItem('alpha'))) ? parseFloat(localStorage.getItem('alpha')) : PaintScreen.ALPHAS[0]
@@ -438,9 +438,6 @@ export class PaintScreen extends BaseScreen {
         })
         this.canvasModel.on('init-coordinates', (data) => {
             this.loadNode.style.display = 'none'
-        })
-        this.canvasModel.on('init-client', (data) => {
-            console.log('init-client')
         })
         this.canvasModel.on('client-enter', (clientId, data) => {
             this.clientCountNode.textContent = `${this.canvasModel.counts.clients}`

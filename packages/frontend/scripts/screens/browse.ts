@@ -81,11 +81,7 @@ export class BrowseScreen extends BaseScreen {
         // Button
         this.createNode = button({ id: 'canvas-create', className: 'button',
             onclick: () => {
-                if (USER_DATA.userId) {
-                    history.pushState(null, undefined, BASE + '/canvas/' + Math.random().toString(16).substring(2))
-                } else {
-                    history.pushState(null, undefined, BASE + '/email')
-                }
+                history.pushState(null, undefined, BASE + '/canvas/' + Math.random().toString(16).substring(2))
             }
         }, [
             img({ src: BASE + '/images/plus.png' }),
@@ -344,8 +340,8 @@ export class BrowseScreen extends BaseScreen {
             }
         }
         this.request.open('GET', BASE + '/api/v1/canvas/')
-        if (USER_DATA.jwtToken) {
-            this.request.setRequestHeader('Authorization', 'Bearer ' + USER_DATA.jwtToken)
+        if (USER_DATA.token) {
+            this.request.setRequestHeader('Authorization', 'Bearer ' + USER_DATA.token)
         }
         this.request.send()
     }

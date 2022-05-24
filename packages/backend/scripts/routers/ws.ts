@@ -37,8 +37,10 @@ export function ws() {
             // Extract path parameters
             const canvasId = request.params.canvas
             const clientId = request.params.client
-            const jwtToken = typeof request.query.jwtToken == 'string' ? request.query.jwtToken : null
-            const userId = jwtToken ? <string> verify(jwtToken, CONFIG.jwt.secret) : null
+
+            // Extract query parameters
+            const token = typeof request.query.token == 'string' ? request.query.token : null
+            const userId = token ? <string> verify(token, CONFIG.jwt.secret) : null
 
             // Create canvas socket
             if (!(canvasId in CANVAS_SOCKET_MAP)) {

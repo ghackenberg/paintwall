@@ -2,30 +2,32 @@ import { Router } from 'express'
 import { sign, verify } from 'jsonwebtoken'
 import { BASE, UserObject } from 'paintwall-common'
 import { CONFIG } from '../globals/config'
-import { CANVAS_OBJECT_MAP, TOKEN_OBJECT_MAP, USER_OBJECT_EMAIL_MAP, USER_OBJECT_MAP } from '../globals/db'
+import { CANVAS_OBJECT_MAP, CODE_OBJECT_MAP, USER_OBJECT_EMAIL_MAP, USER_OBJECT_MAP } from '../globals/db'
 import { MAIL } from '../globals/mail'
 
 export function api() {
     const router = Router()
 
-    router.post(BASE + '/api/v1/token/', (request, response) => {
-        const tokenId = Math.random().toString(16).substring(2)
+    // CODE
+
+    router.post(BASE + '/api/v1/code/', (request, response) => {
+        const codeId = Math.random().toString(16).substring(2)
         const email = request.body.email
-        const code = Math.random().toString(16).substring(2, 8)
-        TOKEN_OBJECT_MAP[tokenId] = { tokenId, email, code }
-        MAIL.sendMail({ from: 'PaintWall <' + CONFIG.mail.auth.user + '>', to: email, subject: 'Your code', text: 'Your code: ' + code }, (error, info) => {
+        const secret = Math.random().toString(16).substring(2, 8)
+        CODE_OBJECT_MAP[codeId] = { codeId, email, secret }
+        MAIL.sendMail({ from: 'PaintWall <' + CONFIG.mail.auth.user + '>', to: email, subject: 'Your code', text: 'Your code: ' + secret }, (error, info) => {
             if (error) {
                 console.error(error)
             }
         })
-        response.status(200).json({ ...TOKEN_OBJECT_MAP[tokenId], code: undefined })
+        response.status(200).json({ ...CODE_OBJECT_MAP[codeId], secret: undefined })
     })
 
-    router.delete(BASE + '/api/v1/token/:id', (request, response) => {
+    router.delete(BASE + '/api/v1/code/:id', (request, response) => {
         const tokenId = request.params.id
-        const code = request.query.code
-        if (tokenId in TOKEN_OBJECT_MAP && TOKEN_OBJECT_MAP[tokenId].code == code) {
-            const tokenObject = TOKEN_OBJECT_MAP[tokenId]
+        const secret = request.query.secret
+        if (tokenId in CODE_OBJECT_MAP && CODE_OBJECT_MAP[tokenId].secret == secret) {
+            const tokenObject = CODE_OBJECT_MAP[tokenId]
             const email = tokenObject.email
             if (!(email in USER_OBJECT_EMAIL_MAP)) {
                 const userId = Math.random().toString(16).substring(2)
@@ -37,12 +39,14 @@ export function api() {
             }
             const userObject = USER_OBJECT_EMAIL_MAP[email]
             const userId = userObject.userId
-            delete TOKEN_OBJECT_MAP[tokenId]
-            response.status(200).json({ jwtToken: sign(userId, CONFIG.jwt.secret), userId, userObject })
+            delete CODE_OBJECT_MAP[tokenId]
+            response.status(200).json({ token: sign(userId, CONFIG.jwt.secret), user: userObject })
         } else {
             response.status(403).send()
         }
     })
+
+    // USER
 
     router.get(BASE + '/api/v1/user/', (request, response) => {
         const result: UserObject[] = []
@@ -92,6 +96,8 @@ export function api() {
             response.status(403).send()
         }
     })
+
+    // CANVAS
 
     router.get(BASE + '/api/v1/canvas/', (request, response) => {
         const result = []

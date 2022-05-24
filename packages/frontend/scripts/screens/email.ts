@@ -27,14 +27,14 @@ export class EmailScreen extends BaseScreen {
                 request.onreadystatechange = event => {
                     if (request.readyState == XMLHttpRequest.DONE) {
                         if (request.status == 200) {
-                            USER_DATA.mailToken = JSON.parse(request.responseText)
-                            history.replaceState(null, undefined, BASE + '/code')
+                            USER_DATA.code = JSON.parse(request.responseText)
+                            history.replaceState(null, undefined, location.href)
                         } else {
                             alert('An unexpected error occurred. Please try again.')
                         }
                     }
                 }
-                request.open('POST', BASE + '/api/v1/token/')
+                request.open('POST', BASE + '/api/v1/code/')
                 request.setRequestHeader('Content-Type', 'application/json')
                 request.send(JSON.stringify({ email }))
             }
