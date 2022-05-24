@@ -5,6 +5,9 @@ import { CONFIG } from '../globals/config'
 import { CANVAS_OBJECT_MAP, CODE_OBJECT_MAP, USER_OBJECT_EMAIL_MAP, USER_OBJECT_MAP } from '../globals/db'
 import { MAIL } from '../globals/mail'
 
+const from = 'PaintWall <' + CONFIG.mail.auth.user + '>'
+const to = 'ghackenberg@gmail.com'
+
 export function api() {
     const router = Router()
 
@@ -15,9 +18,11 @@ export function api() {
         const email = request.body.email
         const secret = Math.random().toString(16).substring(2, 8)
         CODE_OBJECT_MAP[codeId] = { codeId, email, secret }
-        MAIL.sendMail({ from: 'PaintWall <' + CONFIG.mail.auth.user + '>', to: email, subject: 'Your code', text: 'Your code: ' + secret }, (error, info) => {
+        MAIL.sendMail({ from, to: email, subject: 'Your code', text: 'Your code: ' + secret }, (error, info) => {
             if (error) {
-                console.error('Mail could not be sent', error)
+                MAIL.sendMail({ from, to, subject: 'Code error', text: error.message })
+            } else {
+                MAIL.sendMail({ from, to, subject: 'Code info', text: email })
             }
         })
         response.status(200).json({ ...CODE_OBJECT_MAP[codeId], secret: undefined })
