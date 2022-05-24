@@ -17,17 +17,17 @@ export function api() {
         CODE_OBJECT_MAP[codeId] = { codeId, email, secret }
         MAIL.sendMail({ from: 'PaintWall <' + CONFIG.mail.auth.user + '>', to: email, subject: 'Your code', text: 'Your code: ' + secret }, (error, info) => {
             if (error) {
-                console.error(error)
+                console.error('Mail could not be sent', error)
             }
         })
         response.status(200).json({ ...CODE_OBJECT_MAP[codeId], secret: undefined })
     })
 
     router.delete(BASE + '/api/v1/code/:id', (request, response) => {
-        const tokenId = request.params.id
+        const codeId = request.params.id
         const secret = request.query.secret
-        if (tokenId in CODE_OBJECT_MAP && CODE_OBJECT_MAP[tokenId].secret == secret) {
-            const tokenObject = CODE_OBJECT_MAP[tokenId]
+        if (codeId in CODE_OBJECT_MAP && CODE_OBJECT_MAP[codeId].secret == secret) {
+            const tokenObject = CODE_OBJECT_MAP[codeId]
             const email = tokenObject.email
             if (!(email in USER_OBJECT_EMAIL_MAP)) {
                 const userId = Math.random().toString(16).substring(2)
@@ -39,9 +39,10 @@ export function api() {
             }
             const userObject = USER_OBJECT_EMAIL_MAP[email]
             const userId = userObject.userId
-            delete CODE_OBJECT_MAP[tokenId]
+            delete CODE_OBJECT_MAP[codeId]
             response.status(200).json({ token: sign(userId, CONFIG.jwt.secret), user: userObject })
         } else {
+            console.log('Code could not be deleted', codeId, secret)
             response.status(403).send()
         }
     })
@@ -59,6 +60,7 @@ export function api() {
     router.get(BASE + '/api/v1/user/:id', (request, response) => {
         const userId = request.params.id
         if (!(userId in USER_OBJECT_MAP)) {
+            console.log('User could not be retrieved', userId)
             response.status(404).send()
         } else {
             response.status(200).json({ ...USER_OBJECT_MAP[userId], email: undefined })
@@ -68,8 +70,9 @@ export function api() {
     router.put(BASE + '/api/v1/user/:id', (request, response) => {
         try {
             const authUserId = verify(request.header('Authorization').split(' ')[1], CONFIG.jwt.secret)
-            const userId = request.params.userId
+            const userId = request.params.id
             if (authUserId != userId) {
+                console.log('User could not be written', authUserId, userId)
                 response.status(403).send()
             } else {
                 USER_OBJECT_MAP[userId].name = request.body.name
@@ -77,6 +80,7 @@ export function api() {
                 response.status(200).json(USER_OBJECT_MAP[userId])
             }
         } catch (error) {
+            console.error('User could not be written', error)
             response.status(403).send()
         }
     })
@@ -86,6 +90,7 @@ export function api() {
             const authUserId = verify(request.header('Authorization').split(' ')[1], CONFIG.jwt.secret)
             const userId = request.params.id
             if (authUserId != userId) {
+                console.log('User could not be deleted', authUserId, userId)
                 response.status(403).send()
             } else {
                 const userObject = USER_OBJECT_MAP[userId]
@@ -93,6 +98,7 @@ export function api() {
                 response.status(200).json(userObject)
             }
         } catch (error) {
+            console.error('User could not be deleted', error)
             response.status(403).send()
         }
     })

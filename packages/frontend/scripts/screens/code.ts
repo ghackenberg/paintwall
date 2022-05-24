@@ -28,6 +28,7 @@ export class CodeScreen extends BaseScreen {
                     if (request.readyState == XMLHttpRequest.DONE) {
                         if (request.status == 200) {
                             const response = JSON.parse(request.responseText)
+                            USER_DATA.code = null
                             USER_DATA.token = response.token
                             USER_DATA.user = response.user
                             localStorage.setItem('token', USER_DATA.token)
@@ -45,7 +46,7 @@ export class CodeScreen extends BaseScreen {
 
         append(this.mainNode, [
             this.backNode,
-            h1('Authentication required'),
+            h1('Authentication required (2 / 2)'),
             div(this.formNode)
         ])
     }

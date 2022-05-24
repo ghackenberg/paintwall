@@ -8,6 +8,7 @@ import { ErrorScreen } from '../screens/error'
 import { ImprintScreen } from '../screens/imprint'
 import { LoadScreen } from '../screens/load'
 import { PaintScreen } from '../screens/paint'
+import { ProfileScreen } from '../screens/profile'
 import { TermsScreen } from '../screens/terms'
 
 const loadScreen = new LoadScreen()
@@ -16,6 +17,7 @@ const browseScreen = new BrowseScreen()
 const paintScreen = new PaintScreen()
 const emailScreen = new EmailScreen()
 const codeScreen = new CodeScreen()
+const profileScreen = new ProfileScreen()
 const imprintScreen = new ImprintScreen()
 const dataScreen = new DataScreen()
 const termsScreen = new TermsScreen()
@@ -25,8 +27,10 @@ loadScreen.show()
 export function route() {
     // Switch
     if (location.pathname.startsWith(BASE + '/canvas/')) {
-        if (USER_DATA.token) {
+        if (USER_DATA.token && USER_DATA.user && USER_DATA.user.name && USER_DATA.user.slogan) {
             paintScreen.show()
+        } else if (USER_DATA.token) {
+            profileScreen.show()
         } else if (USER_DATA.code) {
             codeScreen.show()
         } else {

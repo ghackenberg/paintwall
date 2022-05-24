@@ -36,6 +36,7 @@ const files = [
     '/styles/screens/paint.css',
     '/styles/screens/email.css',
     '/styles/screens/code.css',
+    '/styles/screens/profile.css',
     '/styles/screens/imprint.css',
     '/styles/screens/data.css',
     '/styles/screens/terms.css',
