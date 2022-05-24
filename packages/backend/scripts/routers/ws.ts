@@ -40,7 +40,7 @@ export function ws() {
 
             // Extract query parameters
             const token = typeof request.query.token == 'string' ? request.query.token : null
-            const userId = <string> verify(token, CONFIG.jwt.secret)
+            const userId = token ? <string> verify(token, CONFIG.jwt.secret) : null
 
             // Create canvas socket
             if (!(canvasId in CANVAS_SOCKET_MAP)) {
@@ -146,7 +146,7 @@ export function ws() {
                 timestamps.updated = Date.now()
                 // Message
                 const message = { clientId, ...JSON.parse(data.toString()) }
-                // Remember
+                // Process
                 switch (message.type) {
                     case 'client-enter': {
                         if (clientId in clients) {
@@ -160,266 +160,280 @@ export function ws() {
                         break
                     }
                     case 'client-pointer-move': {
-                        if (clientId in clients) {
+                        if (userId && clientId in clients) {
                             clients[clientId].position = message.data
                         }
                         break
                     }
                     case 'client-pointer-out': {
-                        if (clientId in clients) {
+                        if (userId && clientId in clients) {
                             clients[clientId].position = undefined
                         }
                         break
                     }
                     case 'client-pointer-over': {
-                        if (clientId in clients) {
+                        if (userId && clientId in clients) {
                             canvasObject.clients[clientId].position = message.data
                         }
                         break
                     }
                     case 'client-tool': {
-                        if (clientId in clients) {
+                        if (userId && clientId in clients) {
                             clients[clientId].tool = message.data
                         }
                         break
                     }
                     case 'client-color': {
-                        if (clientId in clients) {
+                        if (userId && clientId in clients) {
                             clients[clientId].color = message.data
                         }
                         break
                     }
                     case 'client-width': {
-                        if (clientId in clients) {
+                        if (userId && clientId in clients) {
                             clients[clientId].width = message.data
                         }
                         break
                     }
                     case 'client-alpha': {
-                        if (clientId in clients) {
+                        if (userId && clientId in clients) {
                             clients[clientId].alpha = message.data
                         }
                         break
                     }
                     case 'client-line-start': {
-                        const clientId = message.clientId
-                        const lineId = message.data.lineId
-                        const point = message.data.point
-                        const points = [point]
+                        if (userId) {
+                            const clientId = message.clientId
+                            const lineId = message.data.lineId
+                            const point = message.data.point
+                            const points = [point]
 
-                        const userId = clients[clientId].userId
-                        const color = clients[clientId].color
-                        const width = clients[clientId].width
-                        const alpha = clients[clientId].alpha
+                            const userId = clients[clientId].userId
+                            const color = clients[clientId].color
+                            const width = clients[clientId].width
+                            const alpha = clients[clientId].alpha
 
-                        lines[lineId] = { lineId, clientId, userId, color, width, alpha, points }
+                            lines[lineId] = { lineId, clientId, userId, color, width, alpha, points }
 
-                        counts.shapes++
+                            counts.shapes++
 
-                        broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+                            broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
 
-                        x.min = Math.min(x.min, point.x)
-                        x.max = Math.max(x.max, point.x)
+                            x.min = Math.min(x.min, point.x)
+                            x.max = Math.max(x.max, point.x)
 
-                        y.min = Math.min(y.min, point.y)
-                        y.max = Math.max(y.max, point.y)
-
+                            y.min = Math.min(y.min, point.y)
+                            y.max = Math.max(y.max, point.y)
+                        }
                         break
                     }
                     case 'client-line-continue': {
-                        const lineId = message.data.lineId
-                        const point = message.data.point
-
-                        if (lineId in lines) {
-                            lines[lineId].points.push(point)
-
-                            x.min = Math.min(x.min, point.x)
-                            x.max = Math.max(x.max, point.x)
-            
-                            y.min = Math.min(y.min, point.y)
-                            y.max = Math.max(y.max, point.y)
+                        if (userId) {
+                            const lineId = message.data.lineId
+                            const point = message.data.point
+    
+                            if (lineId in lines) {
+                                lines[lineId].points.push(point)
+    
+                                x.min = Math.min(x.min, point.x)
+                                x.max = Math.max(x.max, point.x)
+                
+                                y.min = Math.min(y.min, point.y)
+                                y.max = Math.max(y.max, point.y)
+                            }
                         }
-                        
                         break
                     }
                     case 'client-circle-start': {
-                        const clientId = message.clientId
-                        const circleId = message.data.circleId
-                        const point = message.data.point
-
-                        const userId = clients[clientId].userId
-                        const color = clients[clientId].color
-                        const width = clients[clientId].width
-                        const alpha = clients[clientId].alpha
-
-                        circles[circleId] = { circleId, clientId, userId, color, width, alpha, start: point, end: point }
-
-                        counts.shapes++
-
-                        broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
-
-                        x.min = Math.min(x.min, point.x)
-                        x.max = Math.max(x.max, point.x)
-
-                        y.min = Math.min(y.min, point.y)
-                        y.max = Math.max(y.max, point.y)
-
+                        if (userId) {
+                            const clientId = message.clientId
+                            const circleId = message.data.circleId
+                            const point = message.data.point
+    
+                            const userId = clients[clientId].userId
+                            const color = clients[clientId].color
+                            const width = clients[clientId].width
+                            const alpha = clients[clientId].alpha
+    
+                            circles[circleId] = { circleId, clientId, userId, color, width, alpha, start: point, end: point }
+    
+                            counts.shapes++
+    
+                            broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+    
+                            x.min = Math.min(x.min, point.x)
+                            x.max = Math.max(x.max, point.x)
+    
+                            y.min = Math.min(y.min, point.y)
+                            y.max = Math.max(y.max, point.y)
+                        }
                         break
                     }
                     case 'client-circle-continue': {
-                        const circleId = message.data.circleId
-                        const point = message.data.point
+                        if (userId) {
+                            const circleId = message.data.circleId
+                            const point = message.data.point
 
-                        if (circleId in circles) {
-                            circles[circleId].end = point
+                            if (circleId in circles) {
+                                circles[circleId].end = point
 
-                            x.min = Math.min(x.min, point.x)
-                            x.max = Math.max(x.max, point.x)
-            
-                            y.min = Math.min(y.min, point.y)
-                            y.max = Math.max(y.max, point.y)
+                                x.min = Math.min(x.min, point.x)
+                                x.max = Math.max(x.max, point.x)
+                
+                                y.min = Math.min(y.min, point.y)
+                                y.max = Math.max(y.max, point.y)
+                            }
                         }
-                        
                         break
                     }
                     case 'client-square-start': {
-                        const clientId = message.clientId
-                        const squareId = message.data.squareId
-                        const point = message.data.point
-
-                        const userId = clients[clientId].userId
-                        const color = clients[clientId].color
-                        const width = clients[clientId].width
-                        const alpha = clients[clientId].alpha
-
-                        squares[squareId] = { squareId, clientId, userId, color, width, alpha, start: point, end: point }
-
-                        counts.shapes++
-
-                        broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
-
-                        x.min = Math.min(x.min, point.x)
-                        x.max = Math.max(x.max, point.x)
-
-                        y.min = Math.min(y.min, point.y)
-                        y.max = Math.max(y.max, point.y)
-
+                        if (userId) {
+                            const clientId = message.clientId
+                            const squareId = message.data.squareId
+                            const point = message.data.point
+    
+                            const userId = clients[clientId].userId
+                            const color = clients[clientId].color
+                            const width = clients[clientId].width
+                            const alpha = clients[clientId].alpha
+    
+                            squares[squareId] = { squareId, clientId, userId, color, width, alpha, start: point, end: point }
+    
+                            counts.shapes++
+    
+                            broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+    
+                            x.min = Math.min(x.min, point.x)
+                            x.max = Math.max(x.max, point.x)
+    
+                            y.min = Math.min(y.min, point.y)
+                            y.max = Math.max(y.max, point.y)
+                        }
                         break
                     }
                     case 'client-square-continue': {
-                        const squareId = message.data.squareId
-                        const point = message.data.point
-
-                        if (squareId in squares) {
-                            squares[squareId].end = point
-
-                            x.min = Math.min(x.min, point.x)
-                            x.max = Math.max(x.max, point.x)
-            
-                            y.min = Math.min(y.min, point.y)
-                            y.max = Math.max(y.max, point.y)
+                        if (userId) {
+                            const squareId = message.data.squareId
+                            const point = message.data.point
+    
+                            if (squareId in squares) {
+                                squares[squareId].end = point
+    
+                                x.min = Math.min(x.min, point.x)
+                                x.max = Math.max(x.max, point.x)
+                
+                                y.min = Math.min(y.min, point.y)
+                                y.max = Math.max(y.max, point.y)
+                            }
                         }
-                        
                         break
                     }
                     case 'client-straightLine-start': {
-                        const clientId = message.clientId
-                        const straightLineId = message.data.straightLineId
-                        const point = message.data.point
-
-                        const userId = clients[clientId].userId
-                        const color = clients[clientId].color
-                        const width = clients[clientId].width
-                        const alpha = clients[clientId].alpha
-
-                        straightLines[straightLineId] = { straightLineId, clientId, userId, color, width, alpha, start: point, end: point }
-
-                        counts.shapes++
-
-                        broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
-
-                        x.min = Math.min(x.min, point.x)
-                        x.max = Math.max(x.max, point.x)
-
-                        y.min = Math.min(y.min, point.y)
-                        y.max = Math.max(y.max, point.y)
-
+                        if (userId) {
+                            const clientId = message.clientId
+                            const straightLineId = message.data.straightLineId
+                            const point = message.data.point
+    
+                            const userId = clients[clientId].userId
+                            const color = clients[clientId].color
+                            const width = clients[clientId].width
+                            const alpha = clients[clientId].alpha
+    
+                            straightLines[straightLineId] = { straightLineId, clientId, userId, color, width, alpha, start: point, end: point }
+    
+                            counts.shapes++
+    
+                            broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+    
+                            x.min = Math.min(x.min, point.x)
+                            x.max = Math.max(x.max, point.x)
+    
+                            y.min = Math.min(y.min, point.y)
+                            y.max = Math.max(y.max, point.y)
+                        }
                         break
                     }
                     case 'client-straightLine-continue': {
-                        const straightLineId = message.data.straightLineId
-                        const point = message.data.point
-
-                        if (straightLineId in straightLines) {
-                            straightLines[straightLineId].end = point
-
-                            x.min = Math.min(x.min, point.x)
-                            x.max = Math.max(x.max, point.x)
-            
-                            y.min = Math.min(y.min, point.y)
-                            y.max = Math.max(y.max, point.y)
+                        if (userId) {
+                            const straightLineId = message.data.straightLineId
+                            const point = message.data.point
+    
+                            if (straightLineId in straightLines) {
+                                straightLines[straightLineId].end = point
+    
+                                x.min = Math.min(x.min, point.x)
+                                x.max = Math.max(x.max, point.x)
+                
+                                y.min = Math.min(y.min, point.y)
+                                y.max = Math.max(y.max, point.y)
+                            }
                         }
-                        
                         break
                     }
                     case 'client-triangle-start': {
-                        const clientId = message.clientId
-                        const triangleId = message.data.triangleId
-                        const point = message.data.point
-
-                        const userId = clients[clientId].userId
-                        const color = clients[clientId].color
-                        const width = clients[clientId].width
-                        const alpha = clients[clientId].alpha
-
-                        triangles[triangleId] = { triangleId, clientId, userId, color, width, alpha, start: point, end: point }
-
-                        counts.shapes++
-
-                        broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
-
-                        x.min = Math.min(x.min, point.x)
-                        x.max = Math.max(x.max, point.x)
-
-                        y.min = Math.min(y.min, point.y)
-                        y.max = Math.max(y.max, point.y)
-
-                        break
-                    }
-                    case 'client-triangle-continue': {
-                        const triangleId = message.data.triangleId
-                        const point = message.data.point
-
-                        if (triangleId in triangles) {
-                            triangles[triangleId].end = point
-
+                        if (userId) {
+                            const clientId = message.clientId
+                            const triangleId = message.data.triangleId
+                            const point = message.data.point
+    
+                            const userId = clients[clientId].userId
+                            const color = clients[clientId].color
+                            const width = clients[clientId].width
+                            const alpha = clients[clientId].alpha
+    
+                            triangles[triangleId] = { triangleId, clientId, userId, color, width, alpha, start: point, end: point }
+    
+                            counts.shapes++
+    
+                            broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-shape-count', data: { canvasId, count: counts.shapes } })
+    
                             x.min = Math.min(x.min, point.x)
                             x.max = Math.max(x.max, point.x)
-            
+    
                             y.min = Math.min(y.min, point.y)
                             y.max = Math.max(y.max, point.y)
                         }
-                        
+                        break
+                    }
+                    case 'client-triangle-continue': {
+                        if (userId) {
+                            const triangleId = message.data.triangleId
+                            const point = message.data.point
+    
+                            if (triangleId in triangles) {
+                                triangles[triangleId].end = point
+    
+                                x.min = Math.min(x.min, point.x)
+                                x.max = Math.max(x.max, point.x)
+                
+                                y.min = Math.min(y.min, point.y)
+                                y.max = Math.max(y.max, point.y)
+                            }
+                        }
                         break
                     }
                     case 'client-react': {
-                        const reaction = message.data
-
-                        if (!(reaction in reactions)) {
-                            reactions[reaction] = 1
-                        } else {
-                            reactions[reaction]++
+                        if (userId) {
+                            const reaction = message.data
+    
+                            if (!(reaction in reactions)) {
+                                reactions[reaction] = 1
+                            } else {
+                                reactions[reaction]++
+                            }
+    
+                            counts.reactions++
+    
+                            broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-reaction-count', data: { canvasId, count: counts.reactions } })
                         }
-
-                        counts.reactions++
-
-                        broadcast(Object.values(CLIENT_SOCKET_MAP), { type: 'canvas-reaction-count', data: { canvasId, count: counts.reactions } })
-
                         break
                     }
                 }
-                // Broadcast
-                broadcast(Object.entries(canvasSocket).filter(pair => pair[0] != clientId).map(pair => pair[1]), message)
+                // Forward
+                if (userId || message.type == 'client-enter') {
+                    // Broadcast
+                    broadcast(Object.entries(canvasSocket).filter(pair => pair[0] != clientId).map(pair => pair[1]), message)
+                }
             })
 
             socket.on('close', () => {
