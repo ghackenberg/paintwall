@@ -19,6 +19,7 @@ application.use((request, response, next) => {
     response.header('Service-Worker-Allowed', BASE + '/')
     next()
 })
+application.use(express.json())
 application.use(api())
 application.use(ws())
 application.use(ui())

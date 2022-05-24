@@ -6,3 +6,9 @@ body > #load > main {
     min-width: 100%;
     min-height: 100vh;
 }
+
+/* Footer */
+
+body > #load > footer {
+    display: none;
+}

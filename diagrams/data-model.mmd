@@ -1,4 +1,9 @@
 classDiagram
+    class UserObject {
+        email: string
+        name: string
+        slogan: string
+    }
     class PointObject {
         x: number
         y: number
@@ -47,6 +52,7 @@ classDiagram
     
     CanvasObject "1" *-- "*" ClientObject: clients
     CanvasObject "1" *-- "*" ShapeObject: shapes
+    CanvasObject "*" --> "0..1" UserObject: references
     CanvasObject "*" *-- "1" CoordinateObject: coordinates
 
     CountObject "1" --* "1" CanvasObject: counts
@@ -56,6 +62,9 @@ classDiagram
     CoordinateObject "*" *-- "1" PointObject: min
     CoordinateObject "*" *-- "1" PointObject: max
 
+    UserObject "0..1" <-- "*" ClientObject: references
+
+    ShapeObject "*" --> "1" UserObject: references
     ShapeObject <|-- LineObject: inherits
     ShapeObject <|-- CircleObject: inherits
     ShapeObject <|-- SquareObject: inherits

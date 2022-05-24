@@ -1,23 +1,43 @@
 import * as WebSocket from 'ws'
 import { readFileSync, writeFileSync } from 'fs'
-import { CanvasObject } from 'paintwall-common'
+import { CanvasObject, UserObjectMap } from 'paintwall-common'
 
-const canvasObjectMapFile = 'database.json'
+const USER_OBJECT_MAP_FILE = 'user.json'
+const CANVAS_OBJECT_MAP_FILE = 'canvas.json'
+
+function loadUserObjectMap(): UserObjectMap {
+    try {
+        console.log('Loading USER_OBJECT_MAP')
+        return JSON.parse(readFileSync(USER_OBJECT_MAP_FILE, 'utf-8'))
+    } catch (error) {
+        console.log('Initializing USER_OBJECT_MAP')
+        return {}
+    }
+}
 
 function loadCanvasObjectMap(): CanvasObjectMap {
     try {
-        console.log('Loading canvasObjectMap')
-        return JSON.parse(readFileSync(canvasObjectMapFile, 'utf-8'))
+        console.log('Loading CANVAS_OBJECT_MAP')
+        return JSON.parse(readFileSync(CANVAS_OBJECT_MAP_FILE, 'utf-8'))
     } catch (error) {
-        console.log('Initializing canvasObjectMap')
+        console.log('Initializing CANVAS_OBJECT_MAP')
         return {}
+    }
+}
+
+function saveUserObjectMap() {
+    try {
+        console.log('Saving USER_OBJECT_MAP')
+        writeFileSync(USER_OBJECT_MAP_FILE, JSON.stringify(USER_OBJECT_MAP))
+    } catch (error) {
+        console.error(error)
     }
 }
 
 function saveCanvasObjectMap() {
     try {
-        console.log('Saving canvasObjectMap')
-        writeFileSync(canvasObjectMapFile, JSON.stringify(CANVAS_OBJECT_MAP))
+        console.log('Saving CANVAS_OBJECT_MAP')
+        writeFileSync(CANVAS_OBJECT_MAP_FILE, JSON.stringify(CANVAS_OBJECT_MAP))
     } catch (error) {
         console.error(error)
     }
@@ -36,31 +56,49 @@ interface CanvasObjectMap {
 }
 
 export const CLIENT_SOCKET_MAP: ClientSocketMap = {}
-export const CANVAS_SOCKET_MAP: CanvasSocketMap = {}
-export const CANVAS_OBJECT_MAP: CanvasObjectMap = loadCanvasObjectMap()
 
-// Reset database
+export const CODE_OBJECT_MAP: {[id: string]: { codeId: string, email: string, secret: string }} = {}
+
+export const USER_OBJECT_MAP = loadUserObjectMap()
+export const USER_OBJECT_EMAIL_MAP: UserObjectMap = {}
+
+export const CANVAS_OBJECT_MAP = loadCanvasObjectMap()
+export const CANVAS_SOCKET_MAP: CanvasSocketMap = {}
+
+// Initialize user
+for (const userObject of Object.values(USER_OBJECT_MAP)) {
+    USER_OBJECT_EMAIL_MAP[userObject.email] = userObject
+}
+
+// Reset canvas
 for (const canvasObject of Object.values(CANVAS_OBJECT_MAP)) {
-    // Initial straightLines, circles squares and triangles for existing canvasObjects
-    if (!('straightLines' in canvasObject)) {
-        canvasObject.straightLines = {}
+    if (!('userId' in canvasObject)) {
+        canvasObject.userId = null
     }
-    if (!('circles' in canvasObject)) {
-        canvasObject.circles = {}
+    for (const line of Object.values(canvasObject.lines)) {
+        if (!('userId' in line)) {
+            line.userId = null
+        }
     }
-    if (!('squares' in canvasObject)) {
-        canvasObject.squares = {}
+    for (const circle of Object.values(canvasObject.circles)) {
+        if (!('userId' in circle)) {
+            circle.userId = null
+        }
     }
-    if (!('triangles' in canvasObject)) {
-        canvasObject.triangles = {}
+    for (const square of Object.values(canvasObject.squares)) {
+        if (!('userId' in square)) {
+            square.userId = null
+        }
     }
-    if (!('shapes' in canvasObject.counts)) {
-        const lines = Object.values(canvasObject.lines).length
-        const straightLines = Object.values(canvasObject.straightLines).length
-        const circles = Object.values(canvasObject.circles).length
-        const squares = Object.values(canvasObject.squares).length
-        const triangles = Object.values(canvasObject.triangles).length
-        canvasObject.counts.shapes = lines + straightLines + circles + squares + triangles
+    for (const triangle of Object.values(canvasObject.triangles)) {
+        if (!('userId' in triangle)) {
+            triangle.userId = null
+        }
+    }
+    for (const straightLine of Object.values(canvasObject.straightLines)) {
+        if (!('userId' in straightLine)) {
+            straightLine.userId = null
+        }
     }
     // Reset counts
     canvasObject.counts.clients = 0
@@ -68,4 +106,15 @@ for (const canvasObject of Object.values(CANVAS_OBJECT_MAP)) {
     canvasObject.clients = {}
 }
 
-setInterval(saveCanvasObjectMap, 30000)
+setTimeout(() => {
+    setInterval(() => console.log('Saving data in 5 seconds'), 30000)
+}, 0)
+setTimeout(() => {
+    setInterval(saveUserObjectMap, 30000)
+}, 5000)
+setTimeout(() => {
+    setInterval(saveCanvasObjectMap, 30000)
+}, 10000)
+setTimeout(() => {
+    setInterval(() => console.log('Saving data done'), 30000)
+}, 15000)

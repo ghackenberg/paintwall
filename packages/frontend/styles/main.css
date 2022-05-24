@@ -3,6 +3,9 @@
 @import url(./screens/error.css);
 @import url(./screens/browse.css);
 @import url(./screens/paint.css);
+@import url(./screens/email.css);
+@import url(./screens/code.css);
+@import url(./screens/profile.css);
 @import url(./screens/imprint.css);
 @import url(./screens/data.css);
 @import url(./screens/terms.css);
@@ -261,4 +264,61 @@ div.popup > div.select > * {
     outline: 0;
 
     height: 100%;
+}
+
+form {
+    display: table;
+
+    margin: 0;
+    padding: 0;
+
+    margin-left: auto;
+    margin-right: auto;
+}
+form > div {
+    display: table-row;
+}
+form > div > div {
+    display: table-cell;
+    padding: 0.5em;
+}
+
+input {
+    font-size: inherit;
+
+    border: 0;
+
+    outline: 0;
+
+    padding: 0.5em;
+    padding-left: 1em;
+    padding-right: 1em;
+
+    border-radius: 1em;
+
+    background-color: lightgray;
+}
+input[type = 'submit'] {
+    background-color: gray;
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
+
+    color: white;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
+}
+input[type = 'reset'] {
+    margin-left: 1em;
+
+    background-color: gray;
+    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
+
+    color: white;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
+}
+textarea {
+    font-size: inherit;
+}
+select {
+    font-size: inherit;
 }
