@@ -11,7 +11,7 @@ export function api() {
     router.post(BASE + '/api/v1/token/', (request, response) => {
         const tokenId = Math.random().toString(16).substring(2)
         const email = request.body.email
-        const code = Math.random().toString(16).substring(2, 6)
+        const code = Math.random().toString(16).substring(2, 8)
         TOKEN_OBJECT_MAP[tokenId] = { tokenId, email, code }
         MAIL.sendMail({ from: 'PaintWall <' + CONFIG.mail.auth.user + '>', to: email, subject: 'Your code', text: 'Your code: ' + code }, (error, info) => {
             if (error) {
