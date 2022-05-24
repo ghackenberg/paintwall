@@ -20,9 +20,11 @@ export function api() {
         MAIL.sendMail({ from, to: email, subject: 'Your code', text: 'Your code: ' + secret }, (error, info) => {
             if (error) {
                 console.error('Code mail could not be sent', error)
+                response.status(500).send()
+            } else {
+                response.status(200).json({ ...CODE_OBJECT_MAP[codeId], secret: undefined })
             }
         })
-        response.status(200).json({ ...CODE_OBJECT_MAP[codeId], secret: undefined })
     })
 
     router.delete(BASE + '/api/v1/code/:id', (request, response) => {
