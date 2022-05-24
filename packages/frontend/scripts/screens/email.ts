@@ -1,6 +1,6 @@
 import { BASE } from 'paintwall-common'
 import { USER_DATA } from '../constants/user'
-import { append, div, form, h1, img, input, p } from '../functions/html'
+import { append, div, form, h1, img, input, label, p } from '../functions/html'
 import { BaseScreen } from './base'
 
 export class EmailScreen extends BaseScreen {
@@ -17,7 +17,7 @@ export class EmailScreen extends BaseScreen {
             onclick: () => history.back(),
         }, img({ src:  BASE + '/images/back.png' }))
 
-        this.fromEmailNode = input({ type: 'email', placeholder: 'your@email.com' })
+        this.fromEmailNode = input({ type: 'email', required: true, placeholder: 'your@email.com' })
         this.formSubmitNode = input({ type: 'submit', value: 'Get code' })
         this.formNode = form({
             onsubmit: event => {
@@ -38,11 +38,14 @@ export class EmailScreen extends BaseScreen {
                 request.setRequestHeader('Content-Type', 'application/json')
                 request.send(JSON.stringify({ email }))
             }
-        }, this.fromEmailNode, this.formSubmitNode)
+        }, [
+            div(div(label('Email')), div(this.fromEmailNode)),
+            div(div(), div(this.formSubmitNode))
+        ])
 
         append(this.mainNode, [
             this.backNode,
-            h1('Authentication required (1 / 2)'),
+            h1('PaintWall sign-in (1 / 2)'),
             div(this.formNode)
         ])
     }

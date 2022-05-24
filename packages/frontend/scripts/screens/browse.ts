@@ -1,4 +1,4 @@
-import { BASE, CanvasObject } from 'paintwall-common'
+import { BASE, CanvasObject, UserObject } from 'paintwall-common'
 import { USER_DATA } from '../constants/user'
 import { a, append, button, canvas, clear, div, img, option, prepend, remove, select, span } from '../functions/html'
 import { makeSocketURL } from '../functions/socket'
@@ -41,6 +41,9 @@ export class BrowseScreen extends BaseScreen {
     sortImageNode: HTMLImageElement
     sortSelectNode: HTMLSelectElement
     sortNode: HTMLSpanElement
+
+    userImageNode: HTMLImageElement
+    userNode: HTMLSpanElement
 
     loadNode: HTMLImageElement
 
@@ -95,13 +98,21 @@ export class BrowseScreen extends BaseScreen {
                 this.show()
             }
         }, Object.keys(BrowseScreen.OPTIONS).map(text => option(text)))
-        this.sortNode = span({ id: 'sort-canvas', className: 'button' }, [
+        this.sortNode = span({ id: 'canvas-sort', className: 'button' }, [
             this.sortImageNode,
             this.sortSelectNode
         ])
 
+        // User
+        this.userImageNode = img({ className: 'empty', src: BASE + '/images/user.png' })
+        this.userNode = span({ id: 'user-picture',
+            onclick: () => {
+                history.pushState(null, undefined, BASE + '/profile')
+            }
+        }, this.userImageNode)
+
         // Header
-        append(this.headerNode, [ this.logoNode, this.clientCountNode, this.createNode, this.sortNode ])
+        append(this.headerNode, [ this.logoNode, this.clientCountNode, this.createNode, this.sortNode, this.userNode ])
 
         // Load
         this.loadNode = img({ className: 'load', src: BASE + '/images/load.png' })
@@ -236,6 +247,11 @@ export class BrowseScreen extends BaseScreen {
 
     show() {
         super.show()
+        if (USER_DATA.user) {
+            this.userNode.style.display = 'inline-block'
+        } else {
+            this.userNode.style.display = 'none'
+        }
         // Main
         this.mainNode.appendChild(this.loadNode)
         // Load
@@ -255,7 +271,7 @@ export class BrowseScreen extends BaseScreen {
                 // Remove
                 this.mainNode.removeChild(this.loadNode)
                 // Parse
-                const canvasObjects: CanvasObject[] = JSON.parse(this.request.responseText)
+                const canvasObjects: (CanvasObject & { user: UserObject })[] = JSON.parse(this.request.responseText)
                 // Reset
                 this.request = null
                 // Sort
@@ -265,6 +281,7 @@ export class BrowseScreen extends BaseScreen {
                     // Extract information
                     const canvasId = canvasObject.canvasId
                     const userId = canvasObject.userId
+                    const user = canvasObject.user
                     const timestamps = canvasObject.timestamps
                     const counts = canvasObject.counts
                     const coordinates = canvasObject.coordinates
@@ -281,6 +298,13 @@ export class BrowseScreen extends BaseScreen {
                     const shapeCount = counts.shapes
                     const clientCount = counts.clients
                     const reactionCount = counts.reactions
+
+                    // User node
+                    const userNode = div({ className: 'user' }, [
+                        span({ className: 'picture' }, img({ className: 'placeholder', src: BASE + '/images/user.png' })),
+                        span({ className: user && user.name ? 'name' : 'name empty' }, user && user.name ? user.name : 'Anonymous'),
+                        span({ className: user && user.slogan ? 'slogan' : 'slogan empty' }, user && user.slogan ? user.slogan : 'No slogan')
+                    ])
 
                     // Canvas node
                     const canvasNode = canvas()
@@ -317,7 +341,7 @@ export class BrowseScreen extends BaseScreen {
                         onclick: () => {
                             history.pushState(null, undefined, BASE + '/canvas/' + canvasObject.canvasId)
                         }
-                    }, canvasNode, liveNode, infoNode)
+                    }, userNode, canvasNode, liveNode, infoNode)
                     
                     // Main node
                     append(this.canvasNode, [ containerNode ])

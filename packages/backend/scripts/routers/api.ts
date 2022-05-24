@@ -109,8 +109,10 @@ export function api() {
         const result = []
         // Convert database entries into array
         for (const canvasObject of Object.values(CANVAS_OBJECT_MAP)) {
+            // Obtain user
+            const user = canvasObject.userId && canvasObject.userId in USER_OBJECT_MAP ? USER_OBJECT_MAP[canvasObject.userId] : null
             // Append canvas object
-            result.push(canvasObject)
+            result.push({ ...canvasObject, user })
         }
         // Send array
         response.json(result.sort((a, b) => a.timestamps.created - b.timestamps.created))
@@ -121,8 +123,12 @@ export function api() {
         const canvasId = request.params.canvas
         // Check if canvas exists in database
         if (canvasId in CANVAS_OBJECT_MAP) {
+            // Obtain canvas
+            const canvasObject = CANVAS_OBJECT_MAP[canvasId]
+            // Obtain user
+            const user = canvasObject.userId && canvasObject.userId in USER_OBJECT_MAP ? USER_OBJECT_MAP[canvasObject.userId] : null
             // Send canvas object
-            response.json(CANVAS_OBJECT_MAP[canvasId])
+            response.json({ ...canvasObject, user })
         } else {
             // Return not found code
             response.status(404).send()

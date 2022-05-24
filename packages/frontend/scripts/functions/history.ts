@@ -9,6 +9,13 @@ export function initializeHistory() {
         history.replaceState(null, undefined, BASE + '/')
         // Push
         history.pushState(null, undefined, pathname)
+    } else if (location.pathname == BASE + '/profile') {
+        // Remember
+        const pathname = location.pathname
+        // Replace
+        history.replaceState(null, undefined, BASE + '/')
+        // Push
+        history.pushState(null, undefined, pathname)
     } else if (location.pathname == BASE + '/imprint') {
         // Remember
         const pathname = location.pathname

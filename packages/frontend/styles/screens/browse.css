@@ -16,24 +16,11 @@ body > #browse > header {
 body > #browse > header > #logo {
     margin-left: 0.5em;
     margin-right: 0.5em;
-    margin-bottom: 1.5em;
 }
 
 body > #browse > header > *.button {
-    margin-top: 0.5em;
-    margin-bottom: 2.5em;
-}
-
-@media screen and (max-width: 40em) {
-    body > #browse > header > #logo {
-        display: none;
-    }
-}
-
-@media screen and (max-width: 35em) {
-    body > #browse > header > #client-count {
-        display: none;
-    }
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 body > #browse > header > #client-count {
@@ -56,13 +43,69 @@ body > #browse > header > #canvas-create {
     cursor: pointer;
 }
 
-body > #browse > header > #sort-canvas {
+body > #browse > header > #canvas-sort {
     margin-left: 0.5em;
     margin-right: 0.5em;
 
     background-color: gray;
 
     cursor: pointer;
+}
+
+body > #browse > header > #user-picture {
+    display: inline-block;
+
+    vertical-align: top;
+
+    width: 2em;
+    height: 2em;
+
+    margin-top: 1em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    margin-bottom: 1em;
+
+    border-radius: 50%;
+
+    background-color: lightgray;
+
+    cursor: pointer;
+}
+
+body > #browse > header > #user-picture > img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+}
+
+body > #browse > header > #user-picture > img.empty {
+    filter: invert(1);
+
+    width: 75%;
+    height: 75%;
+
+    margin: 12.5%;
+}
+
+@media screen and (max-width: 45em) {
+    body > #browse > header > #logo {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 37.5em) {
+    body > #browse > header > #client-count {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 27.5em) {
+    body > #browse > header > #canvas-sort {
+        display: none;
+    }
 }
 
 /* Main */
@@ -142,6 +185,67 @@ body > #browse > main > div > div {
     overflow: hidden;
 }
 
+body > #browse > main > div > div > div.user {
+    text-align: left;
+    
+    padding: 0.5em;
+
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: lightgray;
+}
+
+body > #browse > main > div > div > div.user > span {
+    display: block;
+}
+
+body > #browse > main > div > div > div.user > span.picture {
+    display: block;
+
+    float: left;
+    
+    margin-right: 0.5em;
+    
+    width: 2em;
+    height: 2em;
+
+    border-radius: 50%;
+
+    background-color: lightgray;
+}
+
+body > #browse > main > div > div > div.user > span.picture > img {
+    display: block;
+    
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+}
+
+body > #browse > main > div > div > div.user > span.picture > img.placeholder {
+    filter: invert(1);
+
+    width: 75%;
+    height: 75%;
+
+    margin: 12.5%;
+}
+
+body > #browse > main > div > div > div.user > span.slogan {
+    font-size: 75%;
+
+    margin-top: 0.25rem;
+
+    line-height: 100%;
+    
+    color: lightgray;
+}
+
+body > #browse > main > div > div > div.user > span.empty {
+    font-style: italic;
+}
+
 body > #browse > main > div > div > canvas {
     display: block;
 }
@@ -202,10 +306,6 @@ body > #browse > main > div > div > div.info {
     padding: 0.5rem;
 
     border-top: 1px solid rgba(0,0,0,0.2);
-    border-bottom-left-radius: 0.5rem;
-    border-bottom-right-radius: 0.5rem;
-
-    background-image: linear-gradient(rgba(0,0,0,0.0), rgba(0,0,0,0.025), rgba(0,0,0,0.075));
 
     text-align: center;
 }

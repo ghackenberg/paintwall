@@ -40,7 +40,7 @@ export function ws() {
 
             // Extract query parameters
             const token = typeof request.query.token == 'string' ? request.query.token : null
-            const userId = token ? <string> verify(token, CONFIG.jwt.secret) : null
+            const userId = <string> verify(token, CONFIG.jwt.secret)
 
             // Create canvas socket
             if (!(canvasId in CANVAS_SOCKET_MAP)) {

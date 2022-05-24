@@ -1,11 +1,12 @@
 import { BASE } from 'paintwall-common'
 import { USER_DATA } from '../constants/user'
-import { append, div, form, h1, img, input } from '../functions/html'
+import { append, div, form, h1, img, input, label, p } from '../functions/html'
 import { BaseScreen } from './base'
 
 export class CodeScreen extends BaseScreen {
     backNode: HTMLDivElement
 
+    formEmailNode: HTMLInputElement
     fromSecretNode: HTMLInputElement
     formSubmitNode: HTMLInputElement
     formNode: HTMLFormElement
@@ -17,8 +18,9 @@ export class CodeScreen extends BaseScreen {
             onclick: () => history.back(),
         }, img({ src:  BASE + '/images/back.png' }))
 
-        this.fromSecretNode = input({ type: 'text', placeholder: 'Your code' })
-        this.formSubmitNode = input({ type: 'submit', value: 'Get code' })
+        this.formEmailNode = input({ type: 'text', required: true, placeholder: 'Your email', readOnly: true, disabled: true })
+        this.fromSecretNode = input({ type: 'text', required: true, placeholder: 'Your code' })
+        this.formSubmitNode = input({ type: 'submit', value: 'Sign in' })
         this.formNode = form({
             onsubmit: event => {
                 event.preventDefault()
@@ -42,16 +44,28 @@ export class CodeScreen extends BaseScreen {
                 request.open('DELETE', BASE + '/api/v1/code/' + USER_DATA.code.codeId + '?secret=' + secret)
                 request.send()
             }
-        }, this.fromSecretNode, this.formSubmitNode)
+        }, [
+            div(div(label('Email')), div(this.formEmailNode)),
+            div(div(label('Code')), div(this.fromSecretNode)),
+            div(div(), div(this.formSubmitNode))
+        ])
 
         append(this.mainNode, [
             this.backNode,
-            h1('Authentication required (2 / 2)'),
+            h1('PaintWall sign-in (2 / 2)'),
             div(this.formNode)
         ])
     }
 
+    show() {
+        super.show()
+
+        this.formEmailNode.value = USER_DATA.code.email
+    }
+
     hide() {
+        super.hide()
+
         USER_DATA.code = null
     }
 }

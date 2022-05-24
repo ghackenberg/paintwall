@@ -36,6 +36,8 @@ export function route() {
         } else {
             emailScreen.show()
         }
+    } else if (location.pathname == BASE + '/profile') {
+        profileScreen.show()
     } else if (location.pathname == BASE + '/imprint') {
         imprintScreen.show()
     } else if (location.pathname == BASE + '/data-protection') {

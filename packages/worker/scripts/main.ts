@@ -28,6 +28,7 @@ const files = [
     '/images/live.png',
     '/images/sort.png',
     '/images/plus.png',
+    '/images/user.png',
     '/styles/main.css',
     '/styles/screens/base.css',
     '/styles/screens/load.css',
