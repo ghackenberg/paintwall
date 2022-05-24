@@ -8,6 +8,7 @@ export class EmailScreen extends BaseScreen {
 
     fromEmailNode: HTMLInputElement
     formSubmitNode: HTMLInputElement
+    formResetNode: HTMLInputElement
     formNode: HTMLFormElement
 
     constructor() {
@@ -19,6 +20,7 @@ export class EmailScreen extends BaseScreen {
 
         this.fromEmailNode = input({ type: 'email', required: true, placeholder: 'your@email.com' })
         this.formSubmitNode = input({ type: 'submit', value: 'Get code' })
+        this.formResetNode = input({ type: 'reset', value: 'Skip' })
         this.formNode = form({
             onsubmit: event => {
                 event.preventDefault()
@@ -37,10 +39,15 @@ export class EmailScreen extends BaseScreen {
                 request.open('POST', BASE + '/api/v1/code/')
                 request.setRequestHeader('Content-Type', 'application/json')
                 request.send(JSON.stringify({ email }))
+            },
+            onreset: event => {
+                event.preventDefault()
+                USER_DATA.skip = true
+                history.replaceState(null, undefined, location.href)
             }
         }, [
             div(div(label('Email')), div(this.fromEmailNode)),
-            div(div(), div(this.formSubmitNode))
+            div(div(), div(this.formSubmitNode, this.formResetNode))
         ])
 
         append(this.mainNode, [
@@ -48,5 +55,11 @@ export class EmailScreen extends BaseScreen {
             h1('PaintWall sign-in (1 / 2)'),
             div(this.formNode)
         ])
+    }
+
+    show() {
+        super.show()
+
+        this.fromEmailNode.value = null
     }
 }

@@ -27,8 +27,9 @@ loadScreen.show()
 export function route() {
     // Switch
     if (location.pathname.startsWith(BASE + '/canvas/')) {
-        if (USER_DATA.token && USER_DATA.user && USER_DATA.user.name && USER_DATA.user.slogan) {
+        if (USER_DATA.skip || (USER_DATA.token && USER_DATA.user && USER_DATA.user.name && USER_DATA.user.slogan)) {
             paintScreen.show()
+            USER_DATA.skip = false
         } else if (USER_DATA.token) {
             profileScreen.show()
         } else if (USER_DATA.code) {
@@ -37,7 +38,11 @@ export function route() {
             emailScreen.show()
         }
     } else if (location.pathname == BASE + '/profile') {
-        profileScreen.show()
+        if (USER_DATA.token && USER_DATA.user) {
+            profileScreen.show()
+        } else {
+            history.back()
+        }
     } else if (location.pathname == BASE + '/imprint') {
         imprintScreen.show()
     } else if (location.pathname == BASE + '/data-protection') {

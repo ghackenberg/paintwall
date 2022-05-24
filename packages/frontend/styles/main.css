@@ -304,17 +304,28 @@ input[type = 'submit'] {
 
     color: white;
 
-    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
+    cursor: pointer;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
 }
 input[type = 'reset'] {
     margin-left: 1em;
 
-    background-color: gray;
-    background-image: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.2));
+    border-width: 1px;
+    border-style: solid;
+    border-color: gray;
 
-    color: white;
+    padding: calc(0.5em - 1px);
+    padding-left: calc(1em - 1px);
+    padding-right: calc(1em - 1px);
 
-    box-shadow: 0.25em 0.25em 1em rgba(0,0,0,0.2);
+    background-color: white;
+
+    color: gray;
+
+    cursor: pointer;
+
+    box-shadow: 0.25em 0.25em 1em rgba(0, 0, 0, 0.2);
 }
 textarea {
     font-size: inherit;

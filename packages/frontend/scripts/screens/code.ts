@@ -9,6 +9,7 @@ export class CodeScreen extends BaseScreen {
     formEmailNode: HTMLInputElement
     fromSecretNode: HTMLInputElement
     formSubmitNode: HTMLInputElement
+    formResetNode: HTMLInputElement
     formNode: HTMLFormElement
 
     constructor() {
@@ -21,6 +22,7 @@ export class CodeScreen extends BaseScreen {
         this.formEmailNode = input({ type: 'text', required: true, placeholder: 'Your email', readOnly: true, disabled: true })
         this.fromSecretNode = input({ type: 'text', required: true, placeholder: 'Your code' })
         this.formSubmitNode = input({ type: 'submit', value: 'Sign in' })
+        this.formResetNode = input({ type: 'reset', value: 'Skip' })
         this.formNode = form({
             onsubmit: event => {
                 event.preventDefault()
@@ -43,11 +45,16 @@ export class CodeScreen extends BaseScreen {
                 }
                 request.open('DELETE', BASE + '/api/v1/code/' + USER_DATA.code.codeId + '?secret=' + secret)
                 request.send()
+            },
+            onreset: event => {
+                event.preventDefault()
+                USER_DATA.skip = true
+                history.replaceState(null, undefined, location.href)
             }
         }, [
             div(div(label('Email')), div(this.formEmailNode)),
             div(div(label('Code')), div(this.fromSecretNode)),
-            div(div(), div(this.formSubmitNode))
+            div(div(), div(this.formSubmitNode, this.formResetNode))
         ])
 
         append(this.mainNode, [
@@ -61,6 +68,7 @@ export class CodeScreen extends BaseScreen {
         super.show()
 
         this.formEmailNode.value = USER_DATA.code.email
+        this.fromSecretNode.value = null
     }
 
     hide() {

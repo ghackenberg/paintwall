@@ -65,6 +65,7 @@ export class ProfileScreen extends BaseScreen {
                 if (location.pathname == BASE + '/profile') {
                     history.back()
                 } else {
+                    USER_DATA.skip = true
                     history.replaceState(null, undefined, location.href)
                 }
             }
