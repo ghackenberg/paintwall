@@ -29,7 +29,7 @@ export function route() {
     if (location.pathname.startsWith(BASE + '/canvas/')) {
         if (USER_DATA.skip || (USER_DATA.token && USER_DATA.user && USER_DATA.user.name && USER_DATA.user.slogan)) {
             paintScreen.show()
-            USER_DATA.skip = false
+            //USER_DATA.skip = false
         } else if (USER_DATA.token) {
             profileScreen.show()
         } else if (USER_DATA.code) {

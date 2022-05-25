@@ -8,7 +8,7 @@ interface UserData {
 }
 
 export const USER_DATA: UserData = {
-    skip: false,
+    skip: true,
     code: null,
     token: localStorage.getItem('token'),
     user: JSON.parse(localStorage.getItem('user') || 'null')
