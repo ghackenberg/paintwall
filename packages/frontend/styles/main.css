@@ -191,6 +191,8 @@ div.popup > div.label {
     width: calc(100% - 4em);
 
     overflow: hidden;
+
+    white-space: nowrap;
 }
 div.popup > div.label::after {
     content: '';
