@@ -94,17 +94,21 @@ function drawLine(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, 
         // Path
         context.beginPath()
         const first = points[0]
-        context.arc(projectX(canvas, center, zoom, first.x), projectY(canvas, center, zoom, first.y), Math.max(width * zoom, 1) / 2, 0, Math.PI * 2)
+        context.arc(projectX(canvas, center, zoom, first.x), projectY(canvas, center, zoom, first.y), projectWidth(zoom, width) / 2, 0, Math.PI * 2)
 
         // Style
         context.globalAlpha = alpha
         context.fillStyle = color
+
+        // Fill
         context.fill()
     } else if (points.length > 1) {
         // Path
         context.beginPath()
+
         const first = points[0]
         context.moveTo(projectX(canvas, center, zoom, first.x), projectY(canvas, center, zoom, first.y))
+
         for (var innerIndex = 1; innerIndex < points.length; innerIndex++) {
             const next = points[innerIndex]
             context.lineTo(projectX(canvas, center, zoom, next.x), projectY(canvas, center, zoom, next.y))
@@ -113,8 +117,9 @@ function drawLine(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, 
         // Style
         context.globalAlpha = alpha
         context.strokeStyle = color
-        context.lineWidth = width //Math.max(width * zoom, 1)
+        context.lineWidth = projectWidth(zoom, width)
         context.lineCap = 'round'
+        context.lineJoin = 'round'
 
         // Stroke
         context.stroke()
@@ -143,8 +148,9 @@ function drawStraightLine(canvas: HTMLCanvasElement, context: CanvasRenderingCon
     // Style
     context.globalAlpha = alpha
     context.strokeStyle = color
-    context.lineWidth = width //Math.max(width * zoom, 1)
+    context.lineWidth = projectWidth(zoom, width)
     context.lineCap = 'round'
+    context.lineJoin = 'round'
 
     // Stroke
     context.beginPath()
@@ -176,8 +182,9 @@ function drawCircle(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
     // Style
     context.globalAlpha = alpha
     context.strokeStyle = color
-    context.lineWidth = width //Math.max(width * zoom, 1)
+    context.lineWidth = projectWidth(zoom, width)
     context.lineCap = 'round'
+    context.lineJoin = 'round'
 
     // Stroke
     context.beginPath()
@@ -207,8 +214,9 @@ function drawSquare(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
     // Style
     context.globalAlpha = alpha
     context.strokeStyle = color
-    context.lineWidth = width //Math.max(width * zoom, 1)
+    context.lineWidth = projectWidth(zoom, width)
     context.lineCap = 'round'
+    context.lineJoin = 'round'
 
     // Stroke
     context.strokeRect(x, y, w, h)
@@ -233,18 +241,21 @@ function drawTriangle(canvas: HTMLCanvasElement, context: CanvasRenderingContext
     const xEnd = projectX(canvas, center, zoom, end.x)
     const yEnd = projectY(canvas, center, zoom, end.y)
 
-    // Style
-    context.globalAlpha = alpha
-    context.strokeStyle = color
-    context.lineWidth = width //Math.max(width * zoom, 1)
-    context.lineCap = 'round'
-
-    // Stroke
-    context.beginPath();
+    // Path
+    context.beginPath()
     context.moveTo(x, yEnd)
     context.lineTo(xEnd, yEnd)
     context.lineTo((x + xEnd) / 2, y)
     context.closePath()
+
+    // Style
+    context.globalAlpha = alpha
+    context.strokeStyle = color
+    context.lineWidth = projectWidth(zoom, width)
+    context.lineCap = 'round'
+    context.lineJoin = 'round'
+
+    // Stroke
     context.stroke()
     
 }
@@ -336,6 +347,10 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
         context.fillStyle = 'black'
         context.fillText(name, projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y))
     }
+}
+
+function projectWidth(zoom: number, width: number) {
+    return Math.max(width * zoom, 2)
 }
 
 function projectX(canvas: HTMLCanvasElement, center: PointObject, zoom: number, x: number) {
