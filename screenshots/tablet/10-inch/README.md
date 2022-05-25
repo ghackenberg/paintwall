@@ -8,6 +8,6 @@
 
 ![Paint](./paint.png)
 
-## Login
+## Profile
 
-![Login](./login.png)
+![Login](./profile.png)

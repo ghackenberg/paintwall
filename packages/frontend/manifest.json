@@ -70,11 +70,11 @@
             "platform": "narrow",
             "label": "Paint screen (phone)"
         },{
-            "src": "https://raw.githubusercontent.com/ghackenberg/paintwall/master/screenshots/phone/login.png",
+            "src": "https://raw.githubusercontent.com/ghackenberg/paintwall/master/screenshots/phone/profile.png",
             "type": "image/png",
             "sizes": "450x800",
             "platform": "narrow",
-            "label": "Login screen (phone)"
+            "label": "Profile screen (phone)"
         }
     ],
     "related_applications": [
