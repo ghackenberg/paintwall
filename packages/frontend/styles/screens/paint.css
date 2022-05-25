@@ -81,53 +81,43 @@ body > #paint > main > #count > span.count.client > img {
     vertical-align: top;
 }
 
-@media screen and (max-width: 40em) {
-    body > #paint > main > #count {
-        display: none;
-    }
-}
-
 /* Main share */
 
 body > #paint > main > #share-button {
     position: absolute;
+
+    z-index: 4;
     
     top: 1em;
     right: 1em;
 }
 
 body > #paint > main > #share-popup {
+    z-index: 5;
+
     top: 1em;
     right: 1em;
 }
 
-body > #paint > main > #share-popup > input {
-    display: block;
-    font-size: inherit;
-    line-height: 100%;
-    border: 0;
-    outline: 0;
-    padding: 1em;
-    padding-right: 4em;
-    width: 100%;
-    box-sizing: border-box;
-    border-radius: 1.5em;
-    margin: 0;
-}
-
-body > #paint > main > #share-popup > div {
+body > #paint > main > #share-popup > div.note {
     position: relative;
+
     width: calc(100% - 2em);
+
     margin-left: 1em;
     margin-right: 1em;
+
     padding-top: 1em;
     padding-bottom: 1em;
+
     border-radius: 0.5em;
+
     background-color: palegoldenrod;
+
     text-align: center;
 }
 
-body > #paint > main > #share-popup > div::before {
+body > #paint > main > #share-popup > div.note::before {
     content: '';
     
     display: block;
@@ -147,6 +137,7 @@ body > #paint > main > #share-popup > div::before {
 
 body > #paint > main > #share-popup > canvas {
     display: block;
+
     margin-top: 1em;
     margin-left: auto;
     margin-right: auto;

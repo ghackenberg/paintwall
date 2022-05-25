@@ -53,7 +53,7 @@ export class PaintScreen extends BaseScreen {
     shareButtonNode: HTMLDivElement
     sharePopupNode: HTMLDivElement
     sharePopupImageNode: HTMLImageElement
-    sharePopupInputNode: HTMLInputElement
+    sharePopupLabelNode: HTMLDivElement
     sharePopupDivNode: HTMLDivElement
     sharePopupCanvasNode: HTMLCanvasElement
 
@@ -174,13 +174,13 @@ export class PaintScreen extends BaseScreen {
                     this.sharePopupNode.style.display = 'none' 
                 }
             })
-            this.sharePopupInputNode = input()
-            this.sharePopupDivNode = div('Copied to clipboard 📋')
+            this.sharePopupLabelNode = div({ className: 'label' })
+            this.sharePopupDivNode = div({ className: 'note' }, 'Copied to clipboard 📋')
             this.sharePopupCanvasNode = canvas()
 
             // Popup container
             this.sharePopupNode = div({ id: 'share-popup', className: 'popup' }, [
-                this.sharePopupInputNode,
+                this.sharePopupLabelNode,
                 this.sharePopupImageNode,
                 this.sharePopupDivNode,
                 this.sharePopupCanvasNode
@@ -415,7 +415,7 @@ export class PaintScreen extends BaseScreen {
         this.sharePopupNode.style.display = 'none'
 
         // Share popup input
-        this.sharePopupInputNode.value = location.href
+        this.sharePopupLabelNode.textContent = location.href
 
         // Share popup code
         qrcode.toCanvas(this.sharePopupCanvasNode, location.href)

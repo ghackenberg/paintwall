@@ -10,6 +10,8 @@
 @import url(./screens/data.css);
 @import url(./screens/terms.css);
 
+/* HTML */
+
 body {
     margin: 0;
 
@@ -63,6 +65,8 @@ li {
     margin: 0;
 }
 
+/* Load */
+
 @keyframes rotation {
     from {
         transform: rotate(0deg);
@@ -88,6 +92,8 @@ img.load {
     width: 3em;
     height: 3em;
 }
+
+/* Icon */
 
 #back {
     display: block;
@@ -145,6 +151,8 @@ img.load {
     text-align: center;
 }
 
+/* Popup */
+
 div.popup {
     position: absolute;
 
@@ -174,10 +182,30 @@ div.popup > img {
     cursor: pointer;
 }
 div.popup > div.label {
+    position: relative;
+
     line-height: 3em;
 
-    padding-left: 1em;
-    padding-right: 3em;
+    margin-left: 1em;
+
+    width: calc(100% - 4em);
+
+    overflow: hidden;
+}
+div.popup > div.label::after {
+    content: '';
+
+    display: block;
+
+    position: absolute;
+
+    top: 0;
+    right: 0;
+
+    width: 1em;
+    height: 3em;
+
+    background-image: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));
 }
 div.popup > div.select {
     padding-left: 1em;
@@ -194,6 +222,8 @@ div.popup > div.select > * {
 
     cursor: pointer;
 }
+
+/* Button */
 
 *.button {
     display: inline-block;
@@ -266,6 +296,8 @@ div.popup > div.select > * {
     height: 100%;
 }
 
+/* Form */
+
 form {
     display: table;
 
@@ -282,6 +314,8 @@ form > div > div {
     display: table-cell;
     padding: 0.5em;
 }
+
+/* Input */
 
 input {
     font-size: inherit;
