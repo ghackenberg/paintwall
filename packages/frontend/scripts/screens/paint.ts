@@ -451,6 +451,9 @@ export class PaintScreen extends BaseScreen {
                 this.reactionSelectCountNodes[data].style.display = 'block'
             }
         })
+        this.canvasModel.on('client-react', (clientId, data) => {
+            console.log(`Neue Reaktion ${data} von Client ${clientId} zum Zeitpunkt ${Date.now()}`)
+        })
         this.canvasModel.connect(this.clientModel)
 
         // Resize
