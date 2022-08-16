@@ -9,6 +9,6 @@
         "email": "georg.hackenberg@gmail.com"
     },
     "dependencies": {
-        "typescript": "^4.6.4"
+        "typescript": "^4.7.4"
     }
 }
