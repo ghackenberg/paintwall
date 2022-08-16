@@ -1,6 +1,7 @@
-import { CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, LineObject, LineObjectMap, StraightLineObject, PointObject, SquareObject, SquareObjectMap, StraightLineObjectMap, TriangleObjectMap, CanvasObject, TriangleObject } from 'paintwall-common'
+import { CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, LineObject, LineObjectMap, StraightLineObject, PointObject, SquareObject, SquareObjectMap, StraightLineObjectMap, TriangleObjectMap, CanvasObject, TriangleObject, ReactionData } from 'paintwall-common'
+import { CanvasModel, ReactionHistoryData } from '../models/canvas'
 
-export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: number, model: CanvasObject) {
+export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: number, model: CanvasModel) {
     // Context
     const context = canvas.getContext('2d')
 
@@ -15,6 +16,7 @@ export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: numbe
     drawSquares(canvas, context, center, zoom, model.squares)
     drawTriangles(canvas, context, center, zoom, model.triangles)
     drawClients(canvas, context, center, zoom, model.clients)
+    drawReactions(canvas, context, model.reactionHistory)
 }
 
 function drawGrid(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number) {
@@ -347,6 +349,19 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
         context.fillStyle = 'black'
         context.fillText(name, projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y))
     }
+}
+
+function drawReactions(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, reactions: ReactionHistoryData[]) {
+    for (const reaction of reactions) {
+        if (Date.now() - reaction.timestamp < 1000 * reaction.duration + 1000) {
+            drawReaction(canvas, context, reaction)
+        }
+    }
+}
+
+function drawReaction(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, reaction: ReactionHistoryData) {
+    context.font = 'Arial 100px'
+    context.fillText(reaction.reaction, 100, 100)
 }
 
 function projectWidth(zoom: number, width: number) {
