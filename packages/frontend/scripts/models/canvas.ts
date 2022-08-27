@@ -18,6 +18,7 @@ interface HandlerMap {
 
 export interface ReactionHistoryData {
     reaction: string
+    position: {x:number, y:number, angle:number}
     speed: number
     curve: number
     duration: number
@@ -488,15 +489,15 @@ export class CanvasModel implements CanvasObject {
 
                     break
                 }
+
                 case 'client-react': {
                     const reaction = message.data
-
-                    this.reactionHistory.push({ reaction, speed: Math.random(), curve: Math.random(), duration: Math.random(), timestamp: Date.now() })
-
+                
                     if (!(reaction in this.reactions)) {
                         this.reactions[reaction] = 1
                     } else {
                         this.reactions[reaction]++
+        
                     }
 
                     this.counts.reactions++

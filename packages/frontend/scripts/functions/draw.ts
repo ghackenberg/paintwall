@@ -16,7 +16,8 @@ export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: numbe
     drawSquares(canvas, context, center, zoom, model.squares)
     drawTriangles(canvas, context, center, zoom, model.triangles)
     drawClients(canvas, context, center, zoom, model.clients)
-    drawReactions(canvas, context, model.reactionHistory)
+    drawReactions(canvas, context, model.reactionHistory, model, center, zoom)
+    
 }
 
 function drawGrid(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number) {
@@ -351,18 +352,54 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
     }
 }
 
-function drawReactions(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, reactions: ReactionHistoryData[]) {
+function drawReactions(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, reactions: ReactionHistoryData[], model:CanvasModel, center: PointObject, zoom: number) {
+
     for (const reaction of reactions) {
         if (Date.now() - reaction.timestamp < 1000 * reaction.duration + 1000) {
-            drawReaction(canvas, context, reaction)
+            context.font = '10px serif'
+            var requestAnimationFrame = window.requestAnimationFrame
+            //Request animation-frame with prototype-function "animation_prototype"
+            requestAnimationFrame(function(animation_prototype){drawReaction(canvas, context, reaction, center, zoom, model)})
+            
         }
+    }
+
+}
+
+
+
+
+
+function drawReaction(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, reaction: ReactionHistoryData, center: PointObject, zoom: number, model: CanvasModel) {
+ 
+    const radius = 10 * reaction.curve
+    const dangle = 10 * (Math.PI/180)
+    const dx = 0.0
+    const dy = -0.5
+    const text_width = context.measureText(reaction.reaction).width
+    
+    reaction.position.angle = reaction.position.angle + dangle
+
+    context.clearRect(reaction.position.x , reaction.position.y - text_width , 2 * text_width , 2 * text_width)
+
+    reaction.position.x = (reaction.position.x + dx) + Math.sin(reaction.position.angle) * radius
+    reaction.position.y = (reaction.position.y + dy) + Math.cos(reaction.position.angle) * radius
+
+    context.moveTo(reaction.position.x, reaction.position.y)
+
+    context.fillText(reaction.reaction, reaction.position.x, reaction.position.y)
+
+    context.font = context.font.replace(/\d+px/, parseInt(context.font.split('px')[0]) + 1 + "px");
+
+
+    if (Date.now() - reaction.timestamp < 1000 * reaction.duration + 1000){
+        requestAnimationFrame(function(reactions){drawReaction(canvas, context, reaction, center, zoom, model)})
+    }
+    else{
+        draw(canvas, center, zoom, model)
     }
 }
 
-function drawReaction(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, reaction: ReactionHistoryData) {
-    context.font = 'Arial 100px'
-    context.fillText(reaction.reaction, 100, 100)
-}
 
 function projectWidth(zoom: number, width: number) {
     return Math.max(width * zoom, 2)

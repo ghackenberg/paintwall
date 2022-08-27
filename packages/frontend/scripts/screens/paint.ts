@@ -3,7 +3,7 @@ import { BASE, PointObject, StraightLineObject } from 'paintwall-common'
 import { CLIENT_ID } from '../constants/client'
 import { unprojectX, unprojectY } from '../functions/draw'
 import { append, canvas, div, img, input, span } from '../functions/html'
-import { CanvasModel } from '../models/canvas'
+import { CanvasModel, ReactionHistoryData } from '../models/canvas'
 import { ClientModel } from '../models/client'
 import { LineModel } from '../models/line'
 import { StraightLineModel } from '../models/straightLine'
@@ -365,6 +365,11 @@ export class PaintScreen extends BaseScreen {
                         // Update reaction count
                         if (reaction in this.canvasModel.reactions) {
                             this.canvasModel.reactions[reaction]++
+                            this.canvasModel.reactionHistory.push({ reaction, position: 
+                                {x:this.reactionSelectChildNodes[reaction].getBoundingClientRect().x, 
+                                 y:this.reactionSelectChildNodes[reaction].getBoundingClientRect().y, 
+                                 angle:0} ,speed: Math.random(), curve: Math.random(), duration: Math.random(), timestamp: Date.now() })
+                            this.canvasModel.draw()
                         } else {
                             this.canvasModel.reactions[reaction] = 1
                         }
@@ -450,6 +455,7 @@ export class PaintScreen extends BaseScreen {
                 this.reactionSelectCountNodes[data].textContent = `${this.canvasModel.reactions[data]}`
                 this.reactionSelectCountNodes[data].style.display = 'block'
             }
+            console.log(`Neue Reaktion ${data} von Client ${clientId} zum Zeitpunkt ${Date.now()}`)
         })
         this.canvasModel.connect(this.clientModel)
 
