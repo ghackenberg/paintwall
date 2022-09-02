@@ -18,7 +18,6 @@ interface HandlerMap {
 
 export interface ReactionHistoryData {
     reaction: string
-    position: {x:number, y:number, angle:number}
     speed: number
     curve: number
     duration: number
@@ -499,6 +498,8 @@ export class CanvasModel implements CanvasObject {
                         this.reactions[reaction]++
         
                     }
+
+                    this.reactionHistory.push({ reaction, curve: Math.random(), speed: Math.random(), duration: Math.random(), timestamp: Date.now() })
 
                     this.counts.reactions++
 

@@ -27,6 +27,16 @@ body {
     user-select: none;
 }
 
+body > div.unit {
+    position: absolute;
+
+    top: 0;
+    left: 0;
+    
+    width: 1em;
+    height: 1em;
+}
+
 h1 {
     font-size: 150%;
     line-height: 130%;

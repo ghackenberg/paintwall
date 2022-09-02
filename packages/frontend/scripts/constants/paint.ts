@@ -1,0 +1,5 @@
+export const TOOLS = [ 'line', 'straightLine', 'circle', 'square', 'triangle']
+export const COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
+export const WIDTHS = [1, 5, 10]
+export const ALPHAS = [1, 0.75, 0.5, 0.25]
+export const REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']

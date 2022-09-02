@@ -1,5 +1,6 @@
 import { BASE } from 'paintwall-common'
 import { initializeHistory, overwriteHistoryPushState, overwriteHistoryReplaceState } from './functions/history'
+import { trackUnit } from './functions/unit'
 import { route } from './functions/route'
 
 // FUNCTIONS
@@ -8,6 +9,8 @@ import { route } from './functions/route'
  * Fired when the page was loaded.
  */
 async function handleLoad() {
+    // Track
+    trackUnit()
     // Initialize
     initializeHistory()
     // Overwrite
