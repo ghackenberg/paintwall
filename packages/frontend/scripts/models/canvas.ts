@@ -16,6 +16,14 @@ interface HandlerMap {
     [event: string]: Handler[]   
 }
 
+export interface ReactionHistoryData {
+    reaction: string
+    speed: number
+    curve: number
+    duration: number
+    timestamp: number
+}
+
 export class CanvasModel implements CanvasObject {
 
     handlers: HandlerMap = {}
@@ -42,6 +50,8 @@ export class CanvasModel implements CanvasObject {
     circles: CircleObjectMap
     squares: SquareObjectMap
     triangles: TriangleObjectMap
+
+    reactionHistory: ReactionHistoryData[] = []
 
     constructor(canvasNode: HTMLCanvasElement, canvasId: string, userId?: string, timestamps?: TimestampData, counts?: CountData, coordinates?: CoordinateData, reactions?: ReactionData, clients?: ClientObjectMap, lines?: LineObjectMap, straightLines?: StraightLineObjectMap, circles?: CircleObjectMap, squares?: SquareObjectMap, triangles?: TriangleObjectMap) {
         this.canvasNode = canvasNode
@@ -478,14 +488,18 @@ export class CanvasModel implements CanvasObject {
 
                     break
                 }
+
                 case 'client-react': {
                     const reaction = message.data
-
+                
                     if (!(reaction in this.reactions)) {
                         this.reactions[reaction] = 1
                     } else {
                         this.reactions[reaction]++
+        
                     }
+
+                    this.reactionHistory.push({ reaction, curve: Math.random(), speed: Math.random(), duration: Math.random(), timestamp: Date.now() })
 
                     this.counts.reactions++
 

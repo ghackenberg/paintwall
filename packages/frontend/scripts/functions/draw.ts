@@ -1,6 +1,9 @@
-import { CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, LineObject, LineObjectMap, StraightLineObject, PointObject, SquareObject, SquareObjectMap, StraightLineObjectMap, TriangleObjectMap, CanvasObject, TriangleObject } from 'paintwall-common'
+import { CircleObject, CircleObjectMap, ClientObject, ClientObjectMap, LineObject, LineObjectMap, StraightLineObject, PointObject, SquareObject, SquareObjectMap, StraightLineObjectMap, TriangleObjectMap, CanvasObject, TriangleObject, ReactionData } from 'paintwall-common'
+import { REACTIONS } from '../constants/paint'
+import { CanvasModel, ReactionHistoryData } from '../models/canvas'
+import { UNIT } from './unit'
 
-export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: number, model: CanvasObject) {
+export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: number, model: CanvasModel) {
     // Context
     const context = canvas.getContext('2d')
 
@@ -15,6 +18,8 @@ export function draw(canvas: HTMLCanvasElement, center: PointObject, zoom: numbe
     drawSquares(canvas, context, center, zoom, model.squares)
     drawTriangles(canvas, context, center, zoom, model.triangles)
     drawClients(canvas, context, center, zoom, model.clients)
+    drawReactions(canvas, context, model.reactionHistory, model, center, zoom)
+    
 }
 
 function drawGrid(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number) {
@@ -267,6 +272,8 @@ function drawClients(canvas: HTMLCanvasElement, context: CanvasRenderingContext2
 }
 
 function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, center: PointObject, zoom: number, client: ClientObject) {
+    const unit = UNIT.offsetWidth
+
     // Extract
     const name = client.userId || 'Anonymous'
     const tool = client.tool
@@ -281,7 +288,7 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
         if (tool == 'line') {
             // Path
             context.beginPath()
-            context.arc(projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y), 10, 0, Math.PI * 2)
+            context.arc(projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y), unit, 0, Math.PI * 2)
             // Fill
             context.globalAlpha = alpha
             context.fillStyle = color
@@ -289,7 +296,7 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
         } else if (tool == 'straightLine') {
             // Path
             context.beginPath()
-            context.rect(projectX(canvas, center, zoom, position.x) - 10, projectY(canvas, center, zoom, position.y) - 10, 20, 20)
+            context.rect(projectX(canvas, center, zoom, position.x) - unit, projectY(canvas, center, zoom, position.y) - unit, unit * 2, unit * 2)
             // Fill
             context.globalAlpha = alpha / 2
             context.fillStyle = color
@@ -302,7 +309,7 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
         }else if (tool == 'circle') {
             // Path
             context.beginPath()
-            context.arc(projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y), 10, 0, Math.PI * 2)
+            context.arc(projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y), unit, 0, Math.PI * 2)
             // Fill
             context.globalAlpha = alpha / 2
             context.fillStyle = color
@@ -315,7 +322,7 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
         } else if (tool == 'square') {
             // Path
             context.beginPath()
-            context.rect(projectX(canvas, center, zoom, position.x) - 10, projectY(canvas, center, zoom, position.y) - 10, 20, 20)
+            context.rect(projectX(canvas, center, zoom, position.x) - unit, projectY(canvas, center, zoom, position.y) - unit, unit * 2, unit * 2)
             // Fill
             context.globalAlpha = alpha / 2
             context.fillStyle = color
@@ -328,7 +335,7 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
         } else if (tool == 'triangle') {
             // Path
             context.beginPath()
-            context.rect(projectX(canvas, center, zoom, position.x) - 10, projectY(canvas, center, zoom, position.y) - 10, 20, 20)
+            context.rect(projectX(canvas, center, zoom, position.x) - unit, projectY(canvas, center, zoom, position.y) - unit, unit * 2, unit * 2)
             // Fill
             context.globalAlpha = alpha / 2
             context.fillStyle = color
@@ -340,6 +347,7 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
             context.stroke()
         }
         // Text
+        context.font = `${unit}px sans-serif`
         context.textAlign = 'center'
         context.textBaseline = 'middle'
         // Fill
@@ -348,6 +356,48 @@ function drawClient(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D
         context.fillText(name, projectX(canvas, center, zoom, position.x), projectY(canvas, center, zoom, position.y))
     }
 }
+
+function drawReactions(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, reactions: ReactionHistoryData[], model:CanvasModel, center: PointObject, zoom: number) {
+    const font = context.font
+
+    var animation = false
+
+    for (const reaction of reactions) {
+        if (Date.now() - reaction.timestamp < 1000 * reaction.duration + 1000) {
+            drawReaction(canvas, context, reaction, center, zoom, model)
+
+            animation = true
+        }
+    }
+
+    if (animation) {
+        requestAnimationFrame(() => draw(canvas, center, zoom, model))
+    }
+    
+    context.font = font
+}
+
+function drawReaction(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D, reaction: ReactionHistoryData, center: PointObject, zoom: number, model: CanvasModel) {
+    const age = (Date.now() - reaction.timestamp) / (1000 * reaction.duration + 1000)
+
+    const unit = UNIT.offsetWidth
+
+    context.font = `${unit + age * unit}px sans-serif`
+    context.textAlign = 'center'
+    context.textBaseline = 'middle'
+    context.globalAlpha = 1 - age
+
+    const index = REACTIONS.indexOf(reaction.reaction)
+    const width = canvas.width
+    const height = canvas.height
+    const x = width / 2 - (REACTIONS.length * unit * 4) / 2 + (index * unit * 4) + 2 * unit - age * (reaction.curve - 0.5) * 4 * unit
+    const y = height - unit * 3 - unit * age * 10 * (0.5 + reaction.speed)
+
+    console.log(unit, x, y)
+
+    context.fillText(reaction.reaction, x, y)
+}
+
 
 function projectWidth(zoom: number, width: number) {
     return Math.max(width * zoom, 2)

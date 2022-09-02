@@ -1,8 +1,8 @@
 import * as qrcode from 'qrcode'
-import { BASE, PointObject, StraightLineObject } from 'paintwall-common'
+import { BASE, PointObject } from 'paintwall-common'
 import { CLIENT_ID } from '../constants/client'
 import { unprojectX, unprojectY } from '../functions/draw'
-import { append, canvas, div, img, input, span } from '../functions/html'
+import { append, canvas, div, img, span } from '../functions/html'
 import { CanvasModel } from '../models/canvas'
 import { ClientModel } from '../models/client'
 import { LineModel } from '../models/line'
@@ -12,21 +12,13 @@ import { SquareModel } from '../models/square'
 import { CircleModel } from '../models/circle'
 import { TriangleModel } from '../models/triangle'
 import { USER_DATA } from '../constants/user'
+import { ALPHAS, COLORS, REACTIONS, TOOLS, WIDTHS } from '../constants/paint'
 
 interface NodeMap<T extends HTMLElement> {
     [id: string]: T
 }
 
 export class PaintScreen extends BaseScreen {
-    // Static
-
-    static TOOLS = [ 'line', 'straightLine', 'circle', 'square', 'triangle']
-    static COLORS = ['dodgerblue', 'mediumseagreen', 'yellowgreen', 'gold', 'orange', 'tomato', 'hotpink', 'mediumorchid', 'gray', 'black']
-    static WIDTHS = [1, 5, 10]
-    static ALPHAS = [1, 0.75, 0.5, 0.25]
-    static REACTIONS = ['🧡', '🤣', '👍', '😂', '✌']
-
-    // Non-static
 
     // Models
     
@@ -106,10 +98,10 @@ export class PaintScreen extends BaseScreen {
         // Constants
         const clientId = CLIENT_ID
         const userId: string = USER_DATA.user ? USER_DATA.user.userId : null
-        const color = PaintScreen.COLORS.includes(localStorage.getItem('color')) ? localStorage.getItem('color') : PaintScreen.COLORS[0]
-        const width = PaintScreen.WIDTHS.includes(parseFloat(localStorage.getItem('width'))) ? parseFloat(localStorage.getItem('width')) : PaintScreen.WIDTHS[0]
-        const alpha = PaintScreen.ALPHAS.includes(parseFloat(localStorage.getItem('alpha'))) ? parseFloat(localStorage.getItem('alpha')) : PaintScreen.ALPHAS[0]
-        const tool = PaintScreen.TOOLS.includes(localStorage.getItem('tool')) ? localStorage.getItem('tool') : PaintScreen.TOOLS[0]
+        const color = COLORS.includes(localStorage.getItem('color')) ? localStorage.getItem('color') : COLORS[0]
+        const width = WIDTHS.includes(parseFloat(localStorage.getItem('width'))) ? parseFloat(localStorage.getItem('width')) : WIDTHS[0]
+        const alpha = ALPHAS.includes(parseFloat(localStorage.getItem('alpha'))) ? parseFloat(localStorage.getItem('alpha')) : ALPHAS[0]
+        const tool = TOOLS.includes(localStorage.getItem('tool')) ? localStorage.getItem('tool') : TOOLS[0]
         const position: PointObject = undefined
 
         // States
@@ -201,7 +193,7 @@ export class PaintScreen extends BaseScreen {
             }, this.toolButtonImageNode)
 
             // Popup select children
-            for (const otherTool of PaintScreen.TOOLS) {
+            for (const otherTool of TOOLS) {
                 this.toolPopupSelectChildNodes[otherTool] = span({ className: otherTool == tool ? 'icon active' : 'icon',
                     onclick: () => {
                         this.changeTool(otherTool)
@@ -239,7 +231,7 @@ export class PaintScreen extends BaseScreen {
             this.colorButtonNode.style.backgroundColor = color
 
             // Popup select children
-            for (const otherColor of PaintScreen.COLORS) {
+            for (const otherColor of COLORS) {
                 this.colorPopupSelectChildNodes[otherColor] = span({ className: otherColor == color ? 'icon active' : 'icon',
                     onclick: () => {
                         this.changeColor(otherColor)
@@ -280,7 +272,7 @@ export class PaintScreen extends BaseScreen {
             }, this.widthButtonSpanNode)
 
             // Popup select children
-            for (const otherWidth of PaintScreen.WIDTHS) {
+            for (const otherWidth of WIDTHS) {
                 this.widthPopupSelectChildNodes[otherWidth] = span({ className: otherWidth == width ? 'icon active': 'icon',
                     onclick: () => {
                         this.handleChangeWidth(otherWidth)
@@ -323,7 +315,7 @@ export class PaintScreen extends BaseScreen {
             this.alphaButtonNode.style.backgroundColor = 'rgb(' + color + ',' + color + ',' + color + ')'
 
             // Popup select children
-            for (const otherAlpha of PaintScreen.ALPHAS) {
+            for (const otherAlpha of ALPHAS) {
                 const color = Math.round(255 - 255 * otherAlpha)
 
                 const percentage = 100 - otherAlpha * 100;
@@ -356,7 +348,7 @@ export class PaintScreen extends BaseScreen {
         // Nodes (reaction)
         {
             // Children
-            for (const reaction of PaintScreen.REACTIONS){
+            for (const reaction of REACTIONS){
                 this.reactionSelectCountNodes[reaction] = span()
                 this.reactionSelectCountNodes[reaction].style.display = 'none'
 
@@ -373,6 +365,10 @@ export class PaintScreen extends BaseScreen {
                         this.reactionSelectCountNodes[reaction].style.display = 'block'
                         // Broadcast reaction
                         this.canvasModel.broadcast('client-react', reaction)
+                        // Update reaction history
+                        this.canvasModel.reactionHistory.push({ reaction, speed: Math.random(), curve: Math.random(), duration: Math.random(), timestamp: Date.now() })
+                        // Re-draw canvas
+                        this.canvasModel.draw()
                     }
                 }, [
                     span(reaction),
@@ -426,7 +422,7 @@ export class PaintScreen extends BaseScreen {
             this.clientCountNode.textContent = `${this.canvasModel.counts.clients}`
         })
         this.canvasModel.on('init-reactions', (data) => {
-            for (const reaction of PaintScreen.REACTIONS){
+            for (const reaction of REACTIONS){
                 if (reaction in this.canvasModel.reactions) {
                     this.reactionSelectCountNodes[reaction].textContent = `${data[reaction]}`
                     this.reactionSelectCountNodes[reaction].style.display = 'block'
