@@ -4,10 +4,6 @@ This project contains a collaborative paint application. The application is impl
 
 ![Screenshot](./screenshots/tablet/10-inch/browse.png)
 
-## Instances
-
-* https://iot.fh-wels.at/paintwall/
-
 ## Resources
 
 * [Guides](./guides/)
